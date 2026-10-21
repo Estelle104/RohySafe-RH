@@ -30,6 +30,14 @@ CREATE TABLE postes (
     UNIQUE (id_categorie, libelle)
 );
 
+CREATE TABLE poste_departement (
+    id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    id_poste BIGINT NOT NULL REFERENCES postes(id),
+    id_departement BIGINT NOT NULL REFERENCES departements(id),
+
+    UNIQUE (id_poste, id_departement)
+);
+
 -- CDD, CDI, CE
 CREATE TABLE type_contrats (
     id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
@@ -45,15 +53,15 @@ CREATE TABLE statut_demandes (
 CREATE TABLE demandes (
     id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     date_creation TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    id_departement BIGINT NOT NULL REFERENCES departements(id),
-    id_poste_demande BIGINT NOT NULL REFERENCES postes(id),
+    id_poste_departement BIGINT NOT NULL REFERENCES poste_departement(id),
     id_createur BIGINT REFERENCES utilisateurs(id),
     id_utilisateur_actuel BIGINT REFERENCES utilisateurs(id),
     id_statut_actuel BIGINT NOT NULL REFERENCES statut_demandes(id),
     nombre_demande INTEGER NOT NULL CHECK (nombre_demande > 0),
     id_type_contrat BIGINT NOT NULL REFERENCES type_contrats(id),
     date_prise_poste DATE,
-    salaire_propose NUMERIC(12, 2) NOT NULL CHECK (salaire_propose >= 0)
+    salaire_propose NUMERIC(12, 2) NOT NULL CHECK (salaire_propose >= 0),
+    UNIQUE (id_statut_actuel)
 );
 
 CREATE TABLE historique_demandes (
@@ -68,16 +76,12 @@ CREATE TABLE historique_demandes (
 
 CREATE TABLE grilles_salariales (
     id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-    id_poste BIGINT NOT NULL REFERENCES postes(id),
-    id_departement BIGINT REFERENCES departements(id),
+    id_poste_departement BIGINT NOT NULL REFERENCES poste_departement(id),
     montant_min NUMERIC(12, 2) NOT NULL CHECK (montant_min >= 0),
     montant_max NUMERIC(12, 2) NOT NULL,
     id_type_contrat BIGINT NOT NULL REFERENCES type_contrats(id),
     CHECK (montant_max >= montant_min),
-    CHECK (
-        date_fin IS NULL
-        OR date_fin >= date_debut
-    )
+    UNIQUE (id_poste_departement, id_type_contrat)
 );
 
 CREATE TABLE histo_grille_salariales (
@@ -114,7 +118,7 @@ CREATE TABLE offres (
     id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     id_demande BIGINT NOT NULL REFERENCES demandes(id),
     titre VARCHAR(150) NOT NULL,
-    description TEXT,
+    descriptions TEXT,
     date_publication DATE,
     date_limite DATE,
     id_statut BIGINT REFERENCES statut_offres(id),
@@ -122,7 +126,8 @@ CREATE TABLE offres (
         date_limite IS NULL
         OR date_publication IS NULL
         OR date_limite >= date_publication
-    )
+    ),
+    UNIQUE (id_statut)
 );
 
 CREATE TABLE candidats (
@@ -132,7 +137,8 @@ CREATE TABLE candidats (
     email VARCHAR(150) NOT NULL,
     telephone VARCHAR(30),
     ville VARCHAR(100),
-    date_creation TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+    date_creation TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE (email)
 );
 
 -- selection
@@ -145,8 +151,8 @@ CREATE TABLE candidatures (
     id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     id_candidat BIGINT NOT NULL REFERENCES candidats(id),
     id_offre BIGINT NOT NULL REFERENCES offres(id),
-    date_candidature TIMESTAMP NOT Nsalaire_demandeULL DEFAULT CURRENT_TIMESTAMP,
-    id_statut_actuel BIGINT REFERENCES statut_candidatures(id), 
+    date_candidature TIMESTAMP NOT DEFAULT CURRENT_TIMESTAMP,
+    id_statut_actuel BIGINT NOT NULL REFERENCES statut_candidatures(id), 
     UNIQUE (id_candidat, id_offre)
 );
 
@@ -165,8 +171,7 @@ CREATE TABLE experiences_candidat (
     id_poste BIGINT NOT NULL REFERENCES postes(id),
     date_debut DATE NOT NULL,
     date_fin DATE,
-    description TEXT,
-
+    descriptions TEXT,
     CHECK (date_fin IS NULL OR date_fin >= date_debut)
 );
 
@@ -197,7 +202,7 @@ CREATE TABLE competences_candidat (
     id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     id_candidat BIGINT NOT NULL REFERENCES candidats(id),
     id_competence BIGINT NOT NULL REFERENCES competences(id),
-    niveau VARCHAR(50),   -- a comparer avec le note_minimale dans criteres_poste
+    niveau NUMERIC(5,2)CHECK (niveau BETWEEN 0 AND 20),
 
     UNIQUE (id_candidat, id_competence)
 );
@@ -205,12 +210,6 @@ CREATE TABLE competences_candidat (
 CREATE TABLE softskills (
     id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     libelle VARCHAR(120) NOT NULL UNIQUE
-);
-
-CREATE TABLE poste_departement (
-    id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-    id_poste BIGINT NOT NULL REFERENCES postes(id),
-    id_departement BIGINT NOT NULL REFERENCES departements(id)
 );
 
 CREATE TABLE exigences_experience (
@@ -229,18 +228,20 @@ CREATE TABLE criteres_poste (
     id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     id_poste BIGINT NOT NULL REFERENCES postes(id),
     id_competence BIGINT REFERENCES competences(id),
-    note_minimale NUMERIC(5,2),
+    note_minimale NUMERIC(5,2) CHECK (note_minimale BETWEEN 0 AND 20),
     obligatoire BOOLEAN NOT NULL DEFAULT FALSE,
 
     CHECK (
         id_competence IS NOT NULL
-    )
+    ),
+    
+    UNIQUE (id_poste, id_competence)
 );
 
 CREATE TABLE criteres_softskill (
     id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     id_softskill BIGINT REFERENCES softskills(id),
-    note_minimale NUMERIC(5,2),
+    note_minimale NUMERIC(5,2) CHECK (note_minimale BETWEEN 0 AND 20),
     obligatoire BOOLEAN NOT NULL DEFAULT FALSE,
 
     CHECK (
@@ -274,7 +275,7 @@ CREATE TABLE historique_entretiens_statut (
 CREATE TABLE evaluations_candidat (
     id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     id_entretien BIGINT NOT NULL REFERENCES entretiens(id),
-    id_softskill BIGINT NOT NULL REFERENCES criteres_softskill(id),
+    id_softskill BIGINT NOT NULL REFERENCES softskills(id),
     id_evaluateur BIGINT NOT NULL REFERENCES utilisateurs(id),
     note NUMERIC(5,2) NOT NULL CHECK (note BETWEEN 0 AND 20),
     commentaire TEXT,
@@ -293,20 +294,18 @@ CREATE TABLE statut_propositions_embauche (
 CREATE TABLE propositions_embauche (
     id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     id_candidature BIGINT NOT NULL REFERENCES candidatures(id),
-    id_demande BIGINT NOT NULL REFERENCES demandes(id),  -- ato no maka ny salaire_propose, date_prise_poste, id_type_contrat
     date_proposition TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    id_statut_actuel BIGINT REFERENCES statut_propositions_embauche(id)
+    id_statut_actuel BIGINT NOT NULL REFERENCES statut_propositions_embauche(id),
 );
 
 CREATE TABLE historique_propositions (
     id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     id_proposition BIGINT NOT NULL REFERENCES propositions_embauche(id),
-    id_candidature BIGINT NOT NULL REFERENCES candidatures(id),
-    salaire_demande NUMERIC(12,2) CHECK (salaire_demande >= 0),
+    salaire_propose NUMERIC(12,2) CHECK (salaire_propose >= 0),
     id_type_contrat BIGINT REFERENCES type_contrats(id),
     id_statut_proposition BIGINT NOT NULL REFERENCES statut_propositions_embauche(id),
     motif TEXT,
-    date_action TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    date_action TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
 -- actif, conge, suspendu, demissionne, licencie, retraite
