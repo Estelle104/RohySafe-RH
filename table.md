@@ -1,5 +1,3 @@
-Pas de souci 😊 Je te regroupe toutes les tables avec leurs attributs, en gardant une petite définition pour chacune et en indiquant les clés primaires (`PK`) et étrangères (`FK`).
-
 # 1. Organisation et utilisateurs
 
 | Table          | Attributs et définition                                                                 |
@@ -24,7 +22,7 @@ Pas de souci 😊 Je te regroupe toutes les tables avec leurs attributs, en gard
 
 | Table                    | Attributs et définition                                                                                                                                                            |
 | ------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `grilles_salariales`     | `id (PK)`, `id_poste (FK)`, `id_departement (FK, nullable)`, `montant_min`, `montant_max`, `date_debut`, `date_fin`, `id_type_contrat` — Fourchettes salariales applicables pendant une période.      |
+| `grilles_salariales`     | `id (PK)`, `id_poste (FK)`, `id_departement (FK, nullable)`, `montant_min`, `montant_max`, `date_debut`, `date_fin`, `id_type_contrat (FK)` — Fourchettes salariales applicables pendant une période.      |
 | `budgets`                | `id (PK)`, `id_departement (FK)`, `annee`, `montant_annuel`, `montant_engage` — Budget annuel du département et montant déjà engagé.                                               |
 | `histo_salaire_demandes` | `id (PK)`, `id_demande (FK)`, `montant`, `id_utilisateur (FK)`, `date`, `motif`, `statut_validation` — Historique des montants proposés par la RH pour une demande de recrutement. |
 
@@ -54,7 +52,7 @@ Pas de souci 😊 Je te regroupe toutes les tables avec leurs attributs, en gard
 
 | Table                    | Attributs et définition                                                                                                                                                                               |
 | ------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `exigences_experience`   | `id (PK)`, `id_poste (FK)`, `id_experience (FK)`, `duree_min`, `duree_max`, `obligatoire` — Expérience requise pour un poste.                                                                         |
+| `exigences_experience`   | `id (PK)`, `id_poste (FK)`, `duree_min`, `duree_max`, `obligatoire` — Expérience requise pour un poste.                                                                         |
 | `softskills`             | `id (PK)`, `libelle` — Référentiel des compétences comportementales pertinentes pour le poste.                                                                                                        |
 | `criteres_poste`         | `id (PK)`, `id_poste (FK)`, `id_competence (FK, nullable)`, `id_softskill (FK, nullable)`, `poids`, `note_minimale`, `obligatoire` — Critères utilisés pour évaluer ou présélectionner les candidats. |
 | `resultats_preselection` | `id (PK)`, `id_candidature (FK)`, `score`, `resultat`, `date_calcul`, `details` — Résultat calculé de la présélection d'une candidature.                                                              |
@@ -96,16 +94,5 @@ Dans `criteres_poste`, au moins l'un des champs `id_competence` ou `id_softskill
 | Table               | Attributs et définition                                                                                                                                                                               |
 | ------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `statut_employes` | `id(PK)`, `libelle` - statut employes |
-| `employes`          | `id (PK)`, `id_candidat (FK, unique)`, `matricule`, `date_embauche`, `statut` — Informations administratives de l'employé.                                                                            |
+| `employes`          | `id (PK)`, `id_candidat (FK, unique)`, `matricule`, `date_embauche` — Informations administratives de l'employé.                                                                            |
 | `historique_employes_statut` | `id_employes(PK)`, `id_statut_employes`, `daty` |
-
-## Quelques règles importantes pour ton schéma
-
-- Tous les identifiants `id` marqués `PK` sont des clés primaires ; les `FK` doivent avoir de véritables contraintes de clé étrangère.
-- `utilisateurs.mdp` doit contenir un hachage sécurisé du mot de passe, jamais le mot de passe en clair.
-- Utilise `NUMERIC(12,2)` pour les salaires et les montants budgétaires en PostgreSQL.
-- Les statuts doivent être définis de manière cohérente, idéalement dans des tables de référence lorsqu'ils sont réutilisés.
-- Préserve l'historique des décisions, propositions et affectations au lieu d'écraser les anciennes données.
-- `employes.id_candidat` peut être unique si une personne ne doit avoir qu'un seul dossier employé. Si tu veux gérer les réembauches ou plusieurs périodes d'emploi, il faudra adapter cette règle.
-
-À retenir : cette proposition couvre l'ensemble du parcours RH, mais certaines tables peuvent être simplifiées pour une première version. Le point essentiel est de garder séparées les demandes de recrutement, les candidatures, les négociations salariales et les contrats de travail.
