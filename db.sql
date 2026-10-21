@@ -253,10 +253,18 @@ CREATE TABLE softskills (
     libelle VARCHAR(120) NOT NULL UNIQUE
 );
 
-CREATE TABLE exigences_experience (
+CREATE TABLE poste_departement (
     id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     id_poste BIGINT NOT NULL REFERENCES postes(id),
-    id_departement BIGINT NOT NULL REFERENCES departements(id),
+    id_departement BIGINT NOT NULL REFERENCES departements(id)
+);
+
+
+
+CREATE TABLE exigences_experience (
+    id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    id_poste_departement BIGINT NOT NULL REFERENCES poste_departement(id),
+    id_poste_experience BIGINT NOT NULL REFERENCES postes(id),
     duree_min INTEGER NOT NULL DEFAULT 0 CHECK (duree_min >= 0),
     duree_max INTEGER,
     obligatoire BOOLEAN NOT NULL DEFAULT FALSE,
@@ -264,42 +272,40 @@ CREATE TABLE exigences_experience (
     CHECK (duree_max IS NULL OR duree_max >= duree_min)
 );
 
+
 CREATE TABLE criteres_poste (
     id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     id_poste BIGINT NOT NULL REFERENCES postes(id),
     id_competence BIGINT REFERENCES competences(id),
-    id_softskill BIGINT REFERENCES softskills(id),
+    -- id_softskill BIGINT REFERENCES softskills(id)
     poids NUMERIC(5,2) NOT NULL DEFAULT 1 CHECK (poids >= 0),
     note_minimale NUMERIC(5,2),
     obligatoire BOOLEAN NOT NULL DEFAULT FALSE,
 
     CHECK (
-        id_competence IS NOT NULL OR id_softskill IS NOT NULL
-    ),
-    CHECK (
-        note_minimale IS NULL OR note_minimale BETWEEN 0 AND 20
+        id_competence IS NOT NULL
     )
 );
 
-CREATE TABLE resultats_preselection (
-    id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-    id_candidature BIGINT NOT NULL REFERENCES candidatures(id),
-    score NUMERIC(6,2) NOT NULL CHECK (score >= 0),
-    resultat VARCHAR(30) NOT NULL
-        CHECK (resultat IN ('RETENU', 'NON_RETENU', 'A_VERIFIER')),
-    date_calcul TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    details JSONB,
+-- CREATE TABLE resultats_preselection (
+--     id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+--     id_candidature BIGINT NOT NULL REFERENCES candidatures(id),
+--     score NUMERIC(6,2) NOT NULL CHECK (score >= 0),
+--     resultat VARCHAR(30) NOT NULL
+--         CHECK (resultat IN ('RETENU', 'NON_RETENU', 'A_VERIFIER')),
+--     date_calcul TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+--     details JSONB,
 
-    UNIQUE (id_candidature, date_calcul)
-);
+--     UNIQUE (id_candidature, date_calcul)
+-- );
 
-CREATE TABLE historique_classement (
-    id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-    id_candidature BIGINT NOT NULL REFERENCES candidatures(id),
-    rang INTEGER NOT NULL CHECK (rang > 0),
-    score NUMERIC(6,2) NOT NULL CHECK (score >= 0),
-    date_classement TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
-);
+-- CREATE TABLE historique_classement (
+--     id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+--     id_candidature BIGINT NOT NULL REFERENCES candidatures(id),
+--     rang INTEGER NOT NULL CHECK (rang > 0),
+--     score NUMERIC(6,2) NOT NULL CHECK (score >= 0),
+--     date_classement TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+-- );
 
 -- =========================================================
 -- 9. ENTRETIENS ET EVALUATIONS
@@ -314,7 +320,6 @@ CREATE TABLE entretiens (
     id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     id_candidature BIGINT NOT NULL REFERENCES candidatures(id),
     date_entretien TIMESTAMP NOT NULL,
-    type_entretien VARCHAR(50) NOT NULL,
     id_statut_actuel BIGINT REFERENCES statut_entretiens(id),
     commentaire TEXT
 );
