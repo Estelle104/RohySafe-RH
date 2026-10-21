@@ -71,6 +71,7 @@ CREATE TABLE demandes (
     nombre_poste INTEGER NOT NULL CHECK (nombre_poste > 0),
     id_type_contrat BIGINT NOT NULL REFERENCES type_contrats(id),
     date_prise_poste DATE,
+    id_utilisateur BIGINT REFERENCES utilisateurs(id),
     id_statut_actuel BIGINT REFERENCES statut_demandes(id)
 );
 
