@@ -17,7 +17,10 @@ $routes->get('/form', 'Formation::formationForm');
 $routes->group('api', ['namespace' => 'App\Controllers\Api'], function ($routes) {
     $routes->get('health', 'Health::index');
     $routes->get('departements', 'Departement::index');
-    $routes->get('offres', 'Offre::index');
+    $routes->get('offres', 'OffreController::index');
+    $routes->get('offres/a-publier', 'OffreController::demandesAPublier');
+    $routes->get('offres/(:num)', 'OffreController::show/$1');
+    $routes->post('offres', 'OffreController::publier');
     $routes->get('demandes/notifications', 'RHController::notifications');
     $routes->get('demandes/(:num)', 'RHController::show/$1');
     $routes->get('demandes/(:num)/grille-salariale', 'RHController::grilleSalariale/$1');
