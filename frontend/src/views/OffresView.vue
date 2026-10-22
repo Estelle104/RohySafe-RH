@@ -1,52 +1,24 @@
 <script setup>
-import { ref, computed, onMounted } from 'vue'
+import { useOffre } from '../composables/useOffre.js'
 import OffreCard from '../components/OffreCard.vue'
-import { getOffres } from '../services/offreService'
+import ContratCard from '../components/ContratCard.vue'
 
-const recherche = ref('')
-const filtreActif = ref('Toutes')
-const filtres = ['Toutes', 'Informatique', 'Technique', 'Santé', 'CDI', 'CDD']
-
-const offres = ref([])
-const chargement = ref(true)
-const erreur = ref('')
-
-async function chargerOffres() {
-  chargement.value = true
-  erreur.value = ''
-  try {
-    offres.value = await getOffres()
-  } catch (e) {
-    erreur.value = e.message
-  } finally {
-    chargement.value = false
-  }
-}
-
-onMounted(chargerOffres)
-
-const offresFiltrees = computed(() => {
-  const q = recherche.value.trim().toLowerCase()
-  return offres.value.filter((o) => {
-    const okFiltre =
-      filtreActif.value === 'Toutes' ||
-      o.departement === filtreActif.value ||
-      o.type_contrat === filtreActif.value
-    const okRecherche =
-      !q ||
-      (o.titre ?? '').toLowerCase().includes(q) ||
-      (o.descriptions ?? '').toLowerCase().includes(q)
-    return okFiltre && okRecherche
-  })
-})
-
-function voirDetails(offre) {
-  console.log('details', offre.id) // TODO: router.push({ name: 'offre-detail', params: { id: offre.id } })
-}
-
-function postuler(offre) {
-  console.log('postuler', offre.id) // TODO: ouvrir le formulaire de candidature (CV)
-}
+const {
+  recherche,
+  filtreActif,
+  filtres,
+  offresFiltrees,
+  chargement,
+  erreur,
+  chargerOffres,
+  offreDetail,
+  chargementDetail,
+  erreurDetail,
+  voirDetails,
+  fermerDetails,
+  postuler,
+  voirCandidatsIdeaux,
+} = useOffre()
 </script>
 
 <template>
@@ -92,12 +64,24 @@ function postuler(offre) {
           :offre="o"
           @details="voirDetails"
           @postuler="postuler"
+          @candidats-ideaux="voirCandidatsIdeaux"
         />
 
         <p v-if="offresFiltrees.length === 0" class="end">Aucune offre trouvée</p>
         <p v-else class="end">Vous avez vu toutes les offres</p>
       </template>
     </main>
+
+    <div v-if="offreDetail || chargementDetail" class="modal-backdrop" @click.self="fermerDetails">
+      <section class="detail-modal">
+        <button class="close" @click="fermerDetails">Fermer</button>
+        <p v-if="chargementDetail">Chargement du détail...</p>
+        <p v-else-if="erreurDetail" class="error">{{ erreurDetail }}</p>
+        <template v-else-if="offreDetail">
+          <ContratCard :offre="offreDetail" />
+        </template>
+      </section>
+    </div>
   </div>
 </template>
 
@@ -212,6 +196,36 @@ function postuler(offre) {
   display: flex;
   flex-direction: column;
   gap: 20px;
+}
+
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 20;
+  display: grid;
+  place-items: center;
+  padding: 20px;
+  background: rgb(0 0 0 / 45%);
+}
+
+.detail-modal {
+  position: relative;
+  width: min(620px, 100%);
+  max-height: 90vh;
+  overflow-y: auto;
+  padding: 26px;
+  border-radius: 12px;
+  background: #fff;
+}
+
+.close {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  border: 0;
+  background: transparent;
+  color: #667085;
+  cursor: pointer;
 }
 
 .end {
