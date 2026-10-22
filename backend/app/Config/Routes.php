@@ -17,4 +17,5 @@ $routes->get('/form', 'Formation::formationForm');
 $routes->group('api', ['namespace' => 'App\Controllers\Api'], function ($routes) {
     $routes->get('health', 'Health::index');
     $routes->get('departements', 'Departement::index');
+    $routes->get('offres', 'Offre::index');
 });

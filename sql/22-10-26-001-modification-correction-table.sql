@@ -14,9 +14,9 @@ CREATE TABLE utilisateurs (
     id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     login VARCHAR(100) NOT NULL UNIQUE,
     mdp TEXT NOT NULL,
-    id_role BIGINT NOT NULL REFERENCES roles(id)
+    id_role BIGINT NOT NULL REFERENCES roles(id),
     -- renseigné pour les managers de département, NULL pour DG / RH / Finance
-    -- id_departement BIGINT REFERENCES departements(id)
+    id_departement BIGINT REFERENCES departements(id)
 );
 
 CREATE TABLE categorie_postes (
