@@ -8,6 +8,16 @@ export default createRouter({
     { path: '/', redirect: '/login' },
     { path: '/login', component: LoginView },
     { path: '/candidats/login', component: LoginCandidatsView },
-    { path: '/offres', name: 'offres', component: () => import('../views/OffresView.vue') }
+    { path: '/offres', name: 'offres', component: () => import('../views/OffresView.vue') },
+    {
+      path: '/offres/:id/candidats',
+      name: 'candidats-ideaux',
+      component: () => import('../views/CandidatsIdeauxView.vue')
+    },
+    {
+      path: '/demandes/:id/candidats',
+      name: 'candidats-ideaux-demande',
+      component: () => import('../views/CandidatsIdeauxView.vue')
+    },
   ],
 })
