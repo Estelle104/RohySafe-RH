@@ -180,3 +180,4 @@ in SYSTEMPATH/Database/Postgre/Connection.php on line 200.
 16 SYSTEMPATH/rewrite.php(44): require_once('/home/andry/Documents/S5/Mr_Tovo/GITHUB/RohySafe-RH/backend/public/index.php')
 DEBUG - 2026-10-22 20:00:33 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
 DEBUG - 2026-10-22 20:02:32 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-10-22 20:26:22 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.

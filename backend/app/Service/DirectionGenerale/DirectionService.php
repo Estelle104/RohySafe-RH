@@ -22,8 +22,17 @@ class DirectionService
         $this->historiques = new HistoriqueDemandeModel();
     }
 
-    public function valider(int $id, int $utilisateurId): bool
-    {
+    public function notifications(): array {
+        return $this->demandes->demandesPourDirection();
+    }
+
+    public function compterNotifications(): int {
+        return $this->demandes->compterPourDirection();
+    }
+
+    public function valider(int $id, int $utilisateurId): bool {
+        $id_utilisateur = 1;    
+
         $this->db->transBegin();
         try {
             $demande = $this->demande($id);
@@ -37,6 +46,8 @@ class DirectionService
 
     public function refuser(int $id, int $utilisateurId, int $annee, string $motif): bool
     {
+        $id_utilisateur = 1;    
+
         if (trim($motif) === '') throw new RuntimeException('Le motif de refus est obligatoire.');
         $this->db->transBegin();
         try {
@@ -53,24 +64,27 @@ class DirectionService
         } catch (\Throwable $e) { $this->db->transRollback(); throw $e; }
     }
 
-    private function demande(int $id): array
-    {
+    private function demande(int $id): array{
         $demande = $this->demandes->trouverAvecDepartement($id);
         if (!$demande) throw new RuntimeException('Demande introuvable.');
         return $demande;
     }
 
-    private function budgetVerrouille(int $departementId, int $annee): array
-    {
+    private function budgetVerrouille(int $departementId, int $annee): array {
         $budget = $this->db->query('SELECT * FROM budgets WHERE id_departement = ? AND annee = ? FOR UPDATE', [$departementId, $annee])->getRowArray();
         if (!$budget) throw new RuntimeException('Budget introuvable.');
         return $budget;
     }
 
-    private function montant(array $demande): float { return (float) $demande['salaire_propose'] * (int) $demande['nombre_demande']; }
-    private function exigerDirection(array $demande): void { if ($demande['statut_libelle'] !== 'EN_VALIDATION_DIRECTION') throw new RuntimeException('Cette demande n’est pas en attente de la Direction.'); }
-    private function changerStatut(int $id, string $libelle): void
-    {
+    private function montant(array $demande): float { 
+        return (float) $demande['salaire_propose'] * (int) $demande['nombre_demande']; 
+    }
+
+    private function exigerDirection(array $demande): void { 
+        if ($demande['statut_libelle'] !== 'EN_VALIDATION_DIRECTION') 
+            throw new RuntimeException('Cette demande n’est pas en attente de la Direction.'); 
+    }
+    private function changerStatut(int $id, string $libelle): void{
         $statut = $this->statuts->trouverParLibelle($libelle);
         if (!$statut) throw new RuntimeException("Statut introuvable : {$libelle}");
         $this->demandes->update($id, ['id_statut_actuel' => $statut['id']]);
@@ -78,7 +92,13 @@ class DirectionService
     private function historique(int $id, int $utilisateurId, float $montant, string $remarque): void
     {
         $demande = $this->demande($id);
-        $this->historiques->insert(['id_demande' => $id, 'id_statut_demande' => $demande['id_statut_actuel'], 'id_utilisateur' => $utilisateurId, 'salaire_propose' => $montant, 'remarque' => $remarque]);
+        $this->historiques->insert([
+            'id_demande' => $id, 
+            'id_statut_demande' => $demande['id_statut_actuel'], 
+            'id_utilisateur' => $utilisateurId, 
+            'salaire_propose' => $montant, 
+            'remarque' => $remarque
+        ]);
     }
     private function terminer(string $message): void
     {

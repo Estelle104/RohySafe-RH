@@ -4,19 +4,52 @@ namespace App\Controllers\Api;
 
 use App\Controllers\BaseController;
 use App\Service\DirectionGenerale\DirectionService;
+use App\Service\Finance\FinanceService;
 
 class DirectionGeneraleController extends BaseController
 {
     private DirectionService $directionService;
+    private FinanceService $financeService;
 
     public function __construct()
     {
         $this->directionService = new DirectionService();
+        $this->financeService = new FinanceService();
     }
 
-    /**
-     * Valider définitivement une demande.
-     */
+    public function fiche(int $id)
+    {
+        try {
+            return $this->response->setJSON([
+                'success' => true,
+                'data' => $this->financeService->verifierBudget($id, (int) date('Y')),
+            ]);
+        } catch (\Throwable $e) {
+            return $this->response->setStatusCode(422)->setJSON([
+                'success' => false,
+                'message' => $e->getMessage(),
+            ]);
+        }
+    }
+
+    public function notifications()
+    {
+        try {
+            return $this->response->setJSON([
+                'success' => true,
+                'data' => [
+                    'nombre' => $this->directionService->compterNotifications(),
+                    'demandes' => $this->directionService->notifications(),
+                ],
+            ]);
+        } catch (\Throwable $e) {
+            return $this->response->setStatusCode(500)->setJSON([
+                'success' => false,
+                'message' => $e->getMessage(),
+            ]);
+        }
+    }
+
     public function valider(int $id)
     {
         try {
@@ -39,9 +72,6 @@ class DirectionGeneraleController extends BaseController
         }
     }
 
-    /**
-     * Refuser une demande avec un motif obligatoire.
-     */
     public function refuser(int $id)
     {
         try {
