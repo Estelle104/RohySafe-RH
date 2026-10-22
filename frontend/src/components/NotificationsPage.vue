@@ -4,6 +4,7 @@
 -->
 <script setup>
 import { ref, computed, onMounted } from 'vue'
+import { useRouter } from 'vue-router'
 import CompteurNotifications from './CompteurNotifications.vue'
 import FiltreStatuts from './FiltreStatuts.vue'
 import ListeNotifications from './ListeNotifications.vue'
@@ -14,6 +15,7 @@ const API_URL = '/api/demandes/notifications'
 const statuts = ['Tous', 'Créée', 'En attente', 'Validée', 'Refusée', 'Annulée']
 const statutActif = ref('Tous')
 const notifications = ref([])
+const router = useRouter()
 
 const notificationsFiltrees = computed(() =>
   statutActif.value === 'Tous'
@@ -27,8 +29,8 @@ onMounted(async () => {
 })
 
 function ouvrir(notification) {
-  // router.push(`/demandes/${notification.id}`)
-  console.log('Ouvrir la demande', notification.id)
+  if (notification.statut !== 'Créée') return
+  router.push({ name: 'demande-detail', params: { id: notification.id } })
 }
 </script>
 

@@ -1,4 +1,3 @@
-```vue
 <script setup>
 defineProps({
   notification: {
@@ -38,7 +37,8 @@ function formaterSalaire(salaire) {
 <template>
   <article
     class="card"
-    @click="emit('ouvrir', notification)"
+    :class="{ inactive: notification.statut !== 'Créée' }"
+    @click="notification.statut === 'Créée' && emit('ouvrir', notification)"
   >
     <header class="card-header">
       <div>
@@ -108,6 +108,16 @@ function formaterSalaire(salaire) {
   box-shadow: 0 3px 12px rgb(0 0 0 / 7%);
 }
 
+.card.inactive {
+  cursor: default;
+  opacity: .72;
+}
+
+.card.inactive:hover {
+  border-color: #d5d5d5;
+  box-shadow: none;
+}
+
 .card-header {
   display: flex;
   justify-content: space-between;
@@ -163,4 +173,3 @@ function formaterSalaire(salaire) {
   }
 }
 </style>
-```

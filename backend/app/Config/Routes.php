@@ -18,5 +18,9 @@ $routes->group('api', ['namespace' => 'App\Controllers\Api'], function ($routes)
     $routes->get('health', 'Health::index');
     $routes->get('departements', 'Departement::index');
     $routes->get('offres', 'Offre::index');
-    $routes->get('demandes/notifications', 'Demande::notifications');
+    $routes->get('demandes/notifications', 'RHController::notifications');
+    $routes->get('demandes/(:num)', 'RHController::show/$1');
+    $routes->get('demandes/(:num)/grille-salariale', 'RHController::grilleSalariale/$1');
+    $routes->post('demandes/(:num)/proposition-salaire', 'RHController::proposerSalaire/$1');
+    $routes->post('demandes/(:num)/refuser', 'RHController::refuser/$1');
 });
