@@ -8,6 +8,7 @@ export default createRouter({
     { path: '/', redirect: '/login' },
     { path: '/login', component: LoginView },
     { path: '/candidats/login', component: LoginCandidatsView },
+
     { path: '/offres', name: 'offres', component: () => import('../views/OffresView.vue') },
     {
       path: '/offres/:id/candidats',
@@ -18,6 +19,9 @@ export default createRouter({
       path: '/demandes/:id/candidats',
       name: 'candidats-ideaux-demande',
       component: () => import('../views/CandidatsIdeauxView.vue')
-    },
+    }
+    ,{ path: '/finance', name: 'finance', component: () => import('../views/FinanceView.vue') }
+    ,{ path: '/direction-generale', name: 'direction-generale', component: () => import('../views/DirectionGeneraleView.vue') }
+
   ],
 })
