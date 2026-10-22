@@ -18,4 +18,5 @@ $routes->group('api', ['namespace' => 'App\Controllers\Api'], function ($routes)
     $routes->get('health', 'Health::index');
     $routes->get('departements', 'Departement::index');
     $routes->get('offres', 'Offre::index');
+    $routes->get('demandes/notifications', 'Demande::notifications');
 });
