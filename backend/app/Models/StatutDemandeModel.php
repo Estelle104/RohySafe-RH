@@ -11,4 +11,9 @@ class StatutDemandeModel extends Model
     protected $returnType    = 'array';
     protected $useTimestamps = false;
     protected $allowedFields = ['libelle'];
+
+    public function trouverParLibelle(string $libelle): ?array
+    {
+        return $this->where('libelle', $libelle)->first();
+    }
 }
