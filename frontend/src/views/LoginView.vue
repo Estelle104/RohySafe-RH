@@ -15,18 +15,6 @@
 </template>
 
 <style scoped>
-    *,
-    *::before,
-    *::after {
-      box-sizing: border-box;
-    }
-
-    html,
-    body {
-      margin: 0;
-      min-height: 100vh;
-    }
-
     .login-container {
       min-height: 100vh;
       display: flex;
