@@ -14,9 +14,24 @@ class FinanceController extends BaseController
         $this->financeService = new FinanceService();
     }
 
-    /**
-     * Afficher la fiche de validation financière.
-     */
+    public function notifications()
+    {
+        try {
+            return $this->response->setJSON([
+                'success' => true,
+                'data' => [
+                    'nombre' => $this->financeService->compterNotifications(),
+                    'demandes' => $this->financeService->notifications(),
+                ],
+            ]);
+        } catch (\Throwable $e) {
+            return $this->response->setStatusCode(500)->setJSON([
+                'success' => false,
+                'message' => $e->getMessage(),
+            ]);
+        }
+    }
+
     public function fiche(int $id)
     {
         try {
@@ -39,9 +54,6 @@ class FinanceController extends BaseController
         }
     }
 
-    /**
-     * Valider la demande.
-     */
     public function valider(int $id)
     {
         try {
@@ -65,9 +77,6 @@ class FinanceController extends BaseController
         }
     }
 
-    /**
-     * Annuler avec un motif obligatoire.
-     */
     public function annuler(int $id)
     {
         try {

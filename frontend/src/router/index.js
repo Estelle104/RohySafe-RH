@@ -9,5 +9,7 @@ export default createRouter({
     { path: '/login', component: LoginView },
     { path: '/candidats/login', component: LoginCandidatsView },
     { path: '/offres', name: 'offres', component: () => import('../views/OffresView.vue') }
+    ,{ path: '/finance', name: 'finance', component: () => import('../views/FinanceView.vue') }
+    ,{ path: '/direction-generale', name: 'direction-generale', component: () => import('../views/DirectionGeneraleView.vue') }
   ],
 })

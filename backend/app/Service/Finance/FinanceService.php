@@ -38,8 +38,20 @@ class FinanceService
         ];
     }
 
+    public function notifications(): array
+    {
+        return $this->demandes->demandesPourFinance();
+    }
+
+    public function compterNotifications(): int
+    {
+        return $this->demandes->compterPourFinance();
+    }
+
     public function valider(int $demandeId, int $annee, int $utilisateurId): bool
     {
+        $utilisateurId = 2;
+
         $this->db->transBegin();
         try {
             $demande = $this->demande($demandeId);
@@ -67,6 +79,9 @@ class FinanceService
 
     public function annuler(int $demandeId, int $utilisateurId, string $motif): bool
     {
+        
+        $utilisateurId = 2;
+
         if (trim($motif) === '') throw new RuntimeException('Le motif d’annulation est obligatoire.');
         $this->db->transBegin();
         try {
