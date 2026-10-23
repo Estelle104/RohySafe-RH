@@ -34,4 +34,27 @@ class CandidatureModel extends Model
         if (! $this->db->transStatus()) throw new \RuntimeException('Échec de création de l’entretien.');
         return $entretienId;
     }
+
+    public function getDonneesContrat(int $id): ?array
+    {
+        return $this->db->table('candidatures c')->select('c.id, ca.nom, ca.prenom, ca.ville, o.titre AS titre_offre, p.libelle AS poste, dpt.libelle AS departement, tc.id AS id_type_contrat, tc.libelle AS type_contrat, dm.date_prise_poste, dm.salaire_propose')
+            ->join('statut_candidatures sc', 'sc.id = c.id_statut_actuel')->join('candidats ca', 'ca.id = c.id_candidat')->join('offres o', 'o.id = c.id_offre')->join('demandes dm', 'dm.id = o.id_demande')->join('poste_departement pd', 'pd.id = dm.id_poste_departement')->join('postes p', 'p.id = pd.id_poste')->join('departements dpt', 'dpt.id = pd.id_departement')->join('type_contrats tc', 'tc.id = dm.id_type_contrat')->where('c.id', $id)->where('sc.libelle', 'retenu')->get()->getRowArray();
+    }
+
+    public function genererContrat(int $id): int
+    {
+        $donnees = $this->getDonneesContrat($id);
+        if ($donnees === null) throw new \DomainException('Cette candidature ne peut pas générer de contrat.');
+        $this->db->transStart();
+        $employe = $this->db->table('employes')->select('id')->where('id_candidat', $this->find($id)['id_candidat'])->get()->getRowArray();
+        if ($employe === null) {
+            $matricule = 'EMP-' . date('Y') . '-' . str_pad((string) $id, 4, '0', STR_PAD_LEFT);
+            $this->db->table('employes')->insert(['id_candidat' => $this->find($id)['id_candidat'], 'matricule' => $matricule, 'date_embauche' => $donnees['date_prise_poste'] ?: date('Y-m-d')]);
+            $employe = ['id' => $this->db->insertID()];
+        }
+        $statut = $this->db->table('statut_contrats')->select('id')->where('id', 1)->get()->getRowArray();
+        if ($statut === null) throw new \RuntimeException('Le statut de contrat cree (id 1) est introuvable.');
+        $this->db->table('contrats')->insert(['id_employe' => $employe['id'], 'id_type_contrat' => $donnees['id_type_contrat'], 'date_debut' => $donnees['date_prise_poste'] ?: date('Y-m-d'), 'date_fin' => null, 'salaire' => $donnees['salaire_propose'], 'id_statut_actuel' => $statut['id'], 'date_signature' => date('Y-m-d')]);
+        $contrat = (int) $this->db->insertID(); $this->db->transComplete(); if (! $this->db->transStatus()) throw new \RuntimeException('Échec de génération du contrat.'); return $contrat;
+    }
 }

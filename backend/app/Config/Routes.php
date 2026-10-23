@@ -28,4 +28,6 @@ $routes->group('api', ['namespace' => 'App\Controllers\Api'], function ($routes)
     $routes->post('demandes/(:num)/refuser', 'RHController::refuser/$1');
     $routes->get('candidatures', 'CandidatureController::index');
     $routes->post('candidatures/(:num)/entretiens', 'CandidatureController::creerEntretien/$1');
+    $routes->get('candidatures/(:num)/contrat', 'CandidatureController::ficheContrat/$1');
+    $routes->post('candidatures/(:num)/contrat', 'CandidatureController::genererContrat/$1');
 });

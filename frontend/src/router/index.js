@@ -21,5 +21,6 @@ export default createRouter({
     ,{ path: '/candidatures', name: 'candidatures', component: () => import('../views/CandidaturesView.vue') }
     ,{ path: '/candidatures/:id/entretien', name: 'entretien-formulaire', component: () => import('../views/EntretienFormView.vue') }
     ,{ path: '/candidatures/:id/entretien/confirmation', name: 'entretien-confirme', component: () => import('../views/EntretienConfirmationView.vue') }
+    ,{ path: '/candidatures/:id/contrat', name: 'contrat-fiche', component: () => import('../views/ContratFicheView.vue') }
   ],
 })
