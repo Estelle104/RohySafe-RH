@@ -141,7 +141,6 @@ class OffreModel extends Model
             ->join('roles role_actuel', 'role_actuel.id = actuel.id_role')
             ->join('statut_demandes sd', 'sd.id = dm.id_statut_actuel')
             ->join('offres o', 'o.id_demande = dm.id', 'left')
-            ->where('role_createur.libelle', 'DG')
             ->where('role_actuel.libelle', 'RH')
             ->where('sd.libelle', 'valide')
             ->where('o.id IS NULL', null, false)
