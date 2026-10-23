@@ -1,0 +1,301 @@
+ERROR - 2026-10-23 02:25:35 --> Error connecting to the database: ErrorException: pg_connect(): Unable to connect to PostgreSQL server: connection to server at &quot;localhost&quot; (127.0.0.1), port 5432 failed: FATAL:  password authentication failed for user &quot;admin&quot;
+connection to server at &quot;localhost&quot; (127.0.0.1), port 5432 failed: FATAL:  password authentication failed for user &quot;admin&quot; in /home/estelle/S5/MrTovo/RohySafe-RH/backend/system/Database/Postgre/Connection.php:78
+Stack trace:
+#0 [internal function]: CodeIgniter\Debug\Exceptions->errorHandler()
+#1 /home/estelle/S5/MrTovo/RohySafe-RH/backend/system/Database/Postgre/Connection.php(78): pg_connect()
+#2 /home/estelle/S5/MrTovo/RohySafe-RH/backend/system/Database/BaseConnection.php(555): CodeIgniter\Database\Postgre\Connection->connect()
+#3 /home/estelle/S5/MrTovo/RohySafe-RH/backend/system/Database/BaseConnection.php(795): CodeIgniter\Database\BaseConnection->initialize()
+#4 /home/estelle/S5/MrTovo/RohySafe-RH/backend/system/Database/BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query()
+#5 /home/estelle/S5/MrTovo/RohySafe-RH/backend/system/Model.php(295): CodeIgniter\Database\BaseBuilder->get()
+#6 /home/estelle/S5/MrTovo/RohySafe-RH/backend/system/BaseModel.php(714): CodeIgniter\Model->doFirst()
+#7 /home/estelle/S5/MrTovo/RohySafe-RH/backend/app/Controllers/Api/Auth.php(80): CodeIgniter\BaseModel->first()
+#8 /home/estelle/S5/MrTovo/RohySafe-RH/backend/app/Controllers/Api/Auth.php(30): App\Controllers\Api\Auth->chercher()
+#9 /home/estelle/S5/MrTovo/RohySafe-RH/backend/system/CodeIgniter.php(951): App\Controllers\Api\Auth->login()
+#10 /home/estelle/S5/MrTovo/RohySafe-RH/backend/system/CodeIgniter.php(497): CodeIgniter\CodeIgniter->runController()
+#11 /home/estelle/S5/MrTovo/RohySafe-RH/backend/system/CodeIgniter.php(340): CodeIgniter\CodeIgniter->handleRequest()
+#12 /home/estelle/S5/MrTovo/RohySafe-RH/backend/system/Boot.php(417): CodeIgniter\CodeIgniter->run()
+#13 /home/estelle/S5/MrTovo/RohySafe-RH/backend/system/Boot.php(68): CodeIgniter\Boot::runCodeIgniter()
+#14 /home/estelle/S5/MrTovo/RohySafe-RH/backend/public/index.php(59): CodeIgniter\Boot::bootWeb()
+#15 {main}
+CRITICAL - 2026-10-23 02:25:35 --> CodeIgniter\Database\Exceptions\DatabaseException: Unable to connect to the database.
+Main connection [Postgre]: pg_connect(): Unable to connect to PostgreSQL server: connection to server at &quot;localhost&quot; (127.0.0.1), port 5432 failed: FATAL:  password authentication failed for user &quot;admin&quot;
+connection to server at &quot;localhost&quot; (127.0.0.1), port 5432 failed: FATAL:  password authentication failed for user &quot;admin&quot;
+[Method: POST, Route: api/auth/login]
+in SYSTEMPATH/Database/BaseConnection.php on line 606.
+ 1 SYSTEMPATH/Database/BaseConnection.php(795): CodeIgniter\Database\BaseConnection->initialize()
+ 2 SYSTEMPATH/Database/BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query()
+ 3 SYSTEMPATH/Model.php(295): CodeIgniter\Database\BaseBuilder->get()
+ 4 SYSTEMPATH/BaseModel.php(714): CodeIgniter\Model->doFirst()
+ 5 APPPATH/Controllers/Api/Auth.php(80): CodeIgniter\BaseModel->first()
+ 6 APPPATH/Controllers/Api/Auth.php(30): App\Controllers\Api\Auth->chercher()
+ 7 SYSTEMPATH/CodeIgniter.php(951): App\Controllers\Api\Auth->login()
+ 8 SYSTEMPATH/CodeIgniter.php(497): CodeIgniter\CodeIgniter->runController()
+ 9 SYSTEMPATH/CodeIgniter.php(340): CodeIgniter\CodeIgniter->handleRequest()
+10 SYSTEMPATH/Boot.php(417): CodeIgniter\CodeIgniter->run()
+11 SYSTEMPATH/Boot.php(68): CodeIgniter\Boot::runCodeIgniter()
+12 FCPATH/index.php(59): CodeIgniter\Boot::bootWeb()
+ERROR - 2026-10-23 02:26:36 --> Error connecting to the database: ErrorException: pg_connect(): Unable to connect to PostgreSQL server: connection to server at &quot;localhost&quot; (127.0.0.1), port 5432 failed: FATAL:  password authentication failed for user &quot;admin&quot;
+connection to server at &quot;localhost&quot; (127.0.0.1), port 5432 failed: FATAL:  password authentication failed for user &quot;admin&quot; in /home/estelle/S5/MrTovo/RohySafe-RH/backend/system/Database/Postgre/Connection.php:78
+Stack trace:
+#0 [internal function]: CodeIgniter\Debug\Exceptions->errorHandler()
+#1 /home/estelle/S5/MrTovo/RohySafe-RH/backend/system/Database/Postgre/Connection.php(78): pg_connect()
+#2 /home/estelle/S5/MrTovo/RohySafe-RH/backend/system/Database/BaseConnection.php(555): CodeIgniter\Database\Postgre\Connection->connect()
+#3 /home/estelle/S5/MrTovo/RohySafe-RH/backend/system/Database/BaseConnection.php(795): CodeIgniter\Database\BaseConnection->initialize()
+#4 /home/estelle/S5/MrTovo/RohySafe-RH/backend/system/Database/BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query()
+#5 /home/estelle/S5/MrTovo/RohySafe-RH/backend/system/Model.php(295): CodeIgniter\Database\BaseBuilder->get()
+#6 /home/estelle/S5/MrTovo/RohySafe-RH/backend/system/BaseModel.php(714): CodeIgniter\Model->doFirst()
+#7 /home/estelle/S5/MrTovo/RohySafe-RH/backend/app/Controllers/Api/Auth.php(80): CodeIgniter\BaseModel->first()
+#8 /home/estelle/S5/MrTovo/RohySafe-RH/backend/app/Controllers/Api/Auth.php(30): App\Controllers\Api\Auth->chercher()
+#9 /home/estelle/S5/MrTovo/RohySafe-RH/backend/system/CodeIgniter.php(951): App\Controllers\Api\Auth->login()
+#10 /home/estelle/S5/MrTovo/RohySafe-RH/backend/system/CodeIgniter.php(497): CodeIgniter\CodeIgniter->runController()
+#11 /home/estelle/S5/MrTovo/RohySafe-RH/backend/system/CodeIgniter.php(340): CodeIgniter\CodeIgniter->handleRequest()
+#12 /home/estelle/S5/MrTovo/RohySafe-RH/backend/system/Boot.php(417): CodeIgniter\CodeIgniter->run()
+#13 /home/estelle/S5/MrTovo/RohySafe-RH/backend/system/Boot.php(68): CodeIgniter\Boot::runCodeIgniter()
+#14 /home/estelle/S5/MrTovo/RohySafe-RH/backend/public/index.php(59): CodeIgniter\Boot::bootWeb()
+#15 {main}
+CRITICAL - 2026-10-23 02:26:36 --> CodeIgniter\Database\Exceptions\DatabaseException: Unable to connect to the database.
+Main connection [Postgre]: pg_connect(): Unable to connect to PostgreSQL server: connection to server at &quot;localhost&quot; (127.0.0.1), port 5432 failed: FATAL:  password authentication failed for user &quot;admin&quot;
+connection to server at &quot;localhost&quot; (127.0.0.1), port 5432 failed: FATAL:  password authentication failed for user &quot;admin&quot;
+[Method: POST, Route: api/auth/login]
+in SYSTEMPATH/Database/BaseConnection.php on line 606.
+ 1 SYSTEMPATH/Database/BaseConnection.php(795): CodeIgniter\Database\BaseConnection->initialize()
+ 2 SYSTEMPATH/Database/BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query()
+ 3 SYSTEMPATH/Model.php(295): CodeIgniter\Database\BaseBuilder->get()
+ 4 SYSTEMPATH/BaseModel.php(714): CodeIgniter\Model->doFirst()
+ 5 APPPATH/Controllers/Api/Auth.php(80): CodeIgniter\BaseModel->first()
+ 6 APPPATH/Controllers/Api/Auth.php(30): App\Controllers\Api\Auth->chercher()
+ 7 SYSTEMPATH/CodeIgniter.php(951): App\Controllers\Api\Auth->login()
+ 8 SYSTEMPATH/CodeIgniter.php(497): CodeIgniter\CodeIgniter->runController()
+ 9 SYSTEMPATH/CodeIgniter.php(340): CodeIgniter\CodeIgniter->handleRequest()
+10 SYSTEMPATH/Boot.php(417): CodeIgniter\CodeIgniter->run()
+11 SYSTEMPATH/Boot.php(68): CodeIgniter\Boot::runCodeIgniter()
+12 FCPATH/index.php(59): CodeIgniter\Boot::bootWeb()
+ERROR - 2026-10-23 02:26:37 --> Error connecting to the database: ErrorException: pg_connect(): Unable to connect to PostgreSQL server: connection to server at &quot;localhost&quot; (127.0.0.1), port 5432 failed: FATAL:  password authentication failed for user &quot;admin&quot;
+connection to server at &quot;localhost&quot; (127.0.0.1), port 5432 failed: FATAL:  password authentication failed for user &quot;admin&quot; in /home/estelle/S5/MrTovo/RohySafe-RH/backend/system/Database/Postgre/Connection.php:78
+Stack trace:
+#0 [internal function]: CodeIgniter\Debug\Exceptions->errorHandler()
+#1 /home/estelle/S5/MrTovo/RohySafe-RH/backend/system/Database/Postgre/Connection.php(78): pg_connect()
+#2 /home/estelle/S5/MrTovo/RohySafe-RH/backend/system/Database/BaseConnection.php(555): CodeIgniter\Database\Postgre\Connection->connect()
+#3 /home/estelle/S5/MrTovo/RohySafe-RH/backend/system/Database/BaseConnection.php(795): CodeIgniter\Database\BaseConnection->initialize()
+#4 /home/estelle/S5/MrTovo/RohySafe-RH/backend/system/Database/BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query()
+#5 /home/estelle/S5/MrTovo/RohySafe-RH/backend/system/Model.php(295): CodeIgniter\Database\BaseBuilder->get()
+#6 /home/estelle/S5/MrTovo/RohySafe-RH/backend/system/BaseModel.php(714): CodeIgniter\Model->doFirst()
+#7 /home/estelle/S5/MrTovo/RohySafe-RH/backend/app/Controllers/Api/Auth.php(80): CodeIgniter\BaseModel->first()
+#8 /home/estelle/S5/MrTovo/RohySafe-RH/backend/app/Controllers/Api/Auth.php(30): App\Controllers\Api\Auth->chercher()
+#9 /home/estelle/S5/MrTovo/RohySafe-RH/backend/system/CodeIgniter.php(951): App\Controllers\Api\Auth->login()
+#10 /home/estelle/S5/MrTovo/RohySafe-RH/backend/system/CodeIgniter.php(497): CodeIgniter\CodeIgniter->runController()
+#11 /home/estelle/S5/MrTovo/RohySafe-RH/backend/system/CodeIgniter.php(340): CodeIgniter\CodeIgniter->handleRequest()
+#12 /home/estelle/S5/MrTovo/RohySafe-RH/backend/system/Boot.php(417): CodeIgniter\CodeIgniter->run()
+#13 /home/estelle/S5/MrTovo/RohySafe-RH/backend/system/Boot.php(68): CodeIgniter\Boot::runCodeIgniter()
+#14 /home/estelle/S5/MrTovo/RohySafe-RH/backend/public/index.php(59): CodeIgniter\Boot::bootWeb()
+#15 {main}
+CRITICAL - 2026-10-23 02:26:37 --> CodeIgniter\Database\Exceptions\DatabaseException: Unable to connect to the database.
+Main connection [Postgre]: pg_connect(): Unable to connect to PostgreSQL server: connection to server at &quot;localhost&quot; (127.0.0.1), port 5432 failed: FATAL:  password authentication failed for user &quot;admin&quot;
+connection to server at &quot;localhost&quot; (127.0.0.1), port 5432 failed: FATAL:  password authentication failed for user &quot;admin&quot;
+[Method: POST, Route: api/auth/login]
+in SYSTEMPATH/Database/BaseConnection.php on line 606.
+ 1 SYSTEMPATH/Database/BaseConnection.php(795): CodeIgniter\Database\BaseConnection->initialize()
+ 2 SYSTEMPATH/Database/BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query()
+ 3 SYSTEMPATH/Model.php(295): CodeIgniter\Database\BaseBuilder->get()
+ 4 SYSTEMPATH/BaseModel.php(714): CodeIgniter\Model->doFirst()
+ 5 APPPATH/Controllers/Api/Auth.php(80): CodeIgniter\BaseModel->first()
+ 6 APPPATH/Controllers/Api/Auth.php(30): App\Controllers\Api\Auth->chercher()
+ 7 SYSTEMPATH/CodeIgniter.php(951): App\Controllers\Api\Auth->login()
+ 8 SYSTEMPATH/CodeIgniter.php(497): CodeIgniter\CodeIgniter->runController()
+ 9 SYSTEMPATH/CodeIgniter.php(340): CodeIgniter\CodeIgniter->handleRequest()
+10 SYSTEMPATH/Boot.php(417): CodeIgniter\CodeIgniter->run()
+11 SYSTEMPATH/Boot.php(68): CodeIgniter\Boot::runCodeIgniter()
+12 FCPATH/index.php(59): CodeIgniter\Boot::bootWeb()
+ERROR - 2026-10-23 02:27:27 --> Error connecting to the database: ErrorException: pg_connect(): Unable to connect to PostgreSQL server: connection to server at &quot;localhost&quot; (127.0.0.1), port 5432 failed: FATAL:  password authentication failed for user &quot;admin&quot;
+connection to server at &quot;localhost&quot; (127.0.0.1), port 5432 failed: FATAL:  password authentication failed for user &quot;admin&quot; in /home/estelle/S5/MrTovo/RohySafe-RH/backend/system/Database/Postgre/Connection.php:78
+Stack trace:
+#0 [internal function]: CodeIgniter\Debug\Exceptions->errorHandler()
+#1 /home/estelle/S5/MrTovo/RohySafe-RH/backend/system/Database/Postgre/Connection.php(78): pg_connect()
+#2 /home/estelle/S5/MrTovo/RohySafe-RH/backend/system/Database/BaseConnection.php(555): CodeIgniter\Database\Postgre\Connection->connect()
+#3 /home/estelle/S5/MrTovo/RohySafe-RH/backend/system/Database/BaseConnection.php(795): CodeIgniter\Database\BaseConnection->initialize()
+#4 /home/estelle/S5/MrTovo/RohySafe-RH/backend/system/Database/BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query()
+#5 /home/estelle/S5/MrTovo/RohySafe-RH/backend/system/Model.php(295): CodeIgniter\Database\BaseBuilder->get()
+#6 /home/estelle/S5/MrTovo/RohySafe-RH/backend/system/BaseModel.php(714): CodeIgniter\Model->doFirst()
+#7 /home/estelle/S5/MrTovo/RohySafe-RH/backend/app/Controllers/Api/Auth.php(80): CodeIgniter\BaseModel->first()
+#8 /home/estelle/S5/MrTovo/RohySafe-RH/backend/app/Controllers/Api/Auth.php(30): App\Controllers\Api\Auth->chercher()
+#9 /home/estelle/S5/MrTovo/RohySafe-RH/backend/system/CodeIgniter.php(951): App\Controllers\Api\Auth->login()
+#10 /home/estelle/S5/MrTovo/RohySafe-RH/backend/system/CodeIgniter.php(497): CodeIgniter\CodeIgniter->runController()
+#11 /home/estelle/S5/MrTovo/RohySafe-RH/backend/system/CodeIgniter.php(340): CodeIgniter\CodeIgniter->handleRequest()
+#12 /home/estelle/S5/MrTovo/RohySafe-RH/backend/system/Boot.php(417): CodeIgniter\CodeIgniter->run()
+#13 /home/estelle/S5/MrTovo/RohySafe-RH/backend/system/Boot.php(68): CodeIgniter\Boot::runCodeIgniter()
+#14 /home/estelle/S5/MrTovo/RohySafe-RH/backend/public/index.php(59): CodeIgniter\Boot::bootWeb()
+#15 {main}
+CRITICAL - 2026-10-23 02:27:27 --> CodeIgniter\Database\Exceptions\DatabaseException: Unable to connect to the database.
+Main connection [Postgre]: pg_connect(): Unable to connect to PostgreSQL server: connection to server at &quot;localhost&quot; (127.0.0.1), port 5432 failed: FATAL:  password authentication failed for user &quot;admin&quot;
+connection to server at &quot;localhost&quot; (127.0.0.1), port 5432 failed: FATAL:  password authentication failed for user &quot;admin&quot;
+[Method: POST, Route: api/auth/login]
+in SYSTEMPATH/Database/BaseConnection.php on line 606.
+ 1 SYSTEMPATH/Database/BaseConnection.php(795): CodeIgniter\Database\BaseConnection->initialize()
+ 2 SYSTEMPATH/Database/BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query()
+ 3 SYSTEMPATH/Model.php(295): CodeIgniter\Database\BaseBuilder->get()
+ 4 SYSTEMPATH/BaseModel.php(714): CodeIgniter\Model->doFirst()
+ 5 APPPATH/Controllers/Api/Auth.php(80): CodeIgniter\BaseModel->first()
+ 6 APPPATH/Controllers/Api/Auth.php(30): App\Controllers\Api\Auth->chercher()
+ 7 SYSTEMPATH/CodeIgniter.php(951): App\Controllers\Api\Auth->login()
+ 8 SYSTEMPATH/CodeIgniter.php(497): CodeIgniter\CodeIgniter->runController()
+ 9 SYSTEMPATH/CodeIgniter.php(340): CodeIgniter\CodeIgniter->handleRequest()
+10 SYSTEMPATH/Boot.php(417): CodeIgniter\CodeIgniter->run()
+11 SYSTEMPATH/Boot.php(68): CodeIgniter\Boot::runCodeIgniter()
+12 FCPATH/index.php(59): CodeIgniter\Boot::bootWeb()
+ERROR - 2026-10-23 02:29:52 --> Error connecting to the database: ErrorException: pg_connect(): Unable to connect to PostgreSQL server: connection to server at &quot;localhost&quot; (127.0.0.1), port 5432 failed: FATAL:  password authentication failed for user &quot;admin&quot;
+connection to server at &quot;localhost&quot; (127.0.0.1), port 5432 failed: FATAL:  password authentication failed for user &quot;admin&quot; in /home/estelle/S5/MrTovo/RohySafe-RH/backend/system/Database/Postgre/Connection.php:78
+Stack trace:
+#0 [internal function]: CodeIgniter\Debug\Exceptions->errorHandler()
+#1 /home/estelle/S5/MrTovo/RohySafe-RH/backend/system/Database/Postgre/Connection.php(78): pg_connect()
+#2 /home/estelle/S5/MrTovo/RohySafe-RH/backend/system/Database/BaseConnection.php(555): CodeIgniter\Database\Postgre\Connection->connect()
+#3 /home/estelle/S5/MrTovo/RohySafe-RH/backend/system/Database/BaseConnection.php(795): CodeIgniter\Database\BaseConnection->initialize()
+#4 /home/estelle/S5/MrTovo/RohySafe-RH/backend/system/Database/BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query()
+#5 /home/estelle/S5/MrTovo/RohySafe-RH/backend/system/Model.php(295): CodeIgniter\Database\BaseBuilder->get()
+#6 /home/estelle/S5/MrTovo/RohySafe-RH/backend/system/BaseModel.php(714): CodeIgniter\Model->doFirst()
+#7 /home/estelle/S5/MrTovo/RohySafe-RH/backend/app/Controllers/Api/Auth.php(80): CodeIgniter\BaseModel->first()
+#8 /home/estelle/S5/MrTovo/RohySafe-RH/backend/app/Controllers/Api/Auth.php(30): App\Controllers\Api\Auth->chercher()
+#9 /home/estelle/S5/MrTovo/RohySafe-RH/backend/system/CodeIgniter.php(951): App\Controllers\Api\Auth->login()
+#10 /home/estelle/S5/MrTovo/RohySafe-RH/backend/system/CodeIgniter.php(497): CodeIgniter\CodeIgniter->runController()
+#11 /home/estelle/S5/MrTovo/RohySafe-RH/backend/system/CodeIgniter.php(340): CodeIgniter\CodeIgniter->handleRequest()
+#12 /home/estelle/S5/MrTovo/RohySafe-RH/backend/system/Boot.php(417): CodeIgniter\CodeIgniter->run()
+#13 /home/estelle/S5/MrTovo/RohySafe-RH/backend/system/Boot.php(68): CodeIgniter\Boot::runCodeIgniter()
+#14 /home/estelle/S5/MrTovo/RohySafe-RH/backend/public/index.php(59): CodeIgniter\Boot::bootWeb()
+#15 {main}
+CRITICAL - 2026-10-23 02:29:52 --> CodeIgniter\Database\Exceptions\DatabaseException: Unable to connect to the database.
+Main connection [Postgre]: pg_connect(): Unable to connect to PostgreSQL server: connection to server at &quot;localhost&quot; (127.0.0.1), port 5432 failed: FATAL:  password authentication failed for user &quot;admin&quot;
+connection to server at &quot;localhost&quot; (127.0.0.1), port 5432 failed: FATAL:  password authentication failed for user &quot;admin&quot;
+[Method: POST, Route: api/auth/login]
+in SYSTEMPATH/Database/BaseConnection.php on line 606.
+ 1 SYSTEMPATH/Database/BaseConnection.php(795): CodeIgniter\Database\BaseConnection->initialize()
+ 2 SYSTEMPATH/Database/BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query()
+ 3 SYSTEMPATH/Model.php(295): CodeIgniter\Database\BaseBuilder->get()
+ 4 SYSTEMPATH/BaseModel.php(714): CodeIgniter\Model->doFirst()
+ 5 APPPATH/Controllers/Api/Auth.php(80): CodeIgniter\BaseModel->first()
+ 6 APPPATH/Controllers/Api/Auth.php(30): App\Controllers\Api\Auth->chercher()
+ 7 SYSTEMPATH/CodeIgniter.php(951): App\Controllers\Api\Auth->login()
+ 8 SYSTEMPATH/CodeIgniter.php(497): CodeIgniter\CodeIgniter->runController()
+ 9 SYSTEMPATH/CodeIgniter.php(340): CodeIgniter\CodeIgniter->handleRequest()
+10 SYSTEMPATH/Boot.php(417): CodeIgniter\CodeIgniter->run()
+11 SYSTEMPATH/Boot.php(68): CodeIgniter\Boot::runCodeIgniter()
+12 FCPATH/index.php(59): CodeIgniter\Boot::bootWeb()
+ERROR - 2026-10-23 02:30:12 --> Error connecting to the database: ErrorException: pg_connect(): Unable to connect to PostgreSQL server: connection to server at &quot;localhost&quot; (127.0.0.1), port 5432 failed: FATAL:  password authentication failed for user &quot;admin&quot;
+connection to server at &quot;localhost&quot; (127.0.0.1), port 5432 failed: FATAL:  password authentication failed for user &quot;admin&quot; in /home/estelle/S5/MrTovo/RohySafe-RH/backend/system/Database/Postgre/Connection.php:78
+Stack trace:
+#0 [internal function]: CodeIgniter\Debug\Exceptions->errorHandler()
+#1 /home/estelle/S5/MrTovo/RohySafe-RH/backend/system/Database/Postgre/Connection.php(78): pg_connect()
+#2 /home/estelle/S5/MrTovo/RohySafe-RH/backend/system/Database/BaseConnection.php(555): CodeIgniter\Database\Postgre\Connection->connect()
+#3 /home/estelle/S5/MrTovo/RohySafe-RH/backend/system/Database/BaseConnection.php(795): CodeIgniter\Database\BaseConnection->initialize()
+#4 /home/estelle/S5/MrTovo/RohySafe-RH/backend/system/Database/BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query()
+#5 /home/estelle/S5/MrTovo/RohySafe-RH/backend/system/Model.php(295): CodeIgniter\Database\BaseBuilder->get()
+#6 /home/estelle/S5/MrTovo/RohySafe-RH/backend/system/BaseModel.php(714): CodeIgniter\Model->doFirst()
+#7 /home/estelle/S5/MrTovo/RohySafe-RH/backend/app/Controllers/Api/Auth.php(80): CodeIgniter\BaseModel->first()
+#8 /home/estelle/S5/MrTovo/RohySafe-RH/backend/app/Controllers/Api/Auth.php(30): App\Controllers\Api\Auth->chercher()
+#9 /home/estelle/S5/MrTovo/RohySafe-RH/backend/system/CodeIgniter.php(951): App\Controllers\Api\Auth->login()
+#10 /home/estelle/S5/MrTovo/RohySafe-RH/backend/system/CodeIgniter.php(497): CodeIgniter\CodeIgniter->runController()
+#11 /home/estelle/S5/MrTovo/RohySafe-RH/backend/system/CodeIgniter.php(340): CodeIgniter\CodeIgniter->handleRequest()
+#12 /home/estelle/S5/MrTovo/RohySafe-RH/backend/system/Boot.php(417): CodeIgniter\CodeIgniter->run()
+#13 /home/estelle/S5/MrTovo/RohySafe-RH/backend/system/Boot.php(68): CodeIgniter\Boot::runCodeIgniter()
+#14 /home/estelle/S5/MrTovo/RohySafe-RH/backend/public/index.php(59): CodeIgniter\Boot::bootWeb()
+#15 {main}
+CRITICAL - 2026-10-23 02:30:12 --> CodeIgniter\Database\Exceptions\DatabaseException: Unable to connect to the database.
+Main connection [Postgre]: pg_connect(): Unable to connect to PostgreSQL server: connection to server at &quot;localhost&quot; (127.0.0.1), port 5432 failed: FATAL:  password authentication failed for user &quot;admin&quot;
+connection to server at &quot;localhost&quot; (127.0.0.1), port 5432 failed: FATAL:  password authentication failed for user &quot;admin&quot;
+[Method: POST, Route: api/auth/login]
+in SYSTEMPATH/Database/BaseConnection.php on line 606.
+ 1 SYSTEMPATH/Database/BaseConnection.php(795): CodeIgniter\Database\BaseConnection->initialize()
+ 2 SYSTEMPATH/Database/BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query()
+ 3 SYSTEMPATH/Model.php(295): CodeIgniter\Database\BaseBuilder->get()
+ 4 SYSTEMPATH/BaseModel.php(714): CodeIgniter\Model->doFirst()
+ 5 APPPATH/Controllers/Api/Auth.php(80): CodeIgniter\BaseModel->first()
+ 6 APPPATH/Controllers/Api/Auth.php(30): App\Controllers\Api\Auth->chercher()
+ 7 SYSTEMPATH/CodeIgniter.php(951): App\Controllers\Api\Auth->login()
+ 8 SYSTEMPATH/CodeIgniter.php(497): CodeIgniter\CodeIgniter->runController()
+ 9 SYSTEMPATH/CodeIgniter.php(340): CodeIgniter\CodeIgniter->handleRequest()
+10 SYSTEMPATH/Boot.php(417): CodeIgniter\CodeIgniter->run()
+11 SYSTEMPATH/Boot.php(68): CodeIgniter\Boot::runCodeIgniter()
+12 FCPATH/index.php(59): CodeIgniter\Boot::bootWeb()
+ERROR - 2026-10-23 02:44:52 --> Error connecting to the database: ErrorException: pg_connect(): Unable to connect to PostgreSQL server: connection to server at &quot;localhost&quot; (127.0.0.1), port 5432 failed: FATAL:  password authentication failed for user &quot;admin&quot;
+connection to server at &quot;localhost&quot; (127.0.0.1), port 5432 failed: FATAL:  password authentication failed for user &quot;admin&quot; in /home/estelle/S5/MrTovo/RohySafe-RH/backend/system/Database/Postgre/Connection.php:78
+Stack trace:
+#0 [internal function]: CodeIgniter\Debug\Exceptions->errorHandler()
+#1 /home/estelle/S5/MrTovo/RohySafe-RH/backend/system/Database/Postgre/Connection.php(78): pg_connect()
+#2 /home/estelle/S5/MrTovo/RohySafe-RH/backend/system/Database/BaseConnection.php(555): CodeIgniter\Database\Postgre\Connection->connect()
+#3 /home/estelle/S5/MrTovo/RohySafe-RH/backend/system/Database/BaseConnection.php(795): CodeIgniter\Database\BaseConnection->initialize()
+#4 /home/estelle/S5/MrTovo/RohySafe-RH/backend/system/Database/BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query()
+#5 /home/estelle/S5/MrTovo/RohySafe-RH/backend/system/Model.php(295): CodeIgniter\Database\BaseBuilder->get()
+#6 /home/estelle/S5/MrTovo/RohySafe-RH/backend/system/BaseModel.php(714): CodeIgniter\Model->doFirst()
+#7 /home/estelle/S5/MrTovo/RohySafe-RH/backend/app/Models/UtilisateurModel.php(66): CodeIgniter\BaseModel->first()
+#8 /home/estelle/S5/MrTovo/RohySafe-RH/backend/app/Models/UtilisateurModel.php(47): App\Models\UtilisateurModel->trouverParLogin()
+#9 /home/estelle/S5/MrTovo/RohySafe-RH/backend/app/Controllers/Api/Auth.php(16): App\Models\UtilisateurModel->authentifier()
+#10 /home/estelle/S5/MrTovo/RohySafe-RH/backend/system/CodeIgniter.php(951): App\Controllers\Api\Auth->login()
+#11 /home/estelle/S5/MrTovo/RohySafe-RH/backend/system/CodeIgniter.php(497): CodeIgniter\CodeIgniter->runController()
+#12 /home/estelle/S5/MrTovo/RohySafe-RH/backend/system/CodeIgniter.php(340): CodeIgniter\CodeIgniter->handleRequest()
+#13 /home/estelle/S5/MrTovo/RohySafe-RH/backend/system/Boot.php(417): CodeIgniter\CodeIgniter->run()
+#14 /home/estelle/S5/MrTovo/RohySafe-RH/backend/system/Boot.php(68): CodeIgniter\Boot::runCodeIgniter()
+#15 /home/estelle/S5/MrTovo/RohySafe-RH/backend/public/index.php(59): CodeIgniter\Boot::bootWeb()
+#16 {main}
+CRITICAL - 2026-10-23 02:44:52 --> CodeIgniter\Database\Exceptions\DatabaseException: Unable to connect to the database.
+Main connection [Postgre]: pg_connect(): Unable to connect to PostgreSQL server: connection to server at &quot;localhost&quot; (127.0.0.1), port 5432 failed: FATAL:  password authentication failed for user &quot;admin&quot;
+connection to server at &quot;localhost&quot; (127.0.0.1), port 5432 failed: FATAL:  password authentication failed for user &quot;admin&quot;
+[Method: POST, Route: api/auth/login]
+in SYSTEMPATH/Database/BaseConnection.php on line 606.
+ 1 SYSTEMPATH/Database/BaseConnection.php(795): CodeIgniter\Database\BaseConnection->initialize()
+ 2 SYSTEMPATH/Database/BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query()
+ 3 SYSTEMPATH/Model.php(295): CodeIgniter\Database\BaseBuilder->get()
+ 4 SYSTEMPATH/BaseModel.php(714): CodeIgniter\Model->doFirst()
+ 5 APPPATH/Models/UtilisateurModel.php(66): CodeIgniter\BaseModel->first()
+ 6 APPPATH/Models/UtilisateurModel.php(47): App\Models\UtilisateurModel->trouverParLogin()
+ 7 APPPATH/Controllers/Api/Auth.php(16): App\Models\UtilisateurModel->authentifier()
+ 8 SYSTEMPATH/CodeIgniter.php(951): App\Controllers\Api\Auth->login()
+ 9 SYSTEMPATH/CodeIgniter.php(497): CodeIgniter\CodeIgniter->runController()
+10 SYSTEMPATH/CodeIgniter.php(340): CodeIgniter\CodeIgniter->handleRequest()
+11 SYSTEMPATH/Boot.php(417): CodeIgniter\CodeIgniter->run()
+12 SYSTEMPATH/Boot.php(68): CodeIgniter\Boot::runCodeIgniter()
+13 FCPATH/index.php(59): CodeIgniter\Boot::bootWeb()
+ERROR - 2026-10-23 02:46:30 --> Error connecting to the database: ErrorException: pg_connect(): Unable to connect to PostgreSQL server: connection to server at &quot;localhost&quot; (127.0.0.1), port 5432 failed: FATAL:  password authentication failed for user &quot;admin&quot;
+connection to server at &quot;localhost&quot; (127.0.0.1), port 5432 failed: FATAL:  password authentication failed for user &quot;admin&quot; in /home/estelle/S5/MrTovo/RohySafe-RH/backend/system/Database/Postgre/Connection.php:78
+Stack trace:
+#0 [internal function]: CodeIgniter\Debug\Exceptions->errorHandler()
+#1 /home/estelle/S5/MrTovo/RohySafe-RH/backend/system/Database/Postgre/Connection.php(78): pg_connect()
+#2 /home/estelle/S5/MrTovo/RohySafe-RH/backend/system/Database/BaseConnection.php(555): CodeIgniter\Database\Postgre\Connection->connect()
+#3 /home/estelle/S5/MrTovo/RohySafe-RH/backend/system/Database/BaseConnection.php(795): CodeIgniter\Database\BaseConnection->initialize()
+#4 /home/estelle/S5/MrTovo/RohySafe-RH/backend/system/Database/BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query()
+#5 /home/estelle/S5/MrTovo/RohySafe-RH/backend/system/Model.php(295): CodeIgniter\Database\BaseBuilder->get()
+#6 /home/estelle/S5/MrTovo/RohySafe-RH/backend/system/BaseModel.php(714): CodeIgniter\Model->doFirst()
+#7 /home/estelle/S5/MrTovo/RohySafe-RH/backend/app/Models/UtilisateurModel.php(66): CodeIgniter\BaseModel->first()
+#8 /home/estelle/S5/MrTovo/RohySafe-RH/backend/app/Models/UtilisateurModel.php(47): App\Models\UtilisateurModel->trouverParLogin()
+#9 /home/estelle/S5/MrTovo/RohySafe-RH/backend/app/Controllers/Api/Auth.php(16): App\Models\UtilisateurModel->authentifier()
+#10 /home/estelle/S5/MrTovo/RohySafe-RH/backend/system/CodeIgniter.php(951): App\Controllers\Api\Auth->login()
+#11 /home/estelle/S5/MrTovo/RohySafe-RH/backend/system/CodeIgniter.php(497): CodeIgniter\CodeIgniter->runController()
+#12 /home/estelle/S5/MrTovo/RohySafe-RH/backend/system/CodeIgniter.php(340): CodeIgniter\CodeIgniter->handleRequest()
+#13 /home/estelle/S5/MrTovo/RohySafe-RH/backend/system/Boot.php(417): CodeIgniter\CodeIgniter->run()
+#14 /home/estelle/S5/MrTovo/RohySafe-RH/backend/system/Boot.php(68): CodeIgniter\Boot::runCodeIgniter()
+#15 /home/estelle/S5/MrTovo/RohySafe-RH/backend/public/index.php(59): CodeIgniter\Boot::bootWeb()
+#16 /home/estelle/S5/MrTovo/RohySafe-RH/backend/system/rewrite.php(44): require_once('...')
+#17 {main}
+CRITICAL - 2026-10-23 02:46:30 --> CodeIgniter\Database\Exceptions\DatabaseException: Unable to connect to the database.
+Main connection [Postgre]: pg_connect(): Unable to connect to PostgreSQL server: connection to server at &quot;localhost&quot; (127.0.0.1), port 5432 failed: FATAL:  password authentication failed for user &quot;admin&quot;
+connection to server at &quot;localhost&quot; (127.0.0.1), port 5432 failed: FATAL:  password authentication failed for user &quot;admin&quot;
+[Method: POST, Route: api/auth/login]
+in SYSTEMPATH/Database/BaseConnection.php on line 606.
+ 1 SYSTEMPATH/Database/BaseConnection.php(795): CodeIgniter\Database\BaseConnection->initialize()
+ 2 SYSTEMPATH/Database/BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query()
+ 3 SYSTEMPATH/Model.php(295): CodeIgniter\Database\BaseBuilder->get()
+ 4 SYSTEMPATH/BaseModel.php(714): CodeIgniter\Model->doFirst()
+ 5 APPPATH/Models/UtilisateurModel.php(66): CodeIgniter\BaseModel->first()
+ 6 APPPATH/Models/UtilisateurModel.php(47): App\Models\UtilisateurModel->trouverParLogin()
+ 7 APPPATH/Controllers/Api/Auth.php(16): App\Models\UtilisateurModel->authentifier()
+ 8 SYSTEMPATH/CodeIgniter.php(951): App\Controllers\Api\Auth->login()
+ 9 SYSTEMPATH/CodeIgniter.php(497): CodeIgniter\CodeIgniter->runController()
+10 SYSTEMPATH/CodeIgniter.php(340): CodeIgniter\CodeIgniter->handleRequest()
+11 SYSTEMPATH/Boot.php(417): CodeIgniter\CodeIgniter->run()
+12 SYSTEMPATH/Boot.php(68): CodeIgniter\Boot::runCodeIgniter()
+13 FCPATH/index.php(59): CodeIgniter\Boot::bootWeb()
+14 SYSTEMPATH/rewrite.php(44): require_once('/home/estelle/S5/MrTovo/RohySafe-RH/backend/public/index.php')
+DEBUG - 2026-10-23 02:49:35 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-10-23 02:49:35 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-10-23 02:49:35 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-10-23 02:50:45 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-10-23 02:50:45 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-10-23 02:50:45 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-10-23 02:51:15 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
