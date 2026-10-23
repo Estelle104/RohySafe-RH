@@ -55,5 +55,18 @@ $routes->group('api', ['namespace' => 'App\Controllers\Api'], function ($routes)
     $routes->get('direction-generale/demandes/(:num)', 'DirectionGeneraleController::fiche/$1');
     $routes->post('direction-generale/demandes/(:num)/validation', 'DirectionGeneraleController::valider/$1');
     $routes->post('direction-generale/demandes/(:num)/refus', 'DirectionGeneraleController::refuser/$1');
+    
+        $routes->get('offres', 'OffreController::index');
+        $routes->get('offres/a-publier', 'OffreController::demandesAPublier');
+        $routes->get('offres/(:num)', 'OffreController::show/$1');
+        $routes->post('offres', 'OffreController::publier');
+        $routes->get('demandes/notifications', 'RHController::notifications');
+        $routes->get('demandes/(:num)', 'RHController::show/$1');
+        $routes->get('demandes/(:num)/grille-salariale', 'RHController::grilleSalariale/$1');
+        $routes->post('demandes/(:num)/proposition-salaire', 'RHController::proposerSalaire/$1');
+        $routes->post('demandes/(:num)/refuser', 'RHController::refuser/$1');
+        $routes->get('candidatures', 'CandidatureController::index');
+        $routes->post('candidatures/(:num)/entretiens', 'CandidatureController::creerEntretien/$1');
+        $routes->get('candidatures/(:num)/contrat', 'CandidatureController::ficheContrat/$1');
+        $routes->post('candidatures/(:num)/contrat', 'CandidatureController::genererContrat/$1');
 });
-

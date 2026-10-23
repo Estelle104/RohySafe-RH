@@ -1,0 +1,5 @@
+<script setup>
+import { onMounted,ref } from 'vue';import {useRoute,useRouter} from 'vue-router';const route=useRoute(),router=useRouter(),offre=ref(null),erreur=ref('');onMounted(async()=>{try{const r=await fetch(`/api/offres/${route.params.id}`);if(!r.ok)throw new Error();offre.value=await r.json()}catch{erreur.value='Impossible de charger l’offre publiée.'}})
+</script>
+<template><main class="page"><section v-if="offre" class="succes"><p>Publication réussie</p><h1>{{offre.titre}}</h1><p>L’offre pour {{offre.poste}} ({{offre.departement}}) est maintenant publiée.</p><p>Disponible jusqu’au {{new Date(offre.date_limite).toLocaleDateString('fr-FR')}}.</p><button @click="router.push('/offres/a-publier')">Retour aux demandes</button></section><p v-else>{{erreur||'Chargement…'}}</p></main></template>
+<style scoped>.page{min-height:100vh;background:#f4f7f7;padding:80px 16px}.succes{max-width:600px;margin:auto;padding:30px;border-radius:16px;background:#e0f4ee;color:#00534f}.succes p:first-child{text-transform:uppercase;font-weight:bold}.succes button{background:teal;color:#fff;border:0;border-radius:8px;padding:11px 15px;font-weight:bold}</style>
