@@ -9,6 +9,6 @@ export default createRouter({
     { path: '/login', component: LoginView },
     { path: '/candidats/login', component: LoginCandidatsView },
     { path: '/offres', name: 'offres', component: () => import('../views/OffresView.vue') },
-    { path: '/demandes/nouvelle', name: 'demande-create', component: () => import('../views/DemandeCreateView.vue') }
+    { path: '/demandes/nouvelle', name: 'demande-create', component: () => import('../views/demande/NouvelleDemandeView.vue') }
   ],
 })
