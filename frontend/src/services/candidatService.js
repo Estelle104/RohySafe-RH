@@ -60,6 +60,20 @@ export async function enregistrerCvCandidature(idCandidat, idOffre, donnees) {
   return resultat
 }
 
+export async function preselectionnerCandidature(idCandidature) {
+  const reponse = await fetch(`/api/candidatures/${idCandidature}/preselection`, {
+    method: 'POST',
+    headers: { Accept: 'application/json' },
+  })
+
+  const resultat = await reponse.json()
+  if (!reponse.ok) {
+    throw new Error(resultat.message || `Erreur lors de la présélection (${reponse.status})`)
+  }
+
+  return resultat
+}
+
 export async function creerProposition(idCandidature) {
   const reponse = await fetch(`/api/candidatures/${idCandidature}/proposition`, {
     method: 'POST',

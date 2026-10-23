@@ -1,7 +1,6 @@
 <script setup>
 import { useCandidatsIdeaux } from '../composables/useCandidatsIdeaux'
 import CvCard from '../components/CvCard.vue'
-import EntretienDialog from '../components/EntretienDialog.vue'
 
 const {
   candidatsFiltres,
@@ -13,13 +12,10 @@ const {
   cvDocuments,
   erreurAction,
   messageAction,
-  entretienCandidat,
-  entretienEnCours,
+  candidatEnCours,
   voirCv,
   fermerCv,
-  ouvrirEntretien,
-  fermerEntretien,
-  planifierEntretien,
+  preselectionnerCandidat,
   retourner,
   gererExigences,
   peutGererExigences,
@@ -100,10 +96,10 @@ function formaterDate(valeur) {
           <button class="btn secondary" @click="voirCv(candidat)">Voir le CV</button>
           <button
             class="btn"
-            :disabled="!candidat.id_candidature || candidat.entretien_cree"
-            @click="ouvrirEntretien(candidat)"
+            :disabled="!candidat.id_candidature || candidat.preselectionne || candidat.entretien_cree || candidatEnCours === candidat.id_candidature"
+            @click="preselectionnerCandidat(candidat)"
           >
-            {{ candidat.entretien_cree ? 'Entretien planifié' : 'Planifier un entretien' }}
+            {{ candidat.preselectionne ? 'Candidature présélectionnée' : 'Planifier un entretien' }}
           </button>
         </div>
       </article>
@@ -121,14 +117,6 @@ function formaterDate(valeur) {
       />
     </div>
 
-    <EntretienDialog
-      v-if="entretienCandidat"
-      :candidat="entretienCandidat"
-      :enregistrement="entretienEnCours"
-      :erreur="erreurAction"
-      @submit="planifierEntretien"
-      @close="fermerEntretien"
-    />
   </main>
 </template>
 

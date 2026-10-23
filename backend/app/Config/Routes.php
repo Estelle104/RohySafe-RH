@@ -67,6 +67,7 @@ $routes->group('api', ['namespace' => 'App\Controllers\Api'], function ($routes)
         $routes->post('demandes/(:num)/proposition-salaire', 'RHController::proposerSalaire/$1');
         $routes->post('demandes/(:num)/refuser', 'RHController::refuser/$1');
         $routes->get('candidatures', 'CandidatureController::index');
+        $routes->post('candidatures/(:num)/preselection', 'CandidatureController::preselectionner/$1');
         $routes->post('candidatures/(:num)/entretiens', 'CandidatureController::creerEntretien/$1', ['filter' => 'auth:Manager,RH']);
         $routes->get('candidatures/(:num)/contrat', 'CandidatureController::ficheContrat/$1');
         $routes->post('candidatures/(:num)/contrat', 'CandidatureController::genererContrat/$1');
