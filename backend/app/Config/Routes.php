@@ -22,6 +22,10 @@ $routes->group('api', ['namespace' => 'App\Controllers\Api'], function ($routes)
     $routes->get('health', 'Health::index');
     $routes->get('departements', 'Departement::index');
     $routes->get('offres', 'Offre::index');
+    $routes->group('demandes', ['filter' => 'auth'], static function ($routes) {
+        $routes->get('options', 'Demande::options');
+        $routes->post('/', 'Demande::create');
+    });
     $routes->get('offres/(:num)', 'Offre::detail/$1');
     $routes->get('offres/(:num)/candidats-ideaux', 'CandidatIdeal::byOffre/$1');
     $routes->get('demandes/(:num)/candidats-ideaux', 'CandidatIdeal::byDemande/$1');

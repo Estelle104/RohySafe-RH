@@ -1,3 +1,5 @@
 frontend/node_modules/
 backend/writable/debugbar/
+backend/writable/cache/
+backend/writable/logs/
 backend/.env
