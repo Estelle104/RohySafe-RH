@@ -139,6 +139,5 @@ async function connecter() {
       text-decoration: underline;
       text-decoration-color: teal;
     }
-</style>
     .error { color: #b42318; margin: 0; font-size: 14px; }
 </style>
