@@ -33,7 +33,13 @@ async function connecter() {
       method: 'POST', headers: { 'Content-Type': 'application/json' },
       credentials: 'include', body: JSON.stringify({ login: login.value, mdp: mdp.value }),
     })
-    const result = await response.json()
+    const texte = await response.text()
+    let result
+    try {
+      result = JSON.parse(texte)
+    } catch {
+      throw new Error(`Le serveur n’a pas renvoyé de réponse JSON (HTTP ${response.status}). Vérifiez le backend.`)
+    }
     if (!response.ok) throw new Error(result.messages?.error || 'Identifiant ou mot de passe incorrect.')
     await router.push('/demandes/nouvelle')
   } catch (error) {

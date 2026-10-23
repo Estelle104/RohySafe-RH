@@ -18,14 +18,22 @@ class Demande extends BaseController
     public function create()
     {
         $utilisateur = session()->get('utilisateur');
-        $data = $this->request->getJSON(true) ?? [];
+        $data = $this->request->getJSON(true);
+        if (! is_array($data)) {
+            return $this->failValidationErrors(['body' => 'Le contenu envoyé doit être un JSON valide.']);
+        }
         $model = new DemandeModel();
         if (! $model->validate($data)) {
             return $this->failValidationErrors($model->errors());
         }
-        $resultat = $model->creerPourUtilisateur($data, (int) $utilisateur['id']);
+        try {
+            $resultat = $model->creerPourUtilisateur($data, (int) $utilisateur['id']);
+        } catch (\Throwable $e) {
+            log_message('error', 'Création demande impossible : {message}', ['message' => $e->getMessage()]);
+            return $this->failServerError('Une erreur est survenue pendant l’enregistrement de la demande.');
+        }
         if (isset($resultat['erreur'])) {
-            return $this->failValidationErrors($resultat['erreur']);
+            return $this->failValidationErrors(['demande' => $resultat['erreur']]);
         }
 
         return $this->respondCreated(['id' => $resultat['id'], 'message' => 'Demande enregistrée.']);

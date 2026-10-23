@@ -16,7 +16,7 @@ class DemandeModel extends Model
         'id_poste_departement' => 'required|is_natural_no_zero',
         'nombre_demande' => 'required|is_natural_no_zero',
         'id_type_contrat' => 'required|is_natural_no_zero',
-        'date_prise_poste' => 'permit_empty|valid_date[Y-m-d]',
+        'date_prise_poste' => 'permit_empty',
         'salaire_propose' => 'required|decimal|greater_than_equal_to[0]',
     ];
 
@@ -43,7 +43,7 @@ class DemandeModel extends Model
             'id_statut_actuel' => (int) $statut['id'],
             'nombre_demande' => (int) $data['nombre_demande'],
             'id_type_contrat' => (int) $data['id_type_contrat'],
-            'date_prise_poste' => $data['date_prise_poste'] ?: null,
+            'date_prise_poste' => empty($data['date_prise_poste']) ? null : $data['date_prise_poste'],
             'salaire_propose' => $data['salaire_propose'],
         ], true);
         return $id ? ['id' => $id] : ['erreur' => $this->errors() ?: 'Impossible de créer la demande.'];

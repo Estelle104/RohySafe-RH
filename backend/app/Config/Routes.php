@@ -24,7 +24,7 @@ $routes->group('api', ['namespace' => 'App\Controllers\Api'], function ($routes)
     $routes->get('offres', 'Offre::index');
     $routes->group('demandes', ['filter' => 'auth'], static function ($routes) {
         $routes->get('options', 'Demande::options');
-        $routes->post('/', 'Demande::create');
+        $routes->post('', 'Demande::create');
     });
     $routes->get('offres/(:num)', 'Offre::detail/$1');
     $routes->get('offres/(:num)/candidats-ideaux', 'CandidatIdeal::byOffre/$1');

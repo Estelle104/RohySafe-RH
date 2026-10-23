@@ -156,11 +156,11 @@ async function deconnecter() {
                     }}
                 </h1>
 
-                <p v-if="utilisateur">
+                <!-- <p v-if="utilisateur">
                     Connecté : {{ utilisateur.login }}
                     ·
                     {{ utilisateur.departement || 'Tous départements' }}
-                </p>
+                </p> -->
 
                 <p v-if="erreur" class="error">
                     {{ erreur }}
