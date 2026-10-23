@@ -65,10 +65,10 @@ LEFT JOIN departements dep
 
 
 -- donnee test sataut contrats
-INSERT INTO statut_contrats (libelle)
-VALUES
-    ('cree'),
-    ('en attente'),
-    ('signe'),
-    ('suspendu'),
-    ('annule');
+-- INSERT INTO statut_contrats (libelle)
+-- VALUES
+--     ('cree'),
+--     ('en attente'),
+--     ('signe'),
+--     ('suspendu'),
+--     ('annule');
