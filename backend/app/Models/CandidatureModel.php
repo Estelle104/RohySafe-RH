@@ -22,16 +22,44 @@ class CandidatureModel extends Model
     public function creerEntretien(int $id, array $data): int
     {
         $candidature = $this->find($id);
-        $statutActuel = $candidature ? $this->db->table('statut_candidatures')->select('libelle')->where('id', $candidature['id_statut_actuel'])->get()->getRowArray() : null;
-        if ($statutActuel === null || $statutActuel['libelle'] !== 'preselectionne') throw new \DomainException('Cette candidature ne peut pas recevoir un entretien.');
-        $statutEntretien = $this->db->table('statut_candidatures')->select('id')->where('libelle', 'entretien')->get()->getRowArray();
-        if ($statutEntretien === null) throw new \RuntimeException('Statut entretien introuvable.');
+        if ($candidature === null) throw new \DomainException('Candidature introuvable.');
+
+        $entretienExistant = $this->db->table('entretiens')->select('id')->where('id_candidature', $id)->get()->getRowArray();
+        if ($entretienExistant !== null) throw new \DomainException('Un entretien existe déjà pour cette candidature.');
+
+        $statutActuel = $this->db->table('statut_candidatures')->select('libelle')->where('id', $candidature['id_statut_actuel'])->get()->getRowArray();
+        if ($statutActuel === null || ! in_array($statutActuel['libelle'], ['en_attente', 'preselectionne', 'selectionne'], true)) {
+            throw new \DomainException('Cette candidature ne peut pas recevoir un entretien.');
+        }
+
+        $statutCandidatureEntretien = $this->db->table('statut_candidatures')->select('id')->where('libelle', 'entretien')->get()->getRowArray();
+        $statutEntretienPlanifie = $this->db->table('statut_entretiens')->select('id')->where('libelle', 'planifie')->get()->getRowArray();
+        if ($statutCandidatureEntretien === null || $statutEntretienPlanifie === null) {
+            throw new \RuntimeException('Statuts d’entretien introuvables.');
+        }
+
         $this->db->transStart();
-        $this->db->table('historique_candidature_status')->insert(['id_candidature' => $id, 'id_statut_candidature' => $candidature['id_statut_actuel']]);
-        $this->update($id, ['id_statut_actuel' => $statutEntretien['id']]);
-        $this->db->table('entretiens')->insert(['id_candidature' => $id, 'date_entretien' => $data['date_entretien'], 'lieu_entretien' => trim($data['lieu_entretien'] ?? ''), 'commentaire' => trim($data['commentaire'] ?? '')]);
-        $entretienId = (int) $this->db->insertID(); $this->db->transComplete();
+        $this->db->table('historique_candidature_status')->insert([
+            'id_candidature' => $id,
+            'id_statut_candidature' => $candidature['id_statut_actuel'],
+        ]);
+        $this->update($id, ['id_statut_actuel' => $statutCandidatureEntretien['id']]);
+        $this->db->table('entretiens')->insert([
+            'id_candidature' => $id,
+            'date_entretien' => $data['date_entretien'],
+            'lieu_entretien' => trim((string) ($data['lieu_entretien'] ?? '')),
+            'id_statut_actuel' => $statutEntretienPlanifie['id'],
+            'commentaire' => trim((string) ($data['commentaire'] ?? '')),
+        ]);
+        $entretienId = (int) $this->db->insertID();
+        $this->db->table('historique_entretiens_statut')->insert([
+            'id_entretien' => $entretienId,
+            'id_statut_entretien' => $statutEntretienPlanifie['id'],
+        ]);
+        $this->db->transComplete();
+
         if (! $this->db->transStatus()) throw new \RuntimeException('Échec de création de l’entretien.');
+
         return $entretienId;
     }
 

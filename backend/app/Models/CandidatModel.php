@@ -64,20 +64,62 @@ class CandidatModel extends Model
             return [];
         }
 
-        $candidats = $this->getCandidatsIdeauxByPoste((int) $poste['id_poste']);
         $candidatures = $this->db->table('candidatures')
-            ->select('id, id_candidat')
+            ->select('id')
             ->where('id_offre', $idOffre)
             ->get()
             ->getResultArray();
 
-        $idsParCandidat = [];
+        if ($candidatures === []) {
+            return [];
+        }
+
+        $idsCandidatures = [];
         foreach ($candidatures as $candidature) {
-            $idsParCandidat[(int) $candidature['id_candidat']] = (int) $candidature['id'];
+            $idsCandidatures[(int) $candidature['id']] = true;
+        }
+
+        $candidats = array_values(array_filter(
+            $this->getCandidatsIdeauxByPoste((int) $poste['id_poste']),
+            static fn (array $candidat): bool => isset(
+                $idsCandidatures[(int) ($candidat['id_candidature'] ?? 0)]
+            )
+        ));
+
+        if ($candidats === []) {
+            return [];
+        }
+
+        $entretiensParCandidature = [];
+        $entretiens = $this->db->table('entretiens e')
+            ->select('e.id AS id_entretien, e.id_candidature, e.date_entretien, e.lieu_entretien, se.libelle AS statut_entretien, ec.note AS note_evaluation, ec.remarques AS remarques_evaluation')
+            ->join('statut_entretiens se', 'se.id = e.id_statut_actuel', 'left')
+            ->join('evaluations_candidat ec', 'ec.id_candidature = e.id_candidature', 'left')
+            ->whereIn('e.id_candidature', array_keys($idsCandidatures))
+            ->orderBy('e.date_entretien', 'DESC')
+            ->orderBy('e.id', 'DESC')
+            ->get()
+            ->getResultArray();
+
+        foreach ($entretiens as $entretien) {
+            $idCandidature = (int) $entretien['id_candidature'];
+            if (! isset($entretiensParCandidature[$idCandidature])) {
+                $entretiensParCandidature[$idCandidature] = $entretien;
+            }
         }
 
         foreach ($candidats as &$candidat) {
-            $candidat['id_candidature'] = $idsParCandidat[(int) $candidat['id_candidat']] ?? null;
+            $idCandidature = (int) ($candidat['id_candidature'] ?? 0);
+            $entretien = $entretiensParCandidature[$idCandidature] ?? null;
+
+            $candidat['id_candidature'] = $idCandidature;
+            $candidat['entretien_cree'] = $entretien !== null;
+            $candidat['id_entretien'] = $entretien['id_entretien'] ?? null;
+            $candidat['date_entretien'] = $entretien['date_entretien'] ?? null;
+            $candidat['lieu_entretien'] = $entretien['lieu_entretien'] ?? null;
+            $candidat['statut_entretien'] = $entretien['statut_entretien'] ?? null;
+            $candidat['note_evaluation'] = $entretien['note_evaluation'] ?? null;
+            $candidat['remarques_evaluation'] = $entretien['remarques_evaluation'] ?? null;
         }
         unset($candidat);
 
@@ -180,12 +222,27 @@ class CandidatModel extends Model
                 ->get()
                 ->getRowArray();
 
-            $cv['id_candidature'] = $candidature === null ? null : (int) $candidature['id'];
-            $cv['experiences_exigences'] = $candidature === null
+            $idCandidature = $candidature === null ? null : (int) $candidature['id'];
+            $cv['id_candidature'] = $idCandidature;
+            $cv['experiences_exigences'] = $idCandidature === null
                 ? []
-                : (new ExperienceCandidatureModel())->getByCandidature((int) $candidature['id']);
+                : (new ExperienceCandidatureModel())->getByCandidature($idCandidature);
+            $cv['competences'] = $idCandidature === null
+                ? []
+                : $this->getCompetencesByCandidature($idCandidature);
         }
 
         return $cv;
+    }
+
+    private function getCompetencesByCandidature(int $idCandidature): array
+    {
+        return $this->db->table('competences_candidat cc')
+            ->select('cc.id, cc.id_competence, comp.libelle AS competence, comp.categorie, cc.niveau')
+            ->join('competences comp', 'comp.id = cc.id_competence')
+            ->where('cc.id_candidature', $idCandidature)
+            ->orderBy('comp.libelle', 'ASC')
+            ->get()
+            ->getResultArray();
     }
 }

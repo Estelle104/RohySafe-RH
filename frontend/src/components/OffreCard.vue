@@ -2,7 +2,7 @@
 defineProps({
   offre: { type: Object, required: true },
 })
-defineEmits(['details', 'postuler', 'candidats-ideaux'])
+defineEmits(['details', 'postuler'])
 
 function formatDate(d) {
   return d ? new Date(d).toLocaleDateString('fr-FR') : '-'
@@ -36,9 +36,6 @@ function formatDate(d) {
       </span>
       <div class="actions">
         <button class="btn secondary" @click="$emit('details', offre)">Détails</button>
-        <button class="btn secondary" @click="$emit('candidats-ideaux', offre)">
-          Candidats idéaux
-        </button>
         <button class="btn" @click="$emit('postuler', offre)">Postuler</button>
       </div>
     </div>

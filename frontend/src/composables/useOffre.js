@@ -69,10 +69,6 @@ export function useOffre() {
       router.push({ name: 'postuler', params: { id: offre.id } })
     }
 
-    function voirCandidatsIdeaux(offre) {
-      router.push({ name: 'candidats-ideaux', params: { id: offre.id } })
-    }
-
     return {
       recherche,
       filtreActif,
@@ -86,7 +82,6 @@ export function useOffre() {
       voirDetails,
       fermerDetails,
       postuler,
-      voirCandidatsIdeaux,
       router,
       chargerOffres,
     }

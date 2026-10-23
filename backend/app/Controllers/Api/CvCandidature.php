@@ -33,7 +33,7 @@ class CvCandidature extends BaseController
                 ]);
             }
 
-            $cv = (new CandidatModel())->getCv($idCandidat);
+            $cv = (new CandidatModel())->getCv($idCandidat, $idOffre);
             if ($cv === null) {
                 return $this->response->setStatusCode(404)->setJSON([
                     'message' => 'Candidat introuvable.',
@@ -137,8 +137,7 @@ class CvCandidature extends BaseController
             $lignesCompetences = isset($payload['competences'])
                 ? $this->validerCompetences(
                     $payload['competences'],
-                    $competencesValides,
-                    $idCandidat
+                    $competencesValides
                 )
                 : [];
 
@@ -209,14 +208,20 @@ class CvCandidature extends BaseController
                     $lignesFormations
                 );
 
-                $this->remplacerSection(
-                    $db,
-                    'competences_candidat',
-                    $idCandidat,
-                    $payload,
-                    'competences',
-                    $lignesCompetences
-                );
+                if (array_key_exists('competences', $payload)) {
+                    $db->table('competences_candidat')
+                        ->where('id_candidature', $idCandidature)
+                        ->delete();
+
+                    if ($lignesCompetences !== []) {
+                        foreach ($lignesCompetences as &$ligne) {
+                            $ligne['id_candidature'] = $idCandidature;
+                        }
+                        unset($ligne);
+
+                        $db->table('competences_candidat')->insertBatch($lignesCompetences);
+                    }
+                }
 
                 $db->transCommit();
             } catch (Throwable $e) {
@@ -233,7 +238,7 @@ class CvCandidature extends BaseController
                 ->setJSON([
                     'message' => 'CV et candidature enregistrés.',
                     'candidature' => $candidature,
-                    'cv' => (new CandidatModel())->getCv($idCandidat),
+                    'cv' => (new CandidatModel())->getCv($idCandidat, $idOffre),
                     'experiences' => $experiencesEnregistrees,
                 ]);
         } catch (InvalidArgumentException $e) {
@@ -414,8 +419,7 @@ class CvCandidature extends BaseController
 
     private function validerCompetences(
         array $competences,
-        array $competencesValides,
-        int $idCandidat
+        array $competencesValides
     ): array {
         $lignes = [];
         $dejaVus = [];
@@ -451,7 +455,6 @@ class CvCandidature extends BaseController
             }
 
             $lignes[] = [
-                'id_candidat' => $idCandidat,
                 'id_competence' => $idCompetence,
                 'niveau' => $niveau,
             ];
