@@ -22,7 +22,7 @@ class DemandeModel extends Model
             ->where('d.id', $idDemande)
             ->get()
             ->getRowArray();
-
+    }
     public function trouverAvecDepartement(int $id): ?array
     {
         return $this->select('demandes.*, pd.id_departement, sd.libelle AS statut_libelle')

@@ -10,6 +10,9 @@
         </p>
         <button class="form-btn">Se connecter</button>
       </form>
+      <router-link class="candidate-link" to="/candidats/login">
+        Vous êtes candidat ? Se connecter
+      </router-link>
     </div>
   </div>
 </template>
@@ -97,5 +100,16 @@
 
     .form-btn:active {
       box-shadow: none;
+    }
+
+    .candidate-link {
+      display: block;
+      margin-top: 20px;
+      text-align: center;
+      color: teal;
+      font-size: 12px;
+      font-weight: 700;
+      text-decoration: underline;
+      text-decoration-color: teal;
     }
 </style>

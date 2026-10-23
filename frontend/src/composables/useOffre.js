@@ -66,7 +66,7 @@ export function useOffre() {
     }
 
     function postuler(offre) {
-      console.log('postuler', offre.id) // TODO: ouvrir le formulaire de candidature (CV)
+      router.push({ name: 'postuler', params: { id: offre.id } })
     }
 
     function voirCandidatsIdeaux(offre) {

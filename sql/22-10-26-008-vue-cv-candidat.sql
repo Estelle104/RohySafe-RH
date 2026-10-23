@@ -12,6 +12,7 @@ SELECT
             SELECT jsonb_agg(
                 jsonb_build_object(
                     'id', e.id,
+                    'id_poste', e.id_poste,
                     'poste', p.libelle,
                     'date_debut', e.date_debut,
                     'date_fin', e.date_fin,
@@ -48,6 +49,7 @@ SELECT
             SELECT jsonb_agg(
                 jsonb_build_object(
                     'id', cc.id,
+                    'id_competence', cc.id_competence,
                     'competence', comp.libelle,
                     'categorie', comp.categorie,
                     'niveau', cc.niveau

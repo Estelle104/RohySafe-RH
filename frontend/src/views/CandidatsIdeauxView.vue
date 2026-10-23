@@ -16,6 +16,8 @@ const {
   fermerCv,
   faireProposition,
   retourner,
+  gererExigences,
+  peutGererExigences,
 } = useCandidatsIdeaux()
 
 
@@ -36,9 +38,19 @@ const {
       </div>
     </header>
   <main class="page">
+    <div class="entete-actions">
       <button class="btn secondary back-button" type="button" @click="retourner">
         Retour
       </button>
+      <button
+        v-if="peutGererExigences"
+        class="btn back-button"
+        type="button"
+        @click="gererExigences"
+      >
+        Gérer les exigences
+      </button>
+    </div>
 
     <p v-if="chargement" class="message">Chargement des candidats...</p>
     <p v-else-if="erreur" class="message error">{{ erreur }}</p>
@@ -160,6 +172,13 @@ const {
 
 .nav-link:hover {
   color: #000;
+}
+
+.entete-actions {
+  display: flex;
+  max-width: 900px;
+  margin: 0 auto 16px;
+  gap: 10px;
 }
 
 .header,

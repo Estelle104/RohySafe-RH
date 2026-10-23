@@ -44,6 +44,29 @@ class OffreModel extends Model
     }
 
 
+    public function getOffresBackoffice(): array
+    {
+        return $this->db->table('offres o')
+            ->select(
+                'o.id, o.titre, o.descriptions, o.date_publication, o.date_limite, ' .
+                'd.libelle AS departement, tc.libelle AS type_contrat, ' .
+                'dm.nombre_demande, so.libelle AS statut, ' .
+                '(SELECT COUNT(*) FROM exigences_experience ee ' .
+                'WHERE ee.id_poste_departement = pd.id) AS nb_exigences_experience, ' .
+                '(SELECT COUNT(*) FROM criteres_poste cp ' .
+                'WHERE cp.id_poste = pd.id_poste) AS nb_competences_requises'
+            )
+            ->join('statut_offres so', 'so.id = o.id_statut', 'left')
+            ->join('demandes dm', 'dm.id = o.id_demande')
+            ->join('poste_departement pd', 'pd.id = dm.id_poste_departement')
+            ->join('departements d', 'd.id = pd.id_departement')
+            ->join('type_contrats tc', 'tc.id = dm.id_type_contrat')
+            ->orderBy('o.date_publication', 'DESC')
+            ->orderBy('o.id', 'DESC')
+            ->get()
+            ->getResultArray();
+    }
+
     public function getDetail(int $idOffre): ?array
     {
         $offre = $this->db->table('offres o')
@@ -67,7 +90,8 @@ class OffreModel extends Model
 
         $offre['exigences_experience'] = $this->db->table('exigences_experience ee')
             ->select(
-                'ee.id, p.libelle AS poste, ee.duree_min, ee.duree_max, ee.obligatoire'
+                'ee.id, ee.id_poste_experience, p.libelle AS poste, ' .
+                'ee.duree_min, ee.duree_max, ee.obligatoire'
             )
             ->join('postes p', 'p.id = ee.id_poste_experience')
             ->where('ee.id_poste_departement', $offre['id_poste_departement'])
@@ -77,7 +101,7 @@ class OffreModel extends Model
 
         $offre['competences_requises'] = $this->db->table('criteres_poste cp')
             ->select(
-                'cp.id, c.libelle AS competence, c.categorie, ' .
+                'cp.id, cp.id_competence, c.libelle AS competence, c.categorie, ' .
                 'cp.note_minimale, cp.obligatoire'
             )
             ->join('competences c', 'c.id = cp.id_competence')
@@ -87,6 +111,18 @@ class OffreModel extends Model
             ->get()
             ->getResultArray();
 
+        foreach (['exigences_experience', 'competences_requises'] as $section) {
+            foreach ($offre[$section] as &$ligne) {
+                $ligne['obligatoire'] = $this->estVrai($ligne['obligatoire'] ?? false);
+            }
+            unset($ligne);
+        }
+
         return $offre;
+    }
+
+    private function estVrai(mixed $valeur): bool
+    {
+        return in_array($valeur, [true, 1, '1', 't', 'true'], true);
     }
 }
