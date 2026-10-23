@@ -14,7 +14,11 @@ $routes->post('/api/formations', 'Formation::create');
 
 $routes->get('/form', 'Formation::formationForm');
 
+
 $routes->group('api', ['namespace' => 'App\Controllers\Api'], function ($routes) {
+    $routes->post('auth/login', 'Auth::login');
+    $routes->get('auth/me', 'Auth::me');
+    $routes->post('auth/logout', 'Auth::logout');
     $routes->get('health', 'Health::index');
     $routes->get('departements', 'Departement::index');
     $routes->get('offres', 'Offre::index');
