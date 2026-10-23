@@ -14,6 +14,9 @@ const router = createRouter({
       name: 'candidat-inscription',
       component: () => import('../views/InscriptionCandidatView.vue'),
     },
+    { path: '/candidats/login', component: LoginCandidatsView },
+    { path: '/offres', name: 'offres', component: () => import('../views/OffresView.vue') },
+    { path: '/demandes/nouvelle', name: 'demande-create', component: () => import('../views/demande/NouvelleDemandeView.vue') },
 
     { path: '/offres', name: 'offres', component: () => import('../views/OffresView.vue') },
     {

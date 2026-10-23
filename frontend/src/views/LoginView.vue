@@ -2,13 +2,11 @@
   <div class="login-container">
     <div class="form-container">
       <p class="title">RohySafe</p>
-      <form class="form">
-        <input type="email" class="input" placeholder="Identifiant">
-        <input type="password" class="input" placeholder="Mot de passe">
-        <p class="page-link">
-          <span class="page-link-label">Mot de passe oublie ?</span>
-        </p>
-        <button class="form-btn">Se connecter</button>
+      <form class="form" @submit.prevent="connecter">
+        <input v-model="login" type="text" class="input" placeholder="Identifiant" autocomplete="username" required>
+        <input v-model="mdp" type="password" class="input" placeholder="Mot de passe" autocomplete="current-password" required>
+        <p v-if="erreur" class="error">{{ erreur }}</p>
+        <button class="form-btn" :disabled="chargement">{{ chargement ? 'Connexion…' : 'Se connecter' }}</button>
       </form>
       <router-link class="candidate-link" to="/candidats/login">
         Vous êtes candidat ? Se connecter
@@ -16,6 +14,35 @@
     </div>
   </div>
 </template>
+
+<script setup>
+import { ref } from 'vue'
+import { useRouter } from 'vue-router'
+
+const router = useRouter()
+const login = ref('')
+const mdp = ref('')
+const erreur = ref('')
+const chargement = ref(false)
+
+async function connecter() {
+  erreur.value = ''
+  chargement.value = true
+  try {
+    const response = await fetch('/api/auth/login', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      credentials: 'include', body: JSON.stringify({ login: login.value, mdp: mdp.value }),
+    })
+    const result = await response.json()
+    if (!response.ok) throw new Error(result.messages?.error || 'Identifiant ou mot de passe incorrect.')
+    await router.push('/demandes/nouvelle')
+  } catch (error) {
+    erreur.value = error.message
+  } finally {
+    chargement.value = false
+  }
+}
+</script>
 
 <style scoped>
     .login-container {
@@ -112,4 +139,6 @@
       text-decoration: underline;
       text-decoration-color: teal;
     }
+</style>
+    .error { color: #b42318; margin: 0; font-size: 14px; }
 </style>
