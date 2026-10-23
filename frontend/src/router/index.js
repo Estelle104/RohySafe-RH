@@ -19,7 +19,7 @@ const router = createRouter({
     },
     { path: '/candidats/login', component: LoginCandidatsView },
     { path: '/offres', name: 'offres', component: () => import('../views/OffresView.vue') },
-    { path: '/demandes/nouvelle', name: 'demande-create', component: () => import('../views/demande/NouvelleDemandeView.vue') },
+    { path: '/demandes/nouvelle', name: 'demande-create', meta: { requiresAuth: true, roles: ['Manager'] }, component: () => import('../views/demande/NouvelleDemandeView.vue') },
 
     { path: '/offres', name: 'offres', component: () => import('../views/OffresView.vue') },
     {
@@ -48,16 +48,16 @@ const router = createRouter({
       name: 'candidats-ideaux-demande',
       component: () => import('../views/CandidatsIdeauxView.vue')
     }
-    ,{ path: '/finance', name: 'finance', component: () => import('../views/FinanceView.vue') }
-    ,{ path: '/direction-generale', name: 'direction-generale', component: () => import('../views/DirectionGeneraleView.vue') },
+    ,{ path: '/finance', name: 'finance', meta: { requiresAuth: true, roles: ['Finance'] }, component: () => import('../views/FinanceView.vue') }
+    ,{ path: '/direction-generale', name: 'direction-generale', meta: { requiresAuth: true, roles: ['DG'] }, component: () => import('../views/DirectionGeneraleView.vue') },
 
-    { path: '/notification', component: NotificationsPage },
-    { path: '/demandes/:id', name: 'demande-detail', component: DemandeDetailView },
+    { path: '/notification', meta: { requiresAuth: true, roles: ['RH'] }, component: NotificationsPage },
+    { path: '/demandes/:id', name: 'demande-detail', meta: { requiresAuth: true, roles: ['RH'] }, component: DemandeDetailView },
     { path: '/demandes/:id/confirmation/:action', name: 'demande-confirmation', component: ConfirmationDemandeView },
     { path: '/candidats/login', component: LoginCandidatsView },
     { path: '/offres', name: 'offres', component: () => import('../views/OffresView.vue') }
-    ,{ path: '/offres/a-publier', name: 'offres-a-publier', component: () => import('../views/DemandesAPublierView.vue') }
-    ,{ path: '/offres/nouvelle/:id', name: 'offre-formulaire', component: () => import('../views/OffreFormView.vue') }
+    ,{ path: '/offres/a-publier', name: 'offres-a-publier', meta: { requiresAuth: true, roles: ['RH'] }, component: () => import('../views/DemandesAPublierView.vue') }
+    ,{ path: '/offres/nouvelle/:id', name: 'offre-formulaire', meta: { requiresAuth: true, roles: ['RH'] }, component: () => import('../views/OffreFormView.vue') }
     ,{ path: '/offres/publiee/:id', name: 'offre-publiee', component: () => import('../views/OffrePublieeView.vue') }
     ,{ path: '/candidatures', name: 'candidatures', component: () => import('../views/CandidaturesView.vue') }
     ,{ path: '/candidatures/:id/entretien', name: 'entretien-formulaire', component: () => import('../views/EntretienFormView.vue') }
@@ -66,12 +66,27 @@ const router = createRouter({
   ],
 })
 
-router.beforeEach((to) => {
+router.beforeEach(async (to) => {
   if (to.meta.requiresCandidat && !estCandidatConnecte()) {
     return {
       name: 'candidat-login',
       query: { redirect: to.fullPath },
     }
+  }
+
+  if (!to.meta.requiresAuth) return true
+
+  try {
+    const response = await fetch('/api/auth/me', { credentials: 'include' })
+    if (!response.ok) throw new Error()
+    const { utilisateur } = await response.json()
+    if (!utilisateur) throw new Error()
+    if (to.meta.roles && !to.meta.roles.includes(utilisateur.role)) {
+      return '/login'
+    }
+    return true
+  } catch {
+    return { path: '/login', query: { redirect: to.fullPath } }
   }
 })
 
