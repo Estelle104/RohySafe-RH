@@ -75,7 +75,7 @@ router.beforeEach((to) => {
   }
 })
 
-// export default router
+export default router
 //     { path: '/notification', component: NotificationsPage },
 //     { path: '/demandes/:id', name: 'demande-detail', component: DemandeDetailView },
 //     { path: '/demandes/:id/confirmation/:action', name: 'demande-confirmation', component: ConfirmationDemandeView },
