@@ -88,6 +88,7 @@ class FinanceService
             $demande = $this->demande($demandeId);
             $this->exigerStatut($demande, 'EN_VALIDATION_FINANCE');
             $this->changerStatut($demandeId, 'ANNULEE_FINANCE');
+            $this->affecterAuRH($demandeId);
             $this->historique($demandeId, $utilisateurId, $this->montantDemande($demande), $motif);
             $this->terminerTransaction('Erreur lors de l’annulation.');
             return true;
@@ -133,6 +134,24 @@ class FinanceService
         $statut = $this->statuts->trouverParLibelle($libelle);
         if (!$statut) throw new RuntimeException("Statut introuvable : {$libelle}");
         $this->demandes->update($demandeId, ['id_statut_actuel' => $statut['id']]);
+    }
+
+    private function affecterAuRH(int $demandeId): void
+    {
+        $rh = $this->db->table('utilisateurs u')
+            ->select('u.id')
+            ->join('roles r', 'r.id = u.id_role')
+            ->where('r.libelle', 'RH')
+            ->orderBy('u.id', 'ASC')
+            ->get()->getRowArray();
+
+        if (!$rh) {
+            throw new RuntimeException('Aucun utilisateur RH trouvé.');
+        }
+
+        $this->demandes->update($demandeId, [
+            'id_utilisateur_actuel' => $rh['id'],
+        ]);
     }
 
     private function historique(int $demandeId, int $utilisateurId, float $montant, string $remarque): void

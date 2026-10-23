@@ -99,8 +99,13 @@ class DemandeModel extends Model
                     WHEN 'cree' THEN 'Créée'
                     WHEN 'en_attente' THEN 'En attente'
                     WHEN 'valide' THEN 'Validée'
+                    WHEN 'EN_VALIDATION_FINANCE' THEN 'En validation Finance'
+                    WHEN 'EN_VALIDATION_DIRECTION' THEN 'En validation Direction générale'
+                    WHEN 'VALIDEE' THEN 'Validée'
                     WHEN 'refusee' THEN 'Refusée'
+                    WHEN 'REFUSEE' THEN 'Refusée'
                     WHEN 'annulee' THEN 'Annulée'
+                    WHEN 'ANNULEE_FINANCE' THEN 'Annulée par la Finance'
                     ELSE INITCAP(REPLACE(sd.libelle, '_', ' '))
                 END AS statut
             ", false)
@@ -144,8 +149,13 @@ class DemandeModel extends Model
                     WHEN 'cree' THEN 'Créée'
                     WHEN 'en_attente' THEN 'En attente'
                     WHEN 'valide' THEN 'Validée'
+                    WHEN 'EN_VALIDATION_FINANCE' THEN 'En validation Finance'
+                    WHEN 'EN_VALIDATION_DIRECTION' THEN 'En validation Direction générale'
+                    WHEN 'VALIDEE' THEN 'Validée'
                     WHEN 'refusee' THEN 'Refusée'
+                    WHEN 'REFUSEE' THEN 'Refusée'
                     WHEN 'annulee' THEN 'Annulée'
+                    WHEN 'ANNULEE_FINANCE' THEN 'Annulée par la Finance'
                     ELSE INITCAP(REPLACE(sd.libelle, '_', ' '))
                 END AS statut
             ", false)
@@ -159,7 +169,8 @@ class DemandeModel extends Model
             ->join('statut_demandes sd', 'sd.id = dm.id_statut_actuel')
             ->join('utilisateurs uc', 'uc.id = dm.id_createur', 'left')
             ->join('utilisateurs ua', 'ua.id = dm.id_utilisateur_actuel', 'left')
-            ->where('dm.id_utilisateur_actuel', $idUtilisateur)
+            ->join('roles ra', 'ra.id = ua.id_role', 'left')
+            ->where('ra.libelle', 'RH')
             ->orderBy('dm.date_creation', 'DESC');
 
         log_message(
@@ -175,7 +186,7 @@ class DemandeModel extends Model
     public function getDetail(int $id): ?array
     {
         return $this->db->table('demandes dm')
-            ->select("dm.id, dm.date_creation, dm.nombre_demande AS nombre_poste, dm.date_prise_poste, dm.salaire_propose, d.libelle AS departement, p.libelle AS poste, tc.libelle AS type_contrat, uc.login AS createur, ua.login AS utilisateur_actuel, CASE sd.libelle WHEN 'cree' THEN 'Créée' WHEN 'en_attente' THEN 'En attente' WHEN 'valide' THEN 'Validée' WHEN 'refusee' THEN 'Refusée' WHEN 'annulee' THEN 'Annulée' ELSE INITCAP(REPLACE(sd.libelle, '_', ' ')) END AS statut", false)
+            ->select("dm.id, dm.date_creation, dm.nombre_demande AS nombre_poste, dm.date_prise_poste, dm.salaire_propose, d.libelle AS departement, p.libelle AS poste, tc.libelle AS type_contrat, uc.login AS createur, ua.login AS utilisateur_actuel, CASE sd.libelle WHEN 'cree' THEN 'Créée' WHEN 'en_attente' THEN 'En attente' WHEN 'valide' THEN 'Validée' WHEN 'EN_VALIDATION_FINANCE' THEN 'En validation Finance' WHEN 'EN_VALIDATION_DIRECTION' THEN 'En validation Direction générale' WHEN 'VALIDEE' THEN 'Validée' WHEN 'refusee' THEN 'Refusée' WHEN 'REFUSEE' THEN 'Refusée' WHEN 'annulee' THEN 'Annulée' WHEN 'ANNULEE_FINANCE' THEN 'Annulée par la Finance' ELSE INITCAP(REPLACE(sd.libelle, '_', ' ')) END AS statut", false)
             ->join('poste_departement pd', 'pd.id = dm.id_poste_departement')
             ->join('postes p', 'p.id = pd.id_poste')
             ->join('departements d', 'd.id = pd.id_departement')

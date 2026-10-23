@@ -59,6 +59,7 @@ class DirectionService
             if ((float) $budget['montant_engage'] < $montant) throw new RuntimeException('Le budget engagé est incohérent avec cette demande.');
             $this->budgets->update($budget['id'], ['montant_engage' => (float) $budget['montant_engage'] - $montant]);
             $this->changerStatut($id, 'REFUSEE');
+            $this->affecterAuRH($id);
             $this->historique($id, $utilisateurId, $montant, $motif);
             $this->terminer('Erreur lors du refus de la demande.');
             return true;

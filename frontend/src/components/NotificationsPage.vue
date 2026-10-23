@@ -12,7 +12,17 @@ import ListeNotifications from './ListeNotifications.vue'
 // Adapte l'URL à ta route CodeIgniter 4
 const API_URL = '/api/demandes/notifications'
 
-const statuts = ['Tous', 'Créée', 'En attente', 'Validée', 'Refusée', 'Annulée']
+const statuts = [
+  'Tous',
+  'Créée',
+  'En attente',
+  'En validation Finance',
+  'En validation Direction générale',
+  'Validée',
+  'Refusée',
+  'Annulée',
+  'Annulée par la Finance',
+]
 const statutActif = ref('Tous')
 const notifications = ref([])
 const router = useRouter()
@@ -24,7 +34,8 @@ const notificationsFiltrees = computed(() =>
 )
 
 onMounted(async () => {
-  const res = await fetch(API_URL, { headers: { Accept: 'application/json' } })
+  const res = await fetch(API_URL, { headers: { Accept: 'application/json' }, credentials: 'include' })
+  if (!res.ok) throw new Error('Impossible de charger les notifications.')
   notifications.value = await res.json()
 })
 

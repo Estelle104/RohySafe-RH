@@ -13,7 +13,6 @@ class RHController extends BaseController
         try {
             $utilisateur = session()->get('utilisateur');
             $id = (int) ($utilisateur['id'] ?? 0);
-            $id = 2;
             return $this->response->setJSON((new DemandeModel())->getNotificationsByUtilisateurActuel($id));
         } catch (Throwable $e) {
             log_message('error', $e->getMessage());

@@ -59,7 +59,7 @@ $routes->group('api', ['namespace' => 'App\Controllers\Api'], function ($routes)
         $routes->get('offres', 'OffreController::index');
         $routes->get('offres/a-publier', 'OffreController::demandesAPublier', ['filter' => 'auth:RH']);
         $routes->get('offres/(:num)', 'OffreController::show/$1');
-        $routes->post('offres', 'OffreController::publier');
+        $routes->post('offres', 'OffreController::publier', ['filter' => 'auth:RH']);
         $routes->get('demandes/notifications', 'RHController::notifications', ['filter' => 'auth:RH']);
         $routes->get('demandes/(:num)', 'RHController::show/$1', ['filter' => 'auth:RH']);
         $routes->get('demandes/(:num)/grille-salariale', 'RHController::grilleSalariale/$1', ['filter' => 'auth:RH']);
