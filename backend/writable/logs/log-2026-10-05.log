@@ -1,0 +1,99 @@
+ERROR - 2026-10-05 11:06:24 --> Error connecting to the database: Exception: Unable to open database: unable to open database file in /home/andry/Documents/S5/MrRojo/codeigniter4/system/Database/SQLite3/Connection.php:111
+Stack trace:
+#0 /home/andry/Documents/S5/MrRojo/codeigniter4/system/Database/SQLite3/Connection.php(111): SQLite3->__construct()
+#1 /home/andry/Documents/S5/MrRojo/codeigniter4/system/Database/BaseConnection.php(555): CodeIgniter\Database\SQLite3\Connection->connect()
+#2 /home/andry/Documents/S5/MrRojo/codeigniter4/system/Database/SQLite3/Connection.php(74): CodeIgniter\Database\BaseConnection->initialize()
+#3 /home/andry/Documents/S5/MrRojo/codeigniter4/system/Database/BaseConnection.php(795): CodeIgniter\Database\SQLite3\Connection->initialize()
+#4 /home/andry/Documents/S5/MrRojo/codeigniter4/system/Database/BaseConnection.php(1706): CodeIgniter\Database\BaseConnection->query()
+#5 /home/andry/Documents/S5/MrRojo/codeigniter4/system/Database/BaseConnection.php(1726): CodeIgniter\Database\BaseConnection->listTables()
+#6 /home/andry/Documents/S5/MrRojo/codeigniter4/system/Database/MigrationRunner.php(821): CodeIgniter\Database\BaseConnection->tableExists()
+#7 /home/andry/Documents/S5/MrRojo/codeigniter4/system/Database/MigrationRunner.php(173): CodeIgniter\Database\MigrationRunner->ensureTable()
+#8 /home/andry/Documents/S5/MrRojo/codeigniter4/system/Commands/Database/Migrate.php(89): CodeIgniter\Database\MigrationRunner->latest()
+#9 /home/andry/Documents/S5/MrRojo/codeigniter4/system/CLI/SignalTrait.php(245): CodeIgniter\Commands\Database\Migrate::{closure:CodeIgniter\Commands\Database\Migrate::run():88}()
+#10 /home/andry/Documents/S5/MrRojo/codeigniter4/system/Commands/Database/Migrate.php(88): CodeIgniter\Commands\Database\Migrate->withSignalsBlocked()
+#11 /home/andry/Documents/S5/MrRojo/codeigniter4/system/CLI/Commands.php(74): CodeIgniter\Commands\Database\Migrate->run()
+#12 /home/andry/Documents/S5/MrRojo/codeigniter4/system/CLI/Console.php(47): CodeIgniter\CLI\Commands->run()
+#13 /home/andry/Documents/S5/MrRojo/codeigniter4/system/Boot.php(442): CodeIgniter\CLI\Console->run()
+#14 /home/andry/Documents/S5/MrRojo/codeigniter4/system/Boot.php(166): CodeIgniter\Boot::runCommand()
+#15 /home/andry/Documents/S5/MrRojo/codeigniter4/spark(87): CodeIgniter\Boot::bootSpark()
+#16 {main}
+
+Next CodeIgniter\Database\Exceptions\DatabaseException: SQLite3 error: Unable to open database: unable to open database file in /home/andry/Documents/S5/MrRojo/codeigniter4/system/Database/SQLite3/Connection.php:118
+Stack trace:
+#0 /home/andry/Documents/S5/MrRojo/codeigniter4/system/Database/BaseConnection.php(555): CodeIgniter\Database\SQLite3\Connection->connect()
+#1 /home/andry/Documents/S5/MrRojo/codeigniter4/system/Database/SQLite3/Connection.php(74): CodeIgniter\Database\BaseConnection->initialize()
+#2 /home/andry/Documents/S5/MrRojo/codeigniter4/system/Database/BaseConnection.php(795): CodeIgniter\Database\SQLite3\Connection->initialize()
+#3 /home/andry/Documents/S5/MrRojo/codeigniter4/system/Database/BaseConnection.php(1706): CodeIgniter\Database\BaseConnection->query()
+#4 /home/andry/Documents/S5/MrRojo/codeigniter4/system/Database/BaseConnection.php(1726): CodeIgniter\Database\BaseConnection->listTables()
+#5 /home/andry/Documents/S5/MrRojo/codeigniter4/system/Database/MigrationRunner.php(821): CodeIgniter\Database\BaseConnection->tableExists()
+#6 /home/andry/Documents/S5/MrRojo/codeigniter4/system/Database/MigrationRunner.php(173): CodeIgniter\Database\MigrationRunner->ensureTable()
+#7 /home/andry/Documents/S5/MrRojo/codeigniter4/system/Commands/Database/Migrate.php(89): CodeIgniter\Database\MigrationRunner->latest()
+#8 /home/andry/Documents/S5/MrRojo/codeigniter4/system/CLI/SignalTrait.php(245): CodeIgniter\Commands\Database\Migrate::{closure:CodeIgniter\Commands\Database\Migrate::run():88}()
+#9 /home/andry/Documents/S5/MrRojo/codeigniter4/system/Commands/Database/Migrate.php(88): CodeIgniter\Commands\Database\Migrate->withSignalsBlocked()
+#10 /home/andry/Documents/S5/MrRojo/codeigniter4/system/CLI/Commands.php(74): CodeIgniter\Commands\Database\Migrate->run()
+#11 /home/andry/Documents/S5/MrRojo/codeigniter4/system/CLI/Console.php(47): CodeIgniter\CLI\Commands->run()
+#12 /home/andry/Documents/S5/MrRojo/codeigniter4/system/Boot.php(442): CodeIgniter\CLI\Console->run()
+#13 /home/andry/Documents/S5/MrRojo/codeigniter4/system/Boot.php(166): CodeIgniter\Boot::runCommand()
+#14 /home/andry/Documents/S5/MrRojo/codeigniter4/spark(87): CodeIgniter\Boot::bootSpark()
+#15 {main}
+CRITICAL - 2026-10-05 11:06:24 --> ErrorException: require(/home/andry/Documents/S5/MrRojo/codeigniter4/app/Views/errors/cli/error_exception.php): Failed to open stream: No such file or directory
+[Method: CLI, Route: migrate]
+in SYSTEMPATH/CLI/BaseCommand.php on line 133.
+ 1 SYSTEMPATH/CLI/BaseCommand.php(133): CodeIgniter\Debug\Exceptions->errorHandler()
+ 2 SYSTEMPATH/CLI/BaseCommand.php(133): require()
+ 3 SYSTEMPATH/Commands/Database/Migrate.php(104): CodeIgniter\CLI\BaseCommand->showError()
+ 4 SYSTEMPATH/CLI/Commands.php(74): CodeIgniter\Commands\Database\Migrate->run()
+ 5 SYSTEMPATH/CLI/Console.php(47): CodeIgniter\CLI\Commands->run()
+ 6 SYSTEMPATH/Boot.php(442): CodeIgniter\CLI\Console->run()
+ 7 SYSTEMPATH/Boot.php(166): CodeIgniter\Boot::runCommand()
+ 8 ROOTPATH/spark(87): CodeIgniter\Boot::bootSpark()
+ERROR - 2026-10-05 11:08:56 --> Error connecting to the database: Exception: Unable to open database: unable to open database file in /home/andry/Documents/S5/MrRojo/codeigniter4/system/Database/SQLite3/Connection.php:111
+Stack trace:
+#0 /home/andry/Documents/S5/MrRojo/codeigniter4/system/Database/SQLite3/Connection.php(111): SQLite3->__construct()
+#1 /home/andry/Documents/S5/MrRojo/codeigniter4/system/Database/BaseConnection.php(555): CodeIgniter\Database\SQLite3\Connection->connect()
+#2 /home/andry/Documents/S5/MrRojo/codeigniter4/system/Database/SQLite3/Connection.php(74): CodeIgniter\Database\BaseConnection->initialize()
+#3 /home/andry/Documents/S5/MrRojo/codeigniter4/system/Database/BaseConnection.php(795): CodeIgniter\Database\SQLite3\Connection->initialize()
+#4 /home/andry/Documents/S5/MrRojo/codeigniter4/system/Database/BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query()
+#5 /home/andry/Documents/S5/MrRojo/codeigniter4/system/Model.php(253): CodeIgniter\Database\BaseBuilder->get()
+#6 /home/andry/Documents/S5/MrRojo/codeigniter4/system/BaseModel.php(676): CodeIgniter\Model->doFindAll()
+#7 /home/andry/Documents/S5/MrRojo/codeigniter4/app/Controllers/Formation.php(10): CodeIgniter\BaseModel->findAll()
+#8 /home/andry/Documents/S5/MrRojo/codeigniter4/system/CodeIgniter.php(951): App\Controllers\Formation->getAll()
+#9 /home/andry/Documents/S5/MrRojo/codeigniter4/system/CodeIgniter.php(497): CodeIgniter\CodeIgniter->runController()
+#10 /home/andry/Documents/S5/MrRojo/codeigniter4/system/CodeIgniter.php(340): CodeIgniter\CodeIgniter->handleRequest()
+#11 /home/andry/Documents/S5/MrRojo/codeigniter4/system/Boot.php(417): CodeIgniter\CodeIgniter->run()
+#12 /home/andry/Documents/S5/MrRojo/codeigniter4/system/Boot.php(68): CodeIgniter\Boot::runCodeIgniter()
+#13 /home/andry/Documents/S5/MrRojo/codeigniter4/public/index.php(59): CodeIgniter\Boot::bootWeb()
+#14 {main}
+
+Next CodeIgniter\Database\Exceptions\DatabaseException: SQLite3 error: Unable to open database: unable to open database file in /home/andry/Documents/S5/MrRojo/codeigniter4/system/Database/SQLite3/Connection.php:118
+Stack trace:
+#0 /home/andry/Documents/S5/MrRojo/codeigniter4/system/Database/BaseConnection.php(555): CodeIgniter\Database\SQLite3\Connection->connect()
+#1 /home/andry/Documents/S5/MrRojo/codeigniter4/system/Database/SQLite3/Connection.php(74): CodeIgniter\Database\BaseConnection->initialize()
+#2 /home/andry/Documents/S5/MrRojo/codeigniter4/system/Database/BaseConnection.php(795): CodeIgniter\Database\SQLite3\Connection->initialize()
+#3 /home/andry/Documents/S5/MrRojo/codeigniter4/system/Database/BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query()
+#4 /home/andry/Documents/S5/MrRojo/codeigniter4/system/Model.php(253): CodeIgniter\Database\BaseBuilder->get()
+#5 /home/andry/Documents/S5/MrRojo/codeigniter4/system/BaseModel.php(676): CodeIgniter\Model->doFindAll()
+#6 /home/andry/Documents/S5/MrRojo/codeigniter4/app/Controllers/Formation.php(10): CodeIgniter\BaseModel->findAll()
+#7 /home/andry/Documents/S5/MrRojo/codeigniter4/system/CodeIgniter.php(951): App\Controllers\Formation->getAll()
+#8 /home/andry/Documents/S5/MrRojo/codeigniter4/system/CodeIgniter.php(497): CodeIgniter\CodeIgniter->runController()
+#9 /home/andry/Documents/S5/MrRojo/codeigniter4/system/CodeIgniter.php(340): CodeIgniter\CodeIgniter->handleRequest()
+#10 /home/andry/Documents/S5/MrRojo/codeigniter4/system/Boot.php(417): CodeIgniter\CodeIgniter->run()
+#11 /home/andry/Documents/S5/MrRojo/codeigniter4/system/Boot.php(68): CodeIgniter\Boot::runCodeIgniter()
+#12 /home/andry/Documents/S5/MrRojo/codeigniter4/public/index.php(59): CodeIgniter\Boot::bootWeb()
+#13 {main}
+CRITICAL - 2026-10-05 11:08:56 --> CodeIgniter\Database\Exceptions\DatabaseException: Unable to connect to the database.
+Main connection [SQLite3]: SQLite3 error: Unable to open database: unable to open database file
+[Method: GET, Route: api/formations]
+in SYSTEMPATH/Database/BaseConnection.php on line 606.
+ 1 SYSTEMPATH/Database/SQLite3/Connection.php(74): CodeIgniter\Database\BaseConnection->initialize()
+ 2 SYSTEMPATH/Database/BaseConnection.php(795): CodeIgniter\Database\SQLite3\Connection->initialize()
+ 3 SYSTEMPATH/Database/BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query()
+ 4 SYSTEMPATH/Model.php(253): CodeIgniter\Database\BaseBuilder->get()
+ 5 SYSTEMPATH/BaseModel.php(676): CodeIgniter\Model->doFindAll()
+ 6 APPPATH/Controllers/Formation.php(10): CodeIgniter\BaseModel->findAll()
+ 7 SYSTEMPATH/CodeIgniter.php(951): App\Controllers\Formation->getAll()
+ 8 SYSTEMPATH/CodeIgniter.php(497): CodeIgniter\CodeIgniter->runController()
+ 9 SYSTEMPATH/CodeIgniter.php(340): CodeIgniter\CodeIgniter->handleRequest()
+10 SYSTEMPATH/Boot.php(417): CodeIgniter\CodeIgniter->run()
+11 SYSTEMPATH/Boot.php(68): CodeIgniter\Boot::runCodeIgniter()
+12 FCPATH/index.php(59): CodeIgniter\Boot::bootWeb()
