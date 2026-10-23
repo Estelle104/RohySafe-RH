@@ -37,3 +37,4 @@ CROSS JOIN (
     ON g.poste = p.libelle
 JOIN type_contrats tc
     ON tc.libelle = g.type_contrat;
+

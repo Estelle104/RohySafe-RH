@@ -18,5 +18,8 @@ export default createRouter({
     ,{ path: '/offres/a-publier', name: 'offres-a-publier', component: () => import('../views/DemandesAPublierView.vue') }
     ,{ path: '/offres/nouvelle/:id', name: 'offre-formulaire', component: () => import('../views/OffreFormView.vue') }
     ,{ path: '/offres/publiee/:id', name: 'offre-publiee', component: () => import('../views/OffrePublieeView.vue') }
+    ,{ path: '/candidatures', name: 'candidatures', component: () => import('../views/CandidaturesView.vue') }
+    ,{ path: '/candidatures/:id/entretien', name: 'entretien-formulaire', component: () => import('../views/EntretienFormView.vue') }
+    ,{ path: '/candidatures/:id/entretien/confirmation', name: 'entretien-confirme', component: () => import('../views/EntretienConfirmationView.vue') }
   ],
 })

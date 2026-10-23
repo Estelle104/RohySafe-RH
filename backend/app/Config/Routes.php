@@ -26,4 +26,6 @@ $routes->group('api', ['namespace' => 'App\Controllers\Api'], function ($routes)
     $routes->get('demandes/(:num)/grille-salariale', 'RHController::grilleSalariale/$1');
     $routes->post('demandes/(:num)/proposition-salaire', 'RHController::proposerSalaire/$1');
     $routes->post('demandes/(:num)/refuser', 'RHController::refuser/$1');
+    $routes->get('candidatures', 'CandidatureController::index');
+    $routes->post('candidatures/(:num)/entretiens', 'CandidatureController::creerEntretien/$1');
 });
