@@ -390,6 +390,7 @@ DEBUG - 2026-10-23 07:49:43 --> Session: Class initialized using 'CodeIgniter\Se
 DEBUG - 2026-10-23 07:49:43 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
 DEBUG - 2026-10-23 07:49:43 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
 DEBUG - 2026-10-23 07:50:19 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+<<<<<<< HEAD
 ERROR - 2026-10-23 07:59:15 --> pg_query(): Query failed: ERROR:  relation &quot;vue_classement_candidats_postes&quot; does not exist
 LINE 2: FROM &quot;vue_classement_candidats_postes&quot;
              ^
@@ -528,11 +529,48 @@ in SYSTEMPATH/Database/Postgre/Connection.php on line 200.
  6 APPPATH/Controllers/Api/CandidatIdeal.php(115): App\Controllers\Api\CandidatIdeal->App\Controllers\Api\{closure}()
  7 APPPATH/Controllers/Api/CandidatIdeal.php(23): App\Controllers\Api\CandidatIdeal->findCandidates()
  8 SYSTEMPATH/CodeIgniter.php(951): App\Controllers\Api\CandidatIdeal->byOffre()
+=======
+ERROR - 2026-10-23 07:58:44 --> Error connecting to the database: ErrorException: pg_connect(): Unable to connect to PostgreSQL server: connection to server at &quot;localhost&quot; (127.0.0.1), port 5432 failed: FATAL:  password authentication failed for user &quot;admin&quot;
+connection to server at &quot;localhost&quot; (127.0.0.1), port 5432 failed: FATAL:  password authentication failed for user &quot;admin&quot; in /home/estelle/S5/MrTovo/RohySafe-RH/backend/system/Database/Postgre/Connection.php:78
+Stack trace:
+#0 [internal function]: CodeIgniter\Debug\Exceptions->errorHandler()
+#1 /home/estelle/S5/MrTovo/RohySafe-RH/backend/system/Database/Postgre/Connection.php(78): pg_connect()
+#2 /home/estelle/S5/MrTovo/RohySafe-RH/backend/system/Database/BaseConnection.php(555): CodeIgniter\Database\Postgre\Connection->connect()
+#3 /home/estelle/S5/MrTovo/RohySafe-RH/backend/system/Database/BaseConnection.php(795): CodeIgniter\Database\BaseConnection->initialize()
+#4 /home/estelle/S5/MrTovo/RohySafe-RH/backend/system/Database/BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query()
+#5 /home/estelle/S5/MrTovo/RohySafe-RH/backend/system/Model.php(295): CodeIgniter\Database\BaseBuilder->get()
+#6 /home/estelle/S5/MrTovo/RohySafe-RH/backend/system/BaseModel.php(714): CodeIgniter\Model->doFirst()
+#7 /home/estelle/S5/MrTovo/RohySafe-RH/backend/app/Models/UtilisateurModel.php(66): CodeIgniter\BaseModel->first()
+#8 /home/estelle/S5/MrTovo/RohySafe-RH/backend/app/Models/UtilisateurModel.php(47): App\Models\UtilisateurModel->trouverParLogin()
+#9 /home/estelle/S5/MrTovo/RohySafe-RH/backend/app/Controllers/Api/Auth.php(16): App\Models\UtilisateurModel->authentifier()
+#10 /home/estelle/S5/MrTovo/RohySafe-RH/backend/system/CodeIgniter.php(951): App\Controllers\Api\Auth->login()
+#11 /home/estelle/S5/MrTovo/RohySafe-RH/backend/system/CodeIgniter.php(497): CodeIgniter\CodeIgniter->runController()
+#12 /home/estelle/S5/MrTovo/RohySafe-RH/backend/system/CodeIgniter.php(340): CodeIgniter\CodeIgniter->handleRequest()
+#13 /home/estelle/S5/MrTovo/RohySafe-RH/backend/system/Boot.php(417): CodeIgniter\CodeIgniter->run()
+#14 /home/estelle/S5/MrTovo/RohySafe-RH/backend/system/Boot.php(68): CodeIgniter\Boot::runCodeIgniter()
+#15 /home/estelle/S5/MrTovo/RohySafe-RH/backend/public/index.php(59): CodeIgniter\Boot::bootWeb()
+#16 /home/estelle/S5/MrTovo/RohySafe-RH/backend/system/rewrite.php(44): require_once('...')
+#17 {main}
+CRITICAL - 2026-10-23 07:58:44 --> CodeIgniter\Database\Exceptions\DatabaseException: Unable to connect to the database.
+Main connection [Postgre]: pg_connect(): Unable to connect to PostgreSQL server: connection to server at &quot;localhost&quot; (127.0.0.1), port 5432 failed: FATAL:  password authentication failed for user &quot;admin&quot;
+connection to server at &quot;localhost&quot; (127.0.0.1), port 5432 failed: FATAL:  password authentication failed for user &quot;admin&quot;
+[Method: POST, Route: api/auth/login]
+in SYSTEMPATH/Database/BaseConnection.php on line 606.
+ 1 SYSTEMPATH/Database/BaseConnection.php(795): CodeIgniter\Database\BaseConnection->initialize()
+ 2 SYSTEMPATH/Database/BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query()
+ 3 SYSTEMPATH/Model.php(295): CodeIgniter\Database\BaseBuilder->get()
+ 4 SYSTEMPATH/BaseModel.php(714): CodeIgniter\Model->doFirst()
+ 5 APPPATH/Models/UtilisateurModel.php(66): CodeIgniter\BaseModel->first()
+ 6 APPPATH/Models/UtilisateurModel.php(47): App\Models\UtilisateurModel->trouverParLogin()
+ 7 APPPATH/Controllers/Api/Auth.php(16): App\Models\UtilisateurModel->authentifier()
+ 8 SYSTEMPATH/CodeIgniter.php(951): App\Controllers\Api\Auth->login()
+>>>>>>> 59e14d162ff0a46a9aec3abae24f4bf8b101582c
  9 SYSTEMPATH/CodeIgniter.php(497): CodeIgniter\CodeIgniter->runController()
 10 SYSTEMPATH/CodeIgniter.php(340): CodeIgniter\CodeIgniter->handleRequest()
 11 SYSTEMPATH/Boot.php(417): CodeIgniter\CodeIgniter->run()
 12 SYSTEMPATH/Boot.php(68): CodeIgniter\Boot::runCodeIgniter()
 13 FCPATH/index.php(59): CodeIgniter\Boot::bootWeb()
+<<<<<<< HEAD
 14 SYSTEMPATH/rewrite.php(44): require_once('/home/itu/Documents/Miantsa/S5/RohySafe-RH/backend/public/index.php')
 ERROR - 2026-10-23 08:11:16 --> Erreur candidats idéaux: pg_query(): Query failed: ERROR:  permission denied for table offres
 ERROR - 2026-10-23 08:11:18 --> pg_query(): Query failed: ERROR:  permission denied for table offres
@@ -545,11 +583,49 @@ in SYSTEMPATH/Database/Postgre/Connection.php on line 200.
  6 APPPATH/Controllers/Api/CandidatIdeal.php(115): App\Controllers\Api\CandidatIdeal->App\Controllers\Api\{closure}()
  7 APPPATH/Controllers/Api/CandidatIdeal.php(23): App\Controllers\Api\CandidatIdeal->findCandidates()
  8 SYSTEMPATH/CodeIgniter.php(951): App\Controllers\Api\CandidatIdeal->byOffre()
+=======
+14 SYSTEMPATH/rewrite.php(44): require_once('/home/estelle/S5/MrTovo/RohySafe-RH/backend/public/index.php')
+ERROR - 2026-10-23 07:58:52 --> Error connecting to the database: ErrorException: pg_connect(): Unable to connect to PostgreSQL server: connection to server at &quot;localhost&quot; (127.0.0.1), port 5432 failed: FATAL:  password authentication failed for user &quot;admin&quot;
+connection to server at &quot;localhost&quot; (127.0.0.1), port 5432 failed: FATAL:  password authentication failed for user &quot;admin&quot; in /home/estelle/S5/MrTovo/RohySafe-RH/backend/system/Database/Postgre/Connection.php:78
+Stack trace:
+#0 [internal function]: CodeIgniter\Debug\Exceptions->errorHandler()
+#1 /home/estelle/S5/MrTovo/RohySafe-RH/backend/system/Database/Postgre/Connection.php(78): pg_connect()
+#2 /home/estelle/S5/MrTovo/RohySafe-RH/backend/system/Database/BaseConnection.php(555): CodeIgniter\Database\Postgre\Connection->connect()
+#3 /home/estelle/S5/MrTovo/RohySafe-RH/backend/system/Database/BaseConnection.php(795): CodeIgniter\Database\BaseConnection->initialize()
+#4 /home/estelle/S5/MrTovo/RohySafe-RH/backend/system/Database/BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query()
+#5 /home/estelle/S5/MrTovo/RohySafe-RH/backend/system/Model.php(295): CodeIgniter\Database\BaseBuilder->get()
+#6 /home/estelle/S5/MrTovo/RohySafe-RH/backend/system/BaseModel.php(714): CodeIgniter\Model->doFirst()
+#7 /home/estelle/S5/MrTovo/RohySafe-RH/backend/app/Models/UtilisateurModel.php(66): CodeIgniter\BaseModel->first()
+#8 /home/estelle/S5/MrTovo/RohySafe-RH/backend/app/Models/UtilisateurModel.php(47): App\Models\UtilisateurModel->trouverParLogin()
+#9 /home/estelle/S5/MrTovo/RohySafe-RH/backend/app/Controllers/Api/Auth.php(16): App\Models\UtilisateurModel->authentifier()
+#10 /home/estelle/S5/MrTovo/RohySafe-RH/backend/system/CodeIgniter.php(951): App\Controllers\Api\Auth->login()
+#11 /home/estelle/S5/MrTovo/RohySafe-RH/backend/system/CodeIgniter.php(497): CodeIgniter\CodeIgniter->runController()
+#12 /home/estelle/S5/MrTovo/RohySafe-RH/backend/system/CodeIgniter.php(340): CodeIgniter\CodeIgniter->handleRequest()
+#13 /home/estelle/S5/MrTovo/RohySafe-RH/backend/system/Boot.php(417): CodeIgniter\CodeIgniter->run()
+#14 /home/estelle/S5/MrTovo/RohySafe-RH/backend/system/Boot.php(68): CodeIgniter\Boot::runCodeIgniter()
+#15 /home/estelle/S5/MrTovo/RohySafe-RH/backend/public/index.php(59): CodeIgniter\Boot::bootWeb()
+#16 /home/estelle/S5/MrTovo/RohySafe-RH/backend/system/rewrite.php(44): require_once('...')
+#17 {main}
+CRITICAL - 2026-10-23 07:58:52 --> CodeIgniter\Database\Exceptions\DatabaseException: Unable to connect to the database.
+Main connection [Postgre]: pg_connect(): Unable to connect to PostgreSQL server: connection to server at &quot;localhost&quot; (127.0.0.1), port 5432 failed: FATAL:  password authentication failed for user &quot;admin&quot;
+connection to server at &quot;localhost&quot; (127.0.0.1), port 5432 failed: FATAL:  password authentication failed for user &quot;admin&quot;
+[Method: POST, Route: api/auth/login]
+in SYSTEMPATH/Database/BaseConnection.php on line 606.
+ 1 SYSTEMPATH/Database/BaseConnection.php(795): CodeIgniter\Database\BaseConnection->initialize()
+ 2 SYSTEMPATH/Database/BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query()
+ 3 SYSTEMPATH/Model.php(295): CodeIgniter\Database\BaseBuilder->get()
+ 4 SYSTEMPATH/BaseModel.php(714): CodeIgniter\Model->doFirst()
+ 5 APPPATH/Models/UtilisateurModel.php(66): CodeIgniter\BaseModel->first()
+ 6 APPPATH/Models/UtilisateurModel.php(47): App\Models\UtilisateurModel->trouverParLogin()
+ 7 APPPATH/Controllers/Api/Auth.php(16): App\Models\UtilisateurModel->authentifier()
+ 8 SYSTEMPATH/CodeIgniter.php(951): App\Controllers\Api\Auth->login()
+>>>>>>> 59e14d162ff0a46a9aec3abae24f4bf8b101582c
  9 SYSTEMPATH/CodeIgniter.php(497): CodeIgniter\CodeIgniter->runController()
 10 SYSTEMPATH/CodeIgniter.php(340): CodeIgniter\CodeIgniter->handleRequest()
 11 SYSTEMPATH/Boot.php(417): CodeIgniter\CodeIgniter->run()
 12 SYSTEMPATH/Boot.php(68): CodeIgniter\Boot::runCodeIgniter()
 13 FCPATH/index.php(59): CodeIgniter\Boot::bootWeb()
+<<<<<<< HEAD
 14 SYSTEMPATH/rewrite.php(44): require_once('/home/itu/Documents/Miantsa/S5/RohySafe-RH/backend/public/index.php')
 ERROR - 2026-10-23 08:11:18 --> Erreur candidats idéaux: pg_query(): Query failed: ERROR:  permission denied for table offres
 ERROR - 2026-10-23 08:11:19 --> pg_query(): Query failed: ERROR:  permission denied for table offres
@@ -562,11 +638,49 @@ in SYSTEMPATH/Database/Postgre/Connection.php on line 200.
  6 APPPATH/Controllers/Api/CandidatIdeal.php(115): App\Controllers\Api\CandidatIdeal->App\Controllers\Api\{closure}()
  7 APPPATH/Controllers/Api/CandidatIdeal.php(23): App\Controllers\Api\CandidatIdeal->findCandidates()
  8 SYSTEMPATH/CodeIgniter.php(951): App\Controllers\Api\CandidatIdeal->byOffre()
+=======
+14 SYSTEMPATH/rewrite.php(44): require_once('/home/estelle/S5/MrTovo/RohySafe-RH/backend/public/index.php')
+ERROR - 2026-10-23 07:58:53 --> Error connecting to the database: ErrorException: pg_connect(): Unable to connect to PostgreSQL server: connection to server at &quot;localhost&quot; (127.0.0.1), port 5432 failed: FATAL:  password authentication failed for user &quot;admin&quot;
+connection to server at &quot;localhost&quot; (127.0.0.1), port 5432 failed: FATAL:  password authentication failed for user &quot;admin&quot; in /home/estelle/S5/MrTovo/RohySafe-RH/backend/system/Database/Postgre/Connection.php:78
+Stack trace:
+#0 [internal function]: CodeIgniter\Debug\Exceptions->errorHandler()
+#1 /home/estelle/S5/MrTovo/RohySafe-RH/backend/system/Database/Postgre/Connection.php(78): pg_connect()
+#2 /home/estelle/S5/MrTovo/RohySafe-RH/backend/system/Database/BaseConnection.php(555): CodeIgniter\Database\Postgre\Connection->connect()
+#3 /home/estelle/S5/MrTovo/RohySafe-RH/backend/system/Database/BaseConnection.php(795): CodeIgniter\Database\BaseConnection->initialize()
+#4 /home/estelle/S5/MrTovo/RohySafe-RH/backend/system/Database/BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query()
+#5 /home/estelle/S5/MrTovo/RohySafe-RH/backend/system/Model.php(295): CodeIgniter\Database\BaseBuilder->get()
+#6 /home/estelle/S5/MrTovo/RohySafe-RH/backend/system/BaseModel.php(714): CodeIgniter\Model->doFirst()
+#7 /home/estelle/S5/MrTovo/RohySafe-RH/backend/app/Models/UtilisateurModel.php(66): CodeIgniter\BaseModel->first()
+#8 /home/estelle/S5/MrTovo/RohySafe-RH/backend/app/Models/UtilisateurModel.php(47): App\Models\UtilisateurModel->trouverParLogin()
+#9 /home/estelle/S5/MrTovo/RohySafe-RH/backend/app/Controllers/Api/Auth.php(16): App\Models\UtilisateurModel->authentifier()
+#10 /home/estelle/S5/MrTovo/RohySafe-RH/backend/system/CodeIgniter.php(951): App\Controllers\Api\Auth->login()
+#11 /home/estelle/S5/MrTovo/RohySafe-RH/backend/system/CodeIgniter.php(497): CodeIgniter\CodeIgniter->runController()
+#12 /home/estelle/S5/MrTovo/RohySafe-RH/backend/system/CodeIgniter.php(340): CodeIgniter\CodeIgniter->handleRequest()
+#13 /home/estelle/S5/MrTovo/RohySafe-RH/backend/system/Boot.php(417): CodeIgniter\CodeIgniter->run()
+#14 /home/estelle/S5/MrTovo/RohySafe-RH/backend/system/Boot.php(68): CodeIgniter\Boot::runCodeIgniter()
+#15 /home/estelle/S5/MrTovo/RohySafe-RH/backend/public/index.php(59): CodeIgniter\Boot::bootWeb()
+#16 /home/estelle/S5/MrTovo/RohySafe-RH/backend/system/rewrite.php(44): require_once('...')
+#17 {main}
+CRITICAL - 2026-10-23 07:58:53 --> CodeIgniter\Database\Exceptions\DatabaseException: Unable to connect to the database.
+Main connection [Postgre]: pg_connect(): Unable to connect to PostgreSQL server: connection to server at &quot;localhost&quot; (127.0.0.1), port 5432 failed: FATAL:  password authentication failed for user &quot;admin&quot;
+connection to server at &quot;localhost&quot; (127.0.0.1), port 5432 failed: FATAL:  password authentication failed for user &quot;admin&quot;
+[Method: POST, Route: api/auth/login]
+in SYSTEMPATH/Database/BaseConnection.php on line 606.
+ 1 SYSTEMPATH/Database/BaseConnection.php(795): CodeIgniter\Database\BaseConnection->initialize()
+ 2 SYSTEMPATH/Database/BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query()
+ 3 SYSTEMPATH/Model.php(295): CodeIgniter\Database\BaseBuilder->get()
+ 4 SYSTEMPATH/BaseModel.php(714): CodeIgniter\Model->doFirst()
+ 5 APPPATH/Models/UtilisateurModel.php(66): CodeIgniter\BaseModel->first()
+ 6 APPPATH/Models/UtilisateurModel.php(47): App\Models\UtilisateurModel->trouverParLogin()
+ 7 APPPATH/Controllers/Api/Auth.php(16): App\Models\UtilisateurModel->authentifier()
+ 8 SYSTEMPATH/CodeIgniter.php(951): App\Controllers\Api\Auth->login()
+>>>>>>> 59e14d162ff0a46a9aec3abae24f4bf8b101582c
  9 SYSTEMPATH/CodeIgniter.php(497): CodeIgniter\CodeIgniter->runController()
 10 SYSTEMPATH/CodeIgniter.php(340): CodeIgniter\CodeIgniter->handleRequest()
 11 SYSTEMPATH/Boot.php(417): CodeIgniter\CodeIgniter->run()
 12 SYSTEMPATH/Boot.php(68): CodeIgniter\Boot::runCodeIgniter()
 13 FCPATH/index.php(59): CodeIgniter\Boot::bootWeb()
+<<<<<<< HEAD
 14 SYSTEMPATH/rewrite.php(44): require_once('/home/itu/Documents/Miantsa/S5/RohySafe-RH/backend/public/index.php')
 ERROR - 2026-10-23 08:11:19 --> Erreur candidats idéaux: pg_query(): Query failed: ERROR:  permission denied for table offres
 ERROR - 2026-10-23 08:11:36 --> pg_query(): Query failed: ERROR:  permission denied for table offres
@@ -763,3 +877,9 @@ in SYSTEMPATH/Database/Postgre/Connection.php on line 200.
 11 FCPATH/index.php(59): CodeIgniter\Boot::bootWeb()
 12 SYSTEMPATH/rewrite.php(44): require_once('/home/itu/Documents/Miantsa/S5/RohySafe-RH/backend/public/index.php')
 ERROR - 2026-10-23 08:14:41 --> pg_query(): Query failed: ERROR:  permission denied for table offres
+=======
+14 SYSTEMPATH/rewrite.php(44): require_once('/home/estelle/S5/MrTovo/RohySafe-RH/backend/public/index.php')
+DEBUG - 2026-10-23 07:59:19 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-10-23 07:59:19 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-10-23 07:59:19 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+>>>>>>> 59e14d162ff0a46a9aec3abae24f4bf8b101582c
