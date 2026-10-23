@@ -38,3 +38,23 @@ CROSS JOIN (
 JOIN type_contrats tc
     ON tc.libelle = g.type_contrat
 WHERE p.libelle = g.poste;
+
+
+
+INSERT INTO demandes (
+    date_creation,
+    id_poste_departement,
+    id_createur,
+    id_utilisateur_actuel,
+    id_statut_actuel,
+    nombre_demande,
+    id_type_contrat,
+    date_prise_poste,
+    salaire_propose
+)
+VALUES
+    ('2026-10-23 09:00:00', 1, 6, 3, 1, 2, 1, '2027-01-05', 1600000.00),
+    ('2026-10-23 09:15:00', 2, 6, 3, 1, 1, 2, '2027-01-10', 1400000.00),
+    ('2026-10-23 09:30:00', 3, 5, 5, 1, 2, 1, '2027-02-01', 1000000.00),
+    ('2026-10-23 09:45:00', 4, 4, 4, 1, 1, 2, '2027-02-15', 1200000.00),
+    ('2026-10-23 10:00:00', 5, 2, 2, 1, 1, 3, '2027-03-01', 900000.00);

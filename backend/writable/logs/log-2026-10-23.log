@@ -883,3 +883,251 @@ DEBUG - 2026-10-23 07:59:19 --> Session: Class initialized using 'CodeIgniter\Se
 DEBUG - 2026-10-23 07:59:19 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
 DEBUG - 2026-10-23 07:59:19 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
 >>>>>>> 59e14d162ff0a46a9aec3abae24f4bf8b101582c
+DEBUG - 2026-10-23 08:34:02 --> Requête notifications utilisateur 3 :
+SELECT dm.id,
+                dm.date_creation,
+                dm.nombre_demande AS nombre_poste,
+                d.libelle AS departement,
+                p.libelle AS poste,
+                tc.libelle AS type_contrat,
+                dm.date_prise_poste,
+                dm.salaire_propose,
+                uc.login AS utilisateur,
+                ua.login AS utilisateur_actuel,
+                dm.id_createur,
+                dm.id_utilisateur_actuel,
+                CASE sd.libelle
+                    WHEN 'cree' THEN 'Créée'
+                    WHEN 'en_attente' THEN 'En attente'
+                    WHEN 'valide' THEN 'Validée'
+                    WHEN 'refusee' THEN 'Refusée'
+                    WHEN 'annulee' THEN 'Annulée'
+                    ELSE INITCAP(REPLACE(sd.libelle, '_', ' '))
+                END AS statut
+FROM "demandes" "dm"
+JOIN "poste_departement" "pd" ON "pd"."id" = "dm"."id_poste_departement"
+JOIN "postes" "p" ON "p"."id" = "pd"."id_poste"
+JOIN "departements" "d" ON "d"."id" = "pd"."id_departement"
+JOIN "type_contrats" "tc" ON "tc"."id" = "dm"."id_type_contrat"
+JOIN "statut_demandes" "sd" ON "sd"."id" = "dm"."id_statut_actuel"
+LEFT JOIN "utilisateurs" "uc" ON "uc"."id" = "dm"."id_createur"
+LEFT JOIN "utilisateurs" "ua" ON "ua"."id" = "dm"."id_utilisateur_actuel"
+WHERE "dm"."id_utilisateur_actuel" = 3
+ORDER BY "dm"."date_creation" DESC
+DEBUG - 2026-10-23 08:44:32 --> Requête notifications utilisateur 3 :
+SELECT dm.id,
+                dm.date_creation,
+                dm.nombre_demande AS nombre_poste,
+                d.libelle AS departement,
+                p.libelle AS poste,
+                tc.libelle AS type_contrat,
+                dm.date_prise_poste,
+                dm.salaire_propose,
+                uc.login AS utilisateur,
+                ua.login AS utilisateur_actuel,
+                dm.id_createur,
+                dm.id_utilisateur_actuel,
+                CASE sd.libelle
+                    WHEN 'cree' THEN 'Créée'
+                    WHEN 'en_attente' THEN 'En attente'
+                    WHEN 'valide' THEN 'Validée'
+                    WHEN 'refusee' THEN 'Refusée'
+                    WHEN 'annulee' THEN 'Annulée'
+                    ELSE INITCAP(REPLACE(sd.libelle, '_', ' '))
+                END AS statut
+FROM "demandes" "dm"
+JOIN "poste_departement" "pd" ON "pd"."id" = "dm"."id_poste_departement"
+JOIN "postes" "p" ON "p"."id" = "pd"."id_poste"
+JOIN "departements" "d" ON "d"."id" = "pd"."id_departement"
+JOIN "type_contrats" "tc" ON "tc"."id" = "dm"."id_type_contrat"
+JOIN "statut_demandes" "sd" ON "sd"."id" = "dm"."id_statut_actuel"
+LEFT JOIN "utilisateurs" "uc" ON "uc"."id" = "dm"."id_createur"
+LEFT JOIN "utilisateurs" "ua" ON "ua"."id" = "dm"."id_utilisateur_actuel"
+WHERE "dm"."id_utilisateur_actuel" = 3
+ORDER BY "dm"."date_creation" DESC
+DEBUG - 2026-10-23 08:48:32 --> Requête notifications utilisateur 3 :
+SELECT dm.id,
+                dm.date_creation,
+                dm.nombre_demande AS nombre_poste,
+                d.libelle AS departement,
+                p.libelle AS poste,
+                tc.libelle AS type_contrat,
+                dm.date_prise_poste,
+                dm.salaire_propose,
+                uc.login AS utilisateur,
+                ua.login AS utilisateur_actuel,
+                dm.id_createur,
+                dm.id_utilisateur_actuel,
+                CASE sd.libelle
+                    WHEN 'cree' THEN 'Créée'
+                    WHEN 'en_attente' THEN 'En attente'
+                    WHEN 'valide' THEN 'Validée'
+                    WHEN 'refusee' THEN 'Refusée'
+                    WHEN 'annulee' THEN 'Annulée'
+                    ELSE INITCAP(REPLACE(sd.libelle, '_', ' '))
+                END AS statut
+FROM "demandes" "dm"
+JOIN "poste_departement" "pd" ON "pd"."id" = "dm"."id_poste_departement"
+JOIN "postes" "p" ON "p"."id" = "pd"."id_poste"
+JOIN "departements" "d" ON "d"."id" = "pd"."id_departement"
+JOIN "type_contrats" "tc" ON "tc"."id" = "dm"."id_type_contrat"
+JOIN "statut_demandes" "sd" ON "sd"."id" = "dm"."id_statut_actuel"
+LEFT JOIN "utilisateurs" "uc" ON "uc"."id" = "dm"."id_createur"
+LEFT JOIN "utilisateurs" "ua" ON "ua"."id" = "dm"."id_utilisateur_actuel"
+WHERE "dm"."id_utilisateur_actuel" = 3
+ORDER BY "dm"."date_creation" DESC
+DEBUG - 2026-10-23 08:51:07 --> Requête notifications utilisateur 3 :
+SELECT dm.id,
+                dm.date_creation,
+                dm.nombre_demande AS nombre_poste,
+                d.libelle AS departement,
+                p.libelle AS poste,
+                tc.libelle AS type_contrat,
+                dm.date_prise_poste,
+                dm.salaire_propose,
+                uc.login AS utilisateur,
+                ua.login AS utilisateur_actuel,
+                dm.id_createur,
+                dm.id_utilisateur_actuel,
+                CASE sd.libelle
+                    WHEN 'cree' THEN 'Créée'
+                    WHEN 'en_attente' THEN 'En attente'
+                    WHEN 'valide' THEN 'Validée'
+                    WHEN 'refusee' THEN 'Refusée'
+                    WHEN 'annulee' THEN 'Annulée'
+                    ELSE INITCAP(REPLACE(sd.libelle, '_', ' '))
+                END AS statut
+FROM "demandes" "dm"
+JOIN "poste_departement" "pd" ON "pd"."id" = "dm"."id_poste_departement"
+JOIN "postes" "p" ON "p"."id" = "pd"."id_poste"
+JOIN "departements" "d" ON "d"."id" = "pd"."id_departement"
+JOIN "type_contrats" "tc" ON "tc"."id" = "dm"."id_type_contrat"
+JOIN "statut_demandes" "sd" ON "sd"."id" = "dm"."id_statut_actuel"
+LEFT JOIN "utilisateurs" "uc" ON "uc"."id" = "dm"."id_createur"
+LEFT JOIN "utilisateurs" "ua" ON "ua"."id" = "dm"."id_utilisateur_actuel"
+WHERE "dm"."id_utilisateur_actuel" = 3
+ORDER BY "dm"."date_creation" DESC
+DEBUG - 2026-10-23 08:52:15 --> Requête notifications utilisateur 3 :
+SELECT dm.id,
+                dm.date_creation,
+                dm.nombre_demande AS nombre_poste,
+                d.libelle AS departement,
+                p.libelle AS poste,
+                tc.libelle AS type_contrat,
+                dm.date_prise_poste,
+                dm.salaire_propose,
+                uc.login AS utilisateur,
+                ua.login AS utilisateur_actuel,
+                dm.id_createur,
+                dm.id_utilisateur_actuel,
+                CASE sd.libelle
+                    WHEN 'cree' THEN 'Créée'
+                    WHEN 'en_attente' THEN 'En attente'
+                    WHEN 'valide' THEN 'Validée'
+                    WHEN 'refusee' THEN 'Refusée'
+                    WHEN 'annulee' THEN 'Annulée'
+                    ELSE INITCAP(REPLACE(sd.libelle, '_', ' '))
+                END AS statut
+FROM "demandes" "dm"
+JOIN "poste_departement" "pd" ON "pd"."id" = "dm"."id_poste_departement"
+JOIN "postes" "p" ON "p"."id" = "pd"."id_poste"
+JOIN "departements" "d" ON "d"."id" = "pd"."id_departement"
+JOIN "type_contrats" "tc" ON "tc"."id" = "dm"."id_type_contrat"
+JOIN "statut_demandes" "sd" ON "sd"."id" = "dm"."id_statut_actuel"
+LEFT JOIN "utilisateurs" "uc" ON "uc"."id" = "dm"."id_createur"
+LEFT JOIN "utilisateurs" "ua" ON "ua"."id" = "dm"."id_utilisateur_actuel"
+WHERE "dm"."id_utilisateur_actuel" = 3
+ORDER BY "dm"."date_creation" DESC
+DEBUG - 2026-10-23 08:58:18 --> Requête notifications utilisateur 3 :
+SELECT dm.id,
+                dm.date_creation,
+                dm.nombre_demande AS nombre_poste,
+                d.libelle AS departement,
+                p.libelle AS poste,
+                tc.libelle AS type_contrat,
+                dm.date_prise_poste,
+                dm.salaire_propose,
+                uc.login AS utilisateur,
+                ua.login AS utilisateur_actuel,
+                dm.id_createur,
+                dm.id_utilisateur_actuel,
+                CASE sd.libelle
+                    WHEN 'cree' THEN 'Créée'
+                    WHEN 'en_attente' THEN 'En attente'
+                    WHEN 'valide' THEN 'Validée'
+                    WHEN 'refusee' THEN 'Refusée'
+                    WHEN 'annulee' THEN 'Annulée'
+                    ELSE INITCAP(REPLACE(sd.libelle, '_', ' '))
+                END AS statut
+FROM "demandes" "dm"
+JOIN "poste_departement" "pd" ON "pd"."id" = "dm"."id_poste_departement"
+JOIN "postes" "p" ON "p"."id" = "pd"."id_poste"
+JOIN "departements" "d" ON "d"."id" = "pd"."id_departement"
+JOIN "type_contrats" "tc" ON "tc"."id" = "dm"."id_type_contrat"
+JOIN "statut_demandes" "sd" ON "sd"."id" = "dm"."id_statut_actuel"
+LEFT JOIN "utilisateurs" "uc" ON "uc"."id" = "dm"."id_createur"
+LEFT JOIN "utilisateurs" "ua" ON "ua"."id" = "dm"."id_utilisateur_actuel"
+WHERE "dm"."id_utilisateur_actuel" = 3
+ORDER BY "dm"."date_creation" DESC
+DEBUG - 2026-10-23 09:03:51 --> Requête notifications utilisateur 3 :
+SELECT dm.id,
+                dm.date_creation,
+                dm.nombre_demande AS nombre_poste,
+                d.libelle AS departement,
+                p.libelle AS poste,
+                tc.libelle AS type_contrat,
+                dm.date_prise_poste,
+                dm.salaire_propose,
+                uc.login AS utilisateur,
+                ua.login AS utilisateur_actuel,
+                dm.id_createur,
+                dm.id_utilisateur_actuel,
+                CASE sd.libelle
+                    WHEN 'cree' THEN 'Créée'
+                    WHEN 'en_attente' THEN 'En attente'
+                    WHEN 'valide' THEN 'Validée'
+                    WHEN 'refusee' THEN 'Refusée'
+                    WHEN 'annulee' THEN 'Annulée'
+                    ELSE INITCAP(REPLACE(sd.libelle, '_', ' '))
+                END AS statut
+FROM "demandes" "dm"
+JOIN "poste_departement" "pd" ON "pd"."id" = "dm"."id_poste_departement"
+JOIN "postes" "p" ON "p"."id" = "pd"."id_poste"
+JOIN "departements" "d" ON "d"."id" = "pd"."id_departement"
+JOIN "type_contrats" "tc" ON "tc"."id" = "dm"."id_type_contrat"
+JOIN "statut_demandes" "sd" ON "sd"."id" = "dm"."id_statut_actuel"
+LEFT JOIN "utilisateurs" "uc" ON "uc"."id" = "dm"."id_createur"
+LEFT JOIN "utilisateurs" "ua" ON "ua"."id" = "dm"."id_utilisateur_actuel"
+WHERE "dm"."id_utilisateur_actuel" = 3
+ORDER BY "dm"."date_creation" DESC
+DEBUG - 2026-10-23 10:43:54 --> Requête notifications utilisateur 3 :
+SELECT dm.id,
+                dm.date_creation,
+                dm.nombre_demande AS nombre_poste,
+                d.libelle AS departement,
+                p.libelle AS poste,
+                tc.libelle AS type_contrat,
+                dm.date_prise_poste,
+                dm.salaire_propose,
+                uc.login AS utilisateur,
+                ua.login AS utilisateur_actuel,
+                dm.id_createur,
+                dm.id_utilisateur_actuel,
+                CASE sd.libelle
+                    WHEN 'cree' THEN 'Créée'
+                    WHEN 'en_attente' THEN 'En attente'
+                    WHEN 'valide' THEN 'Validée'
+                    WHEN 'refusee' THEN 'Refusée'
+                    WHEN 'annulee' THEN 'Annulée'
+                    ELSE INITCAP(REPLACE(sd.libelle, '_', ' '))
+                END AS statut
+FROM "demandes" "dm"
+JOIN "poste_departement" "pd" ON "pd"."id" = "dm"."id_poste_departement"
+JOIN "postes" "p" ON "p"."id" = "pd"."id_poste"
+JOIN "departements" "d" ON "d"."id" = "pd"."id_departement"
+JOIN "type_contrats" "tc" ON "tc"."id" = "dm"."id_type_contrat"
+JOIN "statut_demandes" "sd" ON "sd"."id" = "dm"."id_statut_actuel"
+LEFT JOIN "utilisateurs" "uc" ON "uc"."id" = "dm"."id_createur"
+LEFT JOIN "utilisateurs" "ua" ON "ua"."id" = "dm"."id_utilisateur_actuel"
+WHERE "dm"."id_utilisateur_actuel" = 3
+ORDER BY "dm"."date_creation" DESC
