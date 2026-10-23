@@ -390,6 +390,146 @@ DEBUG - 2026-10-23 07:49:43 --> Session: Class initialized using 'CodeIgniter\Se
 DEBUG - 2026-10-23 07:49:43 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
 DEBUG - 2026-10-23 07:49:43 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
 DEBUG - 2026-10-23 07:50:19 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+<<<<<<< HEAD
+ERROR - 2026-10-23 07:59:15 --> pg_query(): Query failed: ERROR:  relation &quot;vue_classement_candidats_postes&quot; does not exist
+LINE 2: FROM &quot;vue_classement_candidats_postes&quot;
+             ^
+in SYSTEMPATH/Database/Postgre/Connection.php on line 200.
+ 1 SYSTEMPATH/Database/BaseConnection.php(910): CodeIgniter\Database\Postgre\Connection->execute()
+ 2 SYSTEMPATH/Database/BaseConnection.php(827): CodeIgniter\Database\BaseConnection->simpleQuery()
+ 3 SYSTEMPATH/Database/BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query()
+ 4 APPPATH/Models/CandidatModel.php(35): CodeIgniter\Database\BaseBuilder->get()
+ 5 APPPATH/Models/CandidatModel.php(67): App\Models\CandidatModel->getCandidatsIdeauxByPoste()
+ 6 APPPATH/Controllers/Api/CandidatIdeal.php(24): App\Models\CandidatModel->getCandidatsIdeauxByOffre()
+ 7 APPPATH/Controllers/Api/CandidatIdeal.php(115): App\Controllers\Api\CandidatIdeal->App\Controllers\Api\{closure}()
+ 8 APPPATH/Controllers/Api/CandidatIdeal.php(23): App\Controllers\Api\CandidatIdeal->findCandidates()
+ 9 SYSTEMPATH/CodeIgniter.php(951): App\Controllers\Api\CandidatIdeal->byOffre()
+10 SYSTEMPATH/CodeIgniter.php(497): CodeIgniter\CodeIgniter->runController()
+11 SYSTEMPATH/CodeIgniter.php(340): CodeIgniter\CodeIgniter->handleRequest()
+12 SYSTEMPATH/Boot.php(417): CodeIgniter\CodeIgniter->run()
+13 SYSTEMPATH/Boot.php(68): CodeIgniter\Boot::runCodeIgniter()
+14 FCPATH/index.php(59): CodeIgniter\Boot::bootWeb()
+15 SYSTEMPATH/rewrite.php(44): require_once('/home/itu/Documents/Miantsa/S5/RohySafe-RH/backend/public/index.php')
+ERROR - 2026-10-23 07:59:15 --> Erreur candidats idéaux: pg_query(): Query failed: ERROR:  relation &quot;vue_classement_candidats_postes&quot; does not exist
+LINE 2: FROM &quot;vue_classement_candidats_postes&quot;
+             ^
+ERROR - 2026-10-23 07:59:23 --> pg_query(): Query failed: ERROR:  relation &quot;vue_classement_candidats_postes&quot; does not exist
+LINE 2: FROM &quot;vue_classement_candidats_postes&quot;
+             ^
+in SYSTEMPATH/Database/Postgre/Connection.php on line 200.
+ 1 SYSTEMPATH/Database/BaseConnection.php(910): CodeIgniter\Database\Postgre\Connection->execute()
+ 2 SYSTEMPATH/Database/BaseConnection.php(827): CodeIgniter\Database\BaseConnection->simpleQuery()
+ 3 SYSTEMPATH/Database/BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query()
+ 4 APPPATH/Models/CandidatModel.php(35): CodeIgniter\Database\BaseBuilder->get()
+ 5 APPPATH/Models/CandidatModel.php(67): App\Models\CandidatModel->getCandidatsIdeauxByPoste()
+ 6 APPPATH/Controllers/Api/CandidatIdeal.php(24): App\Models\CandidatModel->getCandidatsIdeauxByOffre()
+ 7 APPPATH/Controllers/Api/CandidatIdeal.php(115): App\Controllers\Api\CandidatIdeal->App\Controllers\Api\{closure}()
+ 8 APPPATH/Controllers/Api/CandidatIdeal.php(23): App\Controllers\Api\CandidatIdeal->findCandidates()
+ 9 SYSTEMPATH/CodeIgniter.php(951): App\Controllers\Api\CandidatIdeal->byOffre()
+10 SYSTEMPATH/CodeIgniter.php(497): CodeIgniter\CodeIgniter->runController()
+11 SYSTEMPATH/CodeIgniter.php(340): CodeIgniter\CodeIgniter->handleRequest()
+12 SYSTEMPATH/Boot.php(417): CodeIgniter\CodeIgniter->run()
+13 SYSTEMPATH/Boot.php(68): CodeIgniter\Boot::runCodeIgniter()
+14 FCPATH/index.php(59): CodeIgniter\Boot::bootWeb()
+15 SYSTEMPATH/rewrite.php(44): require_once('/home/itu/Documents/Miantsa/S5/RohySafe-RH/backend/public/index.php')
+ERROR - 2026-10-23 07:59:23 --> Erreur candidats idéaux: pg_query(): Query failed: ERROR:  relation &quot;vue_classement_candidats_postes&quot; does not exist
+LINE 2: FROM &quot;vue_classement_candidats_postes&quot;
+             ^
+DEBUG - 2026-10-23 07:59:47 --> Requête notifications utilisateur 3 :
+SELECT dm.id,
+                dm.date_creation,
+                dm.nombre_demande AS nombre_poste,
+                d.libelle AS departement,
+                p.libelle AS poste,
+                tc.libelle AS type_contrat,
+                dm.date_prise_poste,
+                dm.salaire_propose,
+                uc.login AS utilisateur,
+                ua.login AS utilisateur_actuel,
+                dm.id_createur,
+                dm.id_utilisateur_actuel,
+                CASE sd.libelle
+                    WHEN 'cree' THEN 'Créée'
+                    WHEN 'en_attente' THEN 'En attente'
+                    WHEN 'valide' THEN 'Validée'
+                    WHEN 'refusee' THEN 'Refusée'
+                    WHEN 'annulee' THEN 'Annulée'
+                    ELSE INITCAP(REPLACE(sd.libelle, '_', ' '))
+                END AS statut
+FROM "demandes" "dm"
+JOIN "poste_departement" "pd" ON "pd"."id" = "dm"."id_poste_departement"
+JOIN "postes" "p" ON "p"."id" = "pd"."id_poste"
+JOIN "departements" "d" ON "d"."id" = "pd"."id_departement"
+JOIN "type_contrats" "tc" ON "tc"."id" = "dm"."id_type_contrat"
+JOIN "statut_demandes" "sd" ON "sd"."id" = "dm"."id_statut_actuel"
+LEFT JOIN "utilisateurs" "uc" ON "uc"."id" = "dm"."id_createur"
+LEFT JOIN "utilisateurs" "ua" ON "ua"."id" = "dm"."id_utilisateur_actuel"
+WHERE "dm"."id_utilisateur_actuel" = 3
+ORDER BY "dm"."date_creation" DESC
+DEBUG - 2026-10-23 07:59:57 --> Requête notifications utilisateur 3 :
+SELECT dm.id,
+                dm.date_creation,
+                dm.nombre_demande AS nombre_poste,
+                d.libelle AS departement,
+                p.libelle AS poste,
+                tc.libelle AS type_contrat,
+                dm.date_prise_poste,
+                dm.salaire_propose,
+                uc.login AS utilisateur,
+                ua.login AS utilisateur_actuel,
+                dm.id_createur,
+                dm.id_utilisateur_actuel,
+                CASE sd.libelle
+                    WHEN 'cree' THEN 'Créée'
+                    WHEN 'en_attente' THEN 'En attente'
+                    WHEN 'valide' THEN 'Validée'
+                    WHEN 'refusee' THEN 'Refusée'
+                    WHEN 'annulee' THEN 'Annulée'
+                    ELSE INITCAP(REPLACE(sd.libelle, '_', ' '))
+                END AS statut
+FROM "demandes" "dm"
+JOIN "poste_departement" "pd" ON "pd"."id" = "dm"."id_poste_departement"
+JOIN "postes" "p" ON "p"."id" = "pd"."id_poste"
+JOIN "departements" "d" ON "d"."id" = "pd"."id_departement"
+JOIN "type_contrats" "tc" ON "tc"."id" = "dm"."id_type_contrat"
+JOIN "statut_demandes" "sd" ON "sd"."id" = "dm"."id_statut_actuel"
+LEFT JOIN "utilisateurs" "uc" ON "uc"."id" = "dm"."id_createur"
+LEFT JOIN "utilisateurs" "ua" ON "ua"."id" = "dm"."id_utilisateur_actuel"
+WHERE "dm"."id_utilisateur_actuel" = 3
+ORDER BY "dm"."date_creation" DESC
+ERROR - 2026-10-23 08:00:58 --> pg_query(): Query failed: ERROR:  relation &quot;vue_classement_candidats_postes&quot; does not exist
+LINE 2: FROM &quot;vue_classement_candidats_postes&quot;
+             ^
+in SYSTEMPATH/Database/Postgre/Connection.php on line 200.
+ 1 SYSTEMPATH/Database/BaseConnection.php(910): CodeIgniter\Database\Postgre\Connection->execute()
+ 2 SYSTEMPATH/Database/BaseConnection.php(827): CodeIgniter\Database\BaseConnection->simpleQuery()
+ 3 SYSTEMPATH/Database/BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query()
+ 4 APPPATH/Models/CandidatModel.php(35): CodeIgniter\Database\BaseBuilder->get()
+ 5 APPPATH/Models/CandidatModel.php(67): App\Models\CandidatModel->getCandidatsIdeauxByPoste()
+ 6 APPPATH/Controllers/Api/CandidatIdeal.php(24): App\Models\CandidatModel->getCandidatsIdeauxByOffre()
+ 7 APPPATH/Controllers/Api/CandidatIdeal.php(115): App\Controllers\Api\CandidatIdeal->App\Controllers\Api\{closure}()
+ 8 APPPATH/Controllers/Api/CandidatIdeal.php(23): App\Controllers\Api\CandidatIdeal->findCandidates()
+ 9 SYSTEMPATH/CodeIgniter.php(951): App\Controllers\Api\CandidatIdeal->byOffre()
+10 SYSTEMPATH/CodeIgniter.php(497): CodeIgniter\CodeIgniter->runController()
+11 SYSTEMPATH/CodeIgniter.php(340): CodeIgniter\CodeIgniter->handleRequest()
+12 SYSTEMPATH/Boot.php(417): CodeIgniter\CodeIgniter->run()
+13 SYSTEMPATH/Boot.php(68): CodeIgniter\Boot::runCodeIgniter()
+14 FCPATH/index.php(59): CodeIgniter\Boot::bootWeb()
+15 SYSTEMPATH/rewrite.php(44): require_once('/home/itu/Documents/Miantsa/S5/RohySafe-RH/backend/public/index.php')
+ERROR - 2026-10-23 08:00:58 --> Erreur candidats idéaux: pg_query(): Query failed: ERROR:  relation &quot;vue_classement_candidats_postes&quot; does not exist
+LINE 2: FROM &quot;vue_classement_candidats_postes&quot;
+             ^
+ERROR - 2026-10-23 08:11:16 --> pg_query(): Query failed: ERROR:  permission denied for table offres
+in SYSTEMPATH/Database/Postgre/Connection.php on line 200.
+ 1 SYSTEMPATH/Database/BaseConnection.php(910): CodeIgniter\Database\Postgre\Connection->execute()
+ 2 SYSTEMPATH/Database/BaseConnection.php(827): CodeIgniter\Database\BaseConnection->simpleQuery()
+ 3 SYSTEMPATH/Database/BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query()
+ 4 APPPATH/Models/CandidatModel.php(60): CodeIgniter\Database\BaseBuilder->get()
+ 5 APPPATH/Controllers/Api/CandidatIdeal.php(24): App\Models\CandidatModel->getCandidatsIdeauxByOffre()
+ 6 APPPATH/Controllers/Api/CandidatIdeal.php(115): App\Controllers\Api\CandidatIdeal->App\Controllers\Api\{closure}()
+ 7 APPPATH/Controllers/Api/CandidatIdeal.php(23): App\Controllers\Api\CandidatIdeal->findCandidates()
+ 8 SYSTEMPATH/CodeIgniter.php(951): App\Controllers\Api\CandidatIdeal->byOffre()
+=======
 ERROR - 2026-10-23 07:58:44 --> Error connecting to the database: ErrorException: pg_connect(): Unable to connect to PostgreSQL server: connection to server at &quot;localhost&quot; (127.0.0.1), port 5432 failed: FATAL:  password authentication failed for user &quot;admin&quot;
 connection to server at &quot;localhost&quot; (127.0.0.1), port 5432 failed: FATAL:  password authentication failed for user &quot;admin&quot; in /home/estelle/S5/MrTovo/RohySafe-RH/backend/system/Database/Postgre/Connection.php:78
 Stack trace:
@@ -424,11 +564,26 @@ in SYSTEMPATH/Database/BaseConnection.php on line 606.
  6 APPPATH/Models/UtilisateurModel.php(47): App\Models\UtilisateurModel->trouverParLogin()
  7 APPPATH/Controllers/Api/Auth.php(16): App\Models\UtilisateurModel->authentifier()
  8 SYSTEMPATH/CodeIgniter.php(951): App\Controllers\Api\Auth->login()
+>>>>>>> 59e14d162ff0a46a9aec3abae24f4bf8b101582c
  9 SYSTEMPATH/CodeIgniter.php(497): CodeIgniter\CodeIgniter->runController()
 10 SYSTEMPATH/CodeIgniter.php(340): CodeIgniter\CodeIgniter->handleRequest()
 11 SYSTEMPATH/Boot.php(417): CodeIgniter\CodeIgniter->run()
 12 SYSTEMPATH/Boot.php(68): CodeIgniter\Boot::runCodeIgniter()
 13 FCPATH/index.php(59): CodeIgniter\Boot::bootWeb()
+<<<<<<< HEAD
+14 SYSTEMPATH/rewrite.php(44): require_once('/home/itu/Documents/Miantsa/S5/RohySafe-RH/backend/public/index.php')
+ERROR - 2026-10-23 08:11:16 --> Erreur candidats idéaux: pg_query(): Query failed: ERROR:  permission denied for table offres
+ERROR - 2026-10-23 08:11:18 --> pg_query(): Query failed: ERROR:  permission denied for table offres
+in SYSTEMPATH/Database/Postgre/Connection.php on line 200.
+ 1 SYSTEMPATH/Database/BaseConnection.php(910): CodeIgniter\Database\Postgre\Connection->execute()
+ 2 SYSTEMPATH/Database/BaseConnection.php(827): CodeIgniter\Database\BaseConnection->simpleQuery()
+ 3 SYSTEMPATH/Database/BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query()
+ 4 APPPATH/Models/CandidatModel.php(60): CodeIgniter\Database\BaseBuilder->get()
+ 5 APPPATH/Controllers/Api/CandidatIdeal.php(24): App\Models\CandidatModel->getCandidatsIdeauxByOffre()
+ 6 APPPATH/Controllers/Api/CandidatIdeal.php(115): App\Controllers\Api\CandidatIdeal->App\Controllers\Api\{closure}()
+ 7 APPPATH/Controllers/Api/CandidatIdeal.php(23): App\Controllers\Api\CandidatIdeal->findCandidates()
+ 8 SYSTEMPATH/CodeIgniter.php(951): App\Controllers\Api\CandidatIdeal->byOffre()
+=======
 14 SYSTEMPATH/rewrite.php(44): require_once('/home/estelle/S5/MrTovo/RohySafe-RH/backend/public/index.php')
 ERROR - 2026-10-23 07:58:52 --> Error connecting to the database: ErrorException: pg_connect(): Unable to connect to PostgreSQL server: connection to server at &quot;localhost&quot; (127.0.0.1), port 5432 failed: FATAL:  password authentication failed for user &quot;admin&quot;
 connection to server at &quot;localhost&quot; (127.0.0.1), port 5432 failed: FATAL:  password authentication failed for user &quot;admin&quot; in /home/estelle/S5/MrTovo/RohySafe-RH/backend/system/Database/Postgre/Connection.php:78
@@ -464,11 +619,26 @@ in SYSTEMPATH/Database/BaseConnection.php on line 606.
  6 APPPATH/Models/UtilisateurModel.php(47): App\Models\UtilisateurModel->trouverParLogin()
  7 APPPATH/Controllers/Api/Auth.php(16): App\Models\UtilisateurModel->authentifier()
  8 SYSTEMPATH/CodeIgniter.php(951): App\Controllers\Api\Auth->login()
+>>>>>>> 59e14d162ff0a46a9aec3abae24f4bf8b101582c
  9 SYSTEMPATH/CodeIgniter.php(497): CodeIgniter\CodeIgniter->runController()
 10 SYSTEMPATH/CodeIgniter.php(340): CodeIgniter\CodeIgniter->handleRequest()
 11 SYSTEMPATH/Boot.php(417): CodeIgniter\CodeIgniter->run()
 12 SYSTEMPATH/Boot.php(68): CodeIgniter\Boot::runCodeIgniter()
 13 FCPATH/index.php(59): CodeIgniter\Boot::bootWeb()
+<<<<<<< HEAD
+14 SYSTEMPATH/rewrite.php(44): require_once('/home/itu/Documents/Miantsa/S5/RohySafe-RH/backend/public/index.php')
+ERROR - 2026-10-23 08:11:18 --> Erreur candidats idéaux: pg_query(): Query failed: ERROR:  permission denied for table offres
+ERROR - 2026-10-23 08:11:19 --> pg_query(): Query failed: ERROR:  permission denied for table offres
+in SYSTEMPATH/Database/Postgre/Connection.php on line 200.
+ 1 SYSTEMPATH/Database/BaseConnection.php(910): CodeIgniter\Database\Postgre\Connection->execute()
+ 2 SYSTEMPATH/Database/BaseConnection.php(827): CodeIgniter\Database\BaseConnection->simpleQuery()
+ 3 SYSTEMPATH/Database/BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query()
+ 4 APPPATH/Models/CandidatModel.php(60): CodeIgniter\Database\BaseBuilder->get()
+ 5 APPPATH/Controllers/Api/CandidatIdeal.php(24): App\Models\CandidatModel->getCandidatsIdeauxByOffre()
+ 6 APPPATH/Controllers/Api/CandidatIdeal.php(115): App\Controllers\Api\CandidatIdeal->App\Controllers\Api\{closure}()
+ 7 APPPATH/Controllers/Api/CandidatIdeal.php(23): App\Controllers\Api\CandidatIdeal->findCandidates()
+ 8 SYSTEMPATH/CodeIgniter.php(951): App\Controllers\Api\CandidatIdeal->byOffre()
+=======
 14 SYSTEMPATH/rewrite.php(44): require_once('/home/estelle/S5/MrTovo/RohySafe-RH/backend/public/index.php')
 ERROR - 2026-10-23 07:58:53 --> Error connecting to the database: ErrorException: pg_connect(): Unable to connect to PostgreSQL server: connection to server at &quot;localhost&quot; (127.0.0.1), port 5432 failed: FATAL:  password authentication failed for user &quot;admin&quot;
 connection to server at &quot;localhost&quot; (127.0.0.1), port 5432 failed: FATAL:  password authentication failed for user &quot;admin&quot; in /home/estelle/S5/MrTovo/RohySafe-RH/backend/system/Database/Postgre/Connection.php:78
@@ -504,12 +674,212 @@ in SYSTEMPATH/Database/BaseConnection.php on line 606.
  6 APPPATH/Models/UtilisateurModel.php(47): App\Models\UtilisateurModel->trouverParLogin()
  7 APPPATH/Controllers/Api/Auth.php(16): App\Models\UtilisateurModel->authentifier()
  8 SYSTEMPATH/CodeIgniter.php(951): App\Controllers\Api\Auth->login()
+>>>>>>> 59e14d162ff0a46a9aec3abae24f4bf8b101582c
  9 SYSTEMPATH/CodeIgniter.php(497): CodeIgniter\CodeIgniter->runController()
 10 SYSTEMPATH/CodeIgniter.php(340): CodeIgniter\CodeIgniter->handleRequest()
 11 SYSTEMPATH/Boot.php(417): CodeIgniter\CodeIgniter->run()
 12 SYSTEMPATH/Boot.php(68): CodeIgniter\Boot::runCodeIgniter()
 13 FCPATH/index.php(59): CodeIgniter\Boot::bootWeb()
+<<<<<<< HEAD
+14 SYSTEMPATH/rewrite.php(44): require_once('/home/itu/Documents/Miantsa/S5/RohySafe-RH/backend/public/index.php')
+ERROR - 2026-10-23 08:11:19 --> Erreur candidats idéaux: pg_query(): Query failed: ERROR:  permission denied for table offres
+ERROR - 2026-10-23 08:11:36 --> pg_query(): Query failed: ERROR:  permission denied for table offres
+in SYSTEMPATH/Database/Postgre/Connection.php on line 200.
+ 1 SYSTEMPATH/Database/BaseConnection.php(910): CodeIgniter\Database\Postgre\Connection->execute()
+ 2 SYSTEMPATH/Database/BaseConnection.php(827): CodeIgniter\Database\BaseConnection->simpleQuery()
+ 3 SYSTEMPATH/Database/BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query()
+ 4 APPPATH/Models/CandidatModel.php(60): CodeIgniter\Database\BaseBuilder->get()
+ 5 APPPATH/Controllers/Api/CandidatIdeal.php(24): App\Models\CandidatModel->getCandidatsIdeauxByOffre()
+ 6 APPPATH/Controllers/Api/CandidatIdeal.php(115): App\Controllers\Api\CandidatIdeal->App\Controllers\Api\{closure}()
+ 7 APPPATH/Controllers/Api/CandidatIdeal.php(23): App\Controllers\Api\CandidatIdeal->findCandidates()
+ 8 SYSTEMPATH/CodeIgniter.php(951): App\Controllers\Api\CandidatIdeal->byOffre()
+ 9 SYSTEMPATH/CodeIgniter.php(497): CodeIgniter\CodeIgniter->runController()
+10 SYSTEMPATH/CodeIgniter.php(340): CodeIgniter\CodeIgniter->handleRequest()
+11 SYSTEMPATH/Boot.php(417): CodeIgniter\CodeIgniter->run()
+12 SYSTEMPATH/Boot.php(68): CodeIgniter\Boot::runCodeIgniter()
+13 FCPATH/index.php(59): CodeIgniter\Boot::bootWeb()
+14 SYSTEMPATH/rewrite.php(44): require_once('/home/itu/Documents/Miantsa/S5/RohySafe-RH/backend/public/index.php')
+ERROR - 2026-10-23 08:11:36 --> Erreur candidats idéaux: pg_query(): Query failed: ERROR:  permission denied for table offres
+ERROR - 2026-10-23 08:11:37 --> pg_query(): Query failed: ERROR:  permission denied for table offres
+in SYSTEMPATH/Database/Postgre/Connection.php on line 200.
+ 1 SYSTEMPATH/Database/BaseConnection.php(910): CodeIgniter\Database\Postgre\Connection->execute()
+ 2 SYSTEMPATH/Database/BaseConnection.php(827): CodeIgniter\Database\BaseConnection->simpleQuery()
+ 3 SYSTEMPATH/Database/BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query()
+ 4 APPPATH/Models/CandidatModel.php(60): CodeIgniter\Database\BaseBuilder->get()
+ 5 APPPATH/Controllers/Api/CandidatIdeal.php(24): App\Models\CandidatModel->getCandidatsIdeauxByOffre()
+ 6 APPPATH/Controllers/Api/CandidatIdeal.php(115): App\Controllers\Api\CandidatIdeal->App\Controllers\Api\{closure}()
+ 7 APPPATH/Controllers/Api/CandidatIdeal.php(23): App\Controllers\Api\CandidatIdeal->findCandidates()
+ 8 SYSTEMPATH/CodeIgniter.php(951): App\Controllers\Api\CandidatIdeal->byOffre()
+ 9 SYSTEMPATH/CodeIgniter.php(497): CodeIgniter\CodeIgniter->runController()
+10 SYSTEMPATH/CodeIgniter.php(340): CodeIgniter\CodeIgniter->handleRequest()
+11 SYSTEMPATH/Boot.php(417): CodeIgniter\CodeIgniter->run()
+12 SYSTEMPATH/Boot.php(68): CodeIgniter\Boot::runCodeIgniter()
+13 FCPATH/index.php(59): CodeIgniter\Boot::bootWeb()
+14 SYSTEMPATH/rewrite.php(44): require_once('/home/itu/Documents/Miantsa/S5/RohySafe-RH/backend/public/index.php')
+ERROR - 2026-10-23 08:11:37 --> Erreur candidats idéaux: pg_query(): Query failed: ERROR:  permission denied for table offres
+ERROR - 2026-10-23 08:11:38 --> pg_query(): Query failed: ERROR:  permission denied for table offres
+in SYSTEMPATH/Database/Postgre/Connection.php on line 200.
+ 1 SYSTEMPATH/Database/BaseConnection.php(910): CodeIgniter\Database\Postgre\Connection->execute()
+ 2 SYSTEMPATH/Database/BaseConnection.php(827): CodeIgniter\Database\BaseConnection->simpleQuery()
+ 3 SYSTEMPATH/Database/BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query()
+ 4 APPPATH/Models/CandidatModel.php(60): CodeIgniter\Database\BaseBuilder->get()
+ 5 APPPATH/Controllers/Api/CandidatIdeal.php(24): App\Models\CandidatModel->getCandidatsIdeauxByOffre()
+ 6 APPPATH/Controllers/Api/CandidatIdeal.php(115): App\Controllers\Api\CandidatIdeal->App\Controllers\Api\{closure}()
+ 7 APPPATH/Controllers/Api/CandidatIdeal.php(23): App\Controllers\Api\CandidatIdeal->findCandidates()
+ 8 SYSTEMPATH/CodeIgniter.php(951): App\Controllers\Api\CandidatIdeal->byOffre()
+ 9 SYSTEMPATH/CodeIgniter.php(497): CodeIgniter\CodeIgniter->runController()
+10 SYSTEMPATH/CodeIgniter.php(340): CodeIgniter\CodeIgniter->handleRequest()
+11 SYSTEMPATH/Boot.php(417): CodeIgniter\CodeIgniter->run()
+12 SYSTEMPATH/Boot.php(68): CodeIgniter\Boot::runCodeIgniter()
+13 FCPATH/index.php(59): CodeIgniter\Boot::bootWeb()
+14 SYSTEMPATH/rewrite.php(44): require_once('/home/itu/Documents/Miantsa/S5/RohySafe-RH/backend/public/index.php')
+ERROR - 2026-10-23 08:11:38 --> Erreur candidats idéaux: pg_query(): Query failed: ERROR:  permission denied for table offres
+ERROR - 2026-10-23 08:11:39 --> pg_query(): Query failed: ERROR:  permission denied for table offres
+in SYSTEMPATH/Database/Postgre/Connection.php on line 200.
+ 1 SYSTEMPATH/Database/BaseConnection.php(910): CodeIgniter\Database\Postgre\Connection->execute()
+ 2 SYSTEMPATH/Database/BaseConnection.php(827): CodeIgniter\Database\BaseConnection->simpleQuery()
+ 3 SYSTEMPATH/Database/BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query()
+ 4 APPPATH/Models/CandidatModel.php(60): CodeIgniter\Database\BaseBuilder->get()
+ 5 APPPATH/Controllers/Api/CandidatIdeal.php(24): App\Models\CandidatModel->getCandidatsIdeauxByOffre()
+ 6 APPPATH/Controllers/Api/CandidatIdeal.php(115): App\Controllers\Api\CandidatIdeal->App\Controllers\Api\{closure}()
+ 7 APPPATH/Controllers/Api/CandidatIdeal.php(23): App\Controllers\Api\CandidatIdeal->findCandidates()
+ 8 SYSTEMPATH/CodeIgniter.php(951): App\Controllers\Api\CandidatIdeal->byOffre()
+ 9 SYSTEMPATH/CodeIgniter.php(497): CodeIgniter\CodeIgniter->runController()
+10 SYSTEMPATH/CodeIgniter.php(340): CodeIgniter\CodeIgniter->handleRequest()
+11 SYSTEMPATH/Boot.php(417): CodeIgniter\CodeIgniter->run()
+12 SYSTEMPATH/Boot.php(68): CodeIgniter\Boot::runCodeIgniter()
+13 FCPATH/index.php(59): CodeIgniter\Boot::bootWeb()
+14 SYSTEMPATH/rewrite.php(44): require_once('/home/itu/Documents/Miantsa/S5/RohySafe-RH/backend/public/index.php')
+ERROR - 2026-10-23 08:11:39 --> Erreur candidats idéaux: pg_query(): Query failed: ERROR:  permission denied for table offres
+ERROR - 2026-10-23 08:11:40 --> pg_query(): Query failed: ERROR:  permission denied for table offres
+in SYSTEMPATH/Database/Postgre/Connection.php on line 200.
+ 1 SYSTEMPATH/Database/BaseConnection.php(910): CodeIgniter\Database\Postgre\Connection->execute()
+ 2 SYSTEMPATH/Database/BaseConnection.php(827): CodeIgniter\Database\BaseConnection->simpleQuery()
+ 3 SYSTEMPATH/Database/BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query()
+ 4 APPPATH/Models/CandidatModel.php(60): CodeIgniter\Database\BaseBuilder->get()
+ 5 APPPATH/Controllers/Api/CandidatIdeal.php(24): App\Models\CandidatModel->getCandidatsIdeauxByOffre()
+ 6 APPPATH/Controllers/Api/CandidatIdeal.php(115): App\Controllers\Api\CandidatIdeal->App\Controllers\Api\{closure}()
+ 7 APPPATH/Controllers/Api/CandidatIdeal.php(23): App\Controllers\Api\CandidatIdeal->findCandidates()
+ 8 SYSTEMPATH/CodeIgniter.php(951): App\Controllers\Api\CandidatIdeal->byOffre()
+ 9 SYSTEMPATH/CodeIgniter.php(497): CodeIgniter\CodeIgniter->runController()
+10 SYSTEMPATH/CodeIgniter.php(340): CodeIgniter\CodeIgniter->handleRequest()
+11 SYSTEMPATH/Boot.php(417): CodeIgniter\CodeIgniter->run()
+12 SYSTEMPATH/Boot.php(68): CodeIgniter\Boot::runCodeIgniter()
+13 FCPATH/index.php(59): CodeIgniter\Boot::bootWeb()
+14 SYSTEMPATH/rewrite.php(44): require_once('/home/itu/Documents/Miantsa/S5/RohySafe-RH/backend/public/index.php')
+ERROR - 2026-10-23 08:11:40 --> Erreur candidats idéaux: pg_query(): Query failed: ERROR:  permission denied for table offres
+ERROR - 2026-10-23 08:11:41 --> pg_query(): Query failed: ERROR:  permission denied for table offres
+in SYSTEMPATH/Database/Postgre/Connection.php on line 200.
+ 1 SYSTEMPATH/Database/BaseConnection.php(910): CodeIgniter\Database\Postgre\Connection->execute()
+ 2 SYSTEMPATH/Database/BaseConnection.php(827): CodeIgniter\Database\BaseConnection->simpleQuery()
+ 3 SYSTEMPATH/Database/BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query()
+ 4 APPPATH/Models/CandidatModel.php(60): CodeIgniter\Database\BaseBuilder->get()
+ 5 APPPATH/Controllers/Api/CandidatIdeal.php(24): App\Models\CandidatModel->getCandidatsIdeauxByOffre()
+ 6 APPPATH/Controllers/Api/CandidatIdeal.php(115): App\Controllers\Api\CandidatIdeal->App\Controllers\Api\{closure}()
+ 7 APPPATH/Controllers/Api/CandidatIdeal.php(23): App\Controllers\Api\CandidatIdeal->findCandidates()
+ 8 SYSTEMPATH/CodeIgniter.php(951): App\Controllers\Api\CandidatIdeal->byOffre()
+ 9 SYSTEMPATH/CodeIgniter.php(497): CodeIgniter\CodeIgniter->runController()
+10 SYSTEMPATH/CodeIgniter.php(340): CodeIgniter\CodeIgniter->handleRequest()
+11 SYSTEMPATH/Boot.php(417): CodeIgniter\CodeIgniter->run()
+12 SYSTEMPATH/Boot.php(68): CodeIgniter\Boot::runCodeIgniter()
+13 FCPATH/index.php(59): CodeIgniter\Boot::bootWeb()
+14 SYSTEMPATH/rewrite.php(44): require_once('/home/itu/Documents/Miantsa/S5/RohySafe-RH/backend/public/index.php')
+ERROR - 2026-10-23 08:11:41 --> Erreur candidats idéaux: pg_query(): Query failed: ERROR:  permission denied for table offres
+ERROR - 2026-10-23 08:11:43 --> pg_query(): Query failed: ERROR:  permission denied for table offres
+in SYSTEMPATH/Database/Postgre/Connection.php on line 200.
+ 1 SYSTEMPATH/Database/BaseConnection.php(910): CodeIgniter\Database\Postgre\Connection->execute()
+ 2 SYSTEMPATH/Database/BaseConnection.php(827): CodeIgniter\Database\BaseConnection->simpleQuery()
+ 3 SYSTEMPATH/Database/BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query()
+ 4 APPPATH/Models/CandidatModel.php(60): CodeIgniter\Database\BaseBuilder->get()
+ 5 APPPATH/Controllers/Api/CandidatIdeal.php(24): App\Models\CandidatModel->getCandidatsIdeauxByOffre()
+ 6 APPPATH/Controllers/Api/CandidatIdeal.php(115): App\Controllers\Api\CandidatIdeal->App\Controllers\Api\{closure}()
+ 7 APPPATH/Controllers/Api/CandidatIdeal.php(23): App\Controllers\Api\CandidatIdeal->findCandidates()
+ 8 SYSTEMPATH/CodeIgniter.php(951): App\Controllers\Api\CandidatIdeal->byOffre()
+ 9 SYSTEMPATH/CodeIgniter.php(497): CodeIgniter\CodeIgniter->runController()
+10 SYSTEMPATH/CodeIgniter.php(340): CodeIgniter\CodeIgniter->handleRequest()
+11 SYSTEMPATH/Boot.php(417): CodeIgniter\CodeIgniter->run()
+12 SYSTEMPATH/Boot.php(68): CodeIgniter\Boot::runCodeIgniter()
+13 FCPATH/index.php(59): CodeIgniter\Boot::bootWeb()
+14 SYSTEMPATH/rewrite.php(44): require_once('/home/itu/Documents/Miantsa/S5/RohySafe-RH/backend/public/index.php')
+ERROR - 2026-10-23 08:11:43 --> Erreur candidats idéaux: pg_query(): Query failed: ERROR:  permission denied for table offres
+ERROR - 2026-10-23 08:11:46 --> pg_query(): Query failed: ERROR:  permission denied for table offres
+in SYSTEMPATH/Database/Postgre/Connection.php on line 200.
+ 1 SYSTEMPATH/Database/BaseConnection.php(910): CodeIgniter\Database\Postgre\Connection->execute()
+ 2 SYSTEMPATH/Database/BaseConnection.php(827): CodeIgniter\Database\BaseConnection->simpleQuery()
+ 3 SYSTEMPATH/Database/BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query()
+ 4 APPPATH/Models/OffreModel.php(42): CodeIgniter\Database\BaseBuilder->get()
+ 5 APPPATH/Controllers/Api/Offre.php(14): App\Models\OffreModel->getOffresPubliees()
+ 6 SYSTEMPATH/CodeIgniter.php(951): App\Controllers\Api\Offre->index()
+ 7 SYSTEMPATH/CodeIgniter.php(497): CodeIgniter\CodeIgniter->runController()
+ 8 SYSTEMPATH/CodeIgniter.php(340): CodeIgniter\CodeIgniter->handleRequest()
+ 9 SYSTEMPATH/Boot.php(417): CodeIgniter\CodeIgniter->run()
+10 SYSTEMPATH/Boot.php(68): CodeIgniter\Boot::runCodeIgniter()
+11 FCPATH/index.php(59): CodeIgniter\Boot::bootWeb()
+12 SYSTEMPATH/rewrite.php(44): require_once('/home/itu/Documents/Miantsa/S5/RohySafe-RH/backend/public/index.php')
+ERROR - 2026-10-23 08:11:46 --> pg_query(): Query failed: ERROR:  permission denied for table offres
+ERROR - 2026-10-23 08:11:49 --> pg_query(): Query failed: ERROR:  permission denied for table offres
+in SYSTEMPATH/Database/Postgre/Connection.php on line 200.
+ 1 SYSTEMPATH/Database/BaseConnection.php(910): CodeIgniter\Database\Postgre\Connection->execute()
+ 2 SYSTEMPATH/Database/BaseConnection.php(827): CodeIgniter\Database\BaseConnection->simpleQuery()
+ 3 SYSTEMPATH/Database/BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query()
+ 4 APPPATH/Models/OffreModel.php(42): CodeIgniter\Database\BaseBuilder->get()
+ 5 APPPATH/Controllers/Api/Offre.php(14): App\Models\OffreModel->getOffresPubliees()
+ 6 SYSTEMPATH/CodeIgniter.php(951): App\Controllers\Api\Offre->index()
+ 7 SYSTEMPATH/CodeIgniter.php(497): CodeIgniter\CodeIgniter->runController()
+ 8 SYSTEMPATH/CodeIgniter.php(340): CodeIgniter\CodeIgniter->handleRequest()
+ 9 SYSTEMPATH/Boot.php(417): CodeIgniter\CodeIgniter->run()
+10 SYSTEMPATH/Boot.php(68): CodeIgniter\Boot::runCodeIgniter()
+11 FCPATH/index.php(59): CodeIgniter\Boot::bootWeb()
+12 SYSTEMPATH/rewrite.php(44): require_once('/home/itu/Documents/Miantsa/S5/RohySafe-RH/backend/public/index.php')
+ERROR - 2026-10-23 08:11:49 --> pg_query(): Query failed: ERROR:  permission denied for table offres
+ERROR - 2026-10-23 08:14:36 --> pg_query(): Query failed: ERROR:  permission denied for table offres
+in SYSTEMPATH/Database/Postgre/Connection.php on line 200.
+ 1 SYSTEMPATH/Database/BaseConnection.php(910): CodeIgniter\Database\Postgre\Connection->execute()
+ 2 SYSTEMPATH/Database/BaseConnection.php(827): CodeIgniter\Database\BaseConnection->simpleQuery()
+ 3 SYSTEMPATH/Database/BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query()
+ 4 APPPATH/Models/OffreModel.php(42): CodeIgniter\Database\BaseBuilder->get()
+ 5 APPPATH/Controllers/Api/Offre.php(14): App\Models\OffreModel->getOffresPubliees()
+ 6 SYSTEMPATH/CodeIgniter.php(951): App\Controllers\Api\Offre->index()
+ 7 SYSTEMPATH/CodeIgniter.php(497): CodeIgniter\CodeIgniter->runController()
+ 8 SYSTEMPATH/CodeIgniter.php(340): CodeIgniter\CodeIgniter->handleRequest()
+ 9 SYSTEMPATH/Boot.php(417): CodeIgniter\CodeIgniter->run()
+10 SYSTEMPATH/Boot.php(68): CodeIgniter\Boot::runCodeIgniter()
+11 FCPATH/index.php(59): CodeIgniter\Boot::bootWeb()
+12 SYSTEMPATH/rewrite.php(44): require_once('/home/itu/Documents/Miantsa/S5/RohySafe-RH/backend/public/index.php')
+ERROR - 2026-10-23 08:14:36 --> pg_query(): Query failed: ERROR:  permission denied for table offres
+ERROR - 2026-10-23 08:14:40 --> pg_query(): Query failed: ERROR:  permission denied for table offres
+in SYSTEMPATH/Database/Postgre/Connection.php on line 200.
+ 1 SYSTEMPATH/Database/BaseConnection.php(910): CodeIgniter\Database\Postgre\Connection->execute()
+ 2 SYSTEMPATH/Database/BaseConnection.php(827): CodeIgniter\Database\BaseConnection->simpleQuery()
+ 3 SYSTEMPATH/Database/BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query()
+ 4 APPPATH/Models/OffreModel.php(42): CodeIgniter\Database\BaseBuilder->get()
+ 5 APPPATH/Controllers/Api/Offre.php(14): App\Models\OffreModel->getOffresPubliees()
+ 6 SYSTEMPATH/CodeIgniter.php(951): App\Controllers\Api\Offre->index()
+ 7 SYSTEMPATH/CodeIgniter.php(497): CodeIgniter\CodeIgniter->runController()
+ 8 SYSTEMPATH/CodeIgniter.php(340): CodeIgniter\CodeIgniter->handleRequest()
+ 9 SYSTEMPATH/Boot.php(417): CodeIgniter\CodeIgniter->run()
+10 SYSTEMPATH/Boot.php(68): CodeIgniter\Boot::runCodeIgniter()
+11 FCPATH/index.php(59): CodeIgniter\Boot::bootWeb()
+12 SYSTEMPATH/rewrite.php(44): require_once('/home/itu/Documents/Miantsa/S5/RohySafe-RH/backend/public/index.php')
+ERROR - 2026-10-23 08:14:40 --> pg_query(): Query failed: ERROR:  permission denied for table offres
+ERROR - 2026-10-23 08:14:41 --> pg_query(): Query failed: ERROR:  permission denied for table offres
+in SYSTEMPATH/Database/Postgre/Connection.php on line 200.
+ 1 SYSTEMPATH/Database/BaseConnection.php(910): CodeIgniter\Database\Postgre\Connection->execute()
+ 2 SYSTEMPATH/Database/BaseConnection.php(827): CodeIgniter\Database\BaseConnection->simpleQuery()
+ 3 SYSTEMPATH/Database/BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query()
+ 4 APPPATH/Models/OffreModel.php(42): CodeIgniter\Database\BaseBuilder->get()
+ 5 APPPATH/Controllers/Api/Offre.php(14): App\Models\OffreModel->getOffresPubliees()
+ 6 SYSTEMPATH/CodeIgniter.php(951): App\Controllers\Api\Offre->index()
+ 7 SYSTEMPATH/CodeIgniter.php(497): CodeIgniter\CodeIgniter->runController()
+ 8 SYSTEMPATH/CodeIgniter.php(340): CodeIgniter\CodeIgniter->handleRequest()
+ 9 SYSTEMPATH/Boot.php(417): CodeIgniter\CodeIgniter->run()
+10 SYSTEMPATH/Boot.php(68): CodeIgniter\Boot::runCodeIgniter()
+11 FCPATH/index.php(59): CodeIgniter\Boot::bootWeb()
+12 SYSTEMPATH/rewrite.php(44): require_once('/home/itu/Documents/Miantsa/S5/RohySafe-RH/backend/public/index.php')
+ERROR - 2026-10-23 08:14:41 --> pg_query(): Query failed: ERROR:  permission denied for table offres
+=======
 14 SYSTEMPATH/rewrite.php(44): require_once('/home/estelle/S5/MrTovo/RohySafe-RH/backend/public/index.php')
 DEBUG - 2026-10-23 07:59:19 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
 DEBUG - 2026-10-23 07:59:19 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
 DEBUG - 2026-10-23 07:59:19 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+>>>>>>> 59e14d162ff0a46a9aec3abae24f4bf8b101582c
