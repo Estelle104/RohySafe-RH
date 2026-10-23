@@ -44,6 +44,7 @@ $routes->group('api', ['namespace' => 'App\Controllers\Api'], function ($routes)
     $routes->post('backoffice/offres/(:num)/exigences/competence', 'ExigenceOffre::enregistrerCompetence/$1');
     $routes->delete('backoffice/offres/(:num)/exigences/competence/(:num)', 'ExigenceOffre::supprimerCompetence/$1/$2');
 
+    $routes->get('backoffice/candidats' , 'ExigenceOffre::formulaire/$1');
     // Finance
     $routes->get('finance/notifications', 'FinanceController::notifications');
     $routes->get('finance/demandes/(:num)', 'FinanceController::fiche/$1');
