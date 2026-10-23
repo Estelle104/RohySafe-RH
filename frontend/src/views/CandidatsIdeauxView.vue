@@ -1,6 +1,7 @@
 <script setup>
 import { useCandidatsIdeaux } from '../composables/useCandidatsIdeaux'
 import CvCard from '../components/CvCard.vue'
+import EntretienDialog from '../components/EntretienDialog.vue'
 
 const {
   candidatsFiltres,
@@ -11,16 +12,29 @@ const {
   cvDetails,
   cvDocuments,
   erreurAction,
-  propositionEnCours,
+  messageAction,
+  entretienCandidat,
+  entretienEnCours,
   voirCv,
   fermerCv,
-  faireProposition,
+  ouvrirEntretien,
+  fermerEntretien,
+  planifierEntretien,
   retourner,
   gererExigences,
   peutGererExigences,
 } = useCandidatsIdeaux()
 
+function formaterDate(valeur) {
+  if (!valeur) {
+    return ''
+  }
 
+  const date = new Date(String(valeur).replace(' ', 'T'))
+  return Number.isNaN(date.getTime())
+    ? valeur
+    : date.toLocaleString('fr-FR', { dateStyle: 'medium', timeStyle: 'short' })
+}
 </script>
 
 <template>
@@ -33,6 +47,7 @@ const {
         placeholder="Rechercher candidat..."
       />
       <div class="nav-right">
+        <router-link class="nav-link" :to="{ name: 'entretiens-offres' }">Entretiens</router-link>
         <span class="nav-link">Mes candidatures</span>
         <div class="avatar-me">TH</div>
       </div>
@@ -68,7 +83,13 @@ const {
         <div class="identity">
           <h2>{{ candidat.prenom }} {{ candidat.nom }}</h2>
           <p>{{ candidat.email }} · {{ candidat.ville || 'Ville non renseignée' }}</p>
-          <small>Compétences validées : {{ candidat.competences_validees }}</small>
+          <small v-if="candidat.competences_validees">
+            Compétences validées : {{ candidat.competences_validees }}
+          </small>
+          <small v-else>Aucun critère de compétence pour ce poste</small>
+          <small v-if="candidat.entretien_cree">
+            Entretien planifié : {{ formaterDate(candidat.date_entretien) }}
+          </small>
         </div>
         <div class="score">
           <strong>{{ candidat.score_total }}</strong>
@@ -79,22 +100,17 @@ const {
           <button class="btn secondary" @click="voirCv(candidat)">Voir le CV</button>
           <button
             class="btn"
-            :disabled="!candidat.id_candidature || propositionEnCours === candidat.id_candidat"
-            @click="faireProposition(candidat)"
+            :disabled="!candidat.id_candidature || candidat.entretien_cree"
+            @click="ouvrirEntretien(candidat)"
           >
-            {{
-              propositionEnCours === candidat.id_candidat
-                ? 'Création...'
-                : candidat.proposition_creee
-                  ? 'Proposition créée'
-                  : 'Créer une proposition'
-            }}
+            {{ candidat.entretien_cree ? 'Entretien planifié' : 'Planifier un entretien' }}
           </button>
         </div>
       </article>
     </section>
 
     <p v-if="erreurAction" class="message error">{{ erreurAction }}</p>
+    <p v-if="messageAction" class="message success">{{ messageAction }}</p>
 
     <div v-if="cvCandidat" class="modal-backdrop" @click.self="fermerCv">
       <CvCard
@@ -104,6 +120,15 @@ const {
         @close="fermerCv"
       />
     </div>
+
+    <EntretienDialog
+      v-if="entretienCandidat"
+      :candidat="entretienCandidat"
+      :enregistrement="entretienEnCours"
+      :erreur="erreurAction"
+      @submit="planifierEntretien"
+      @close="fermerEntretien"
+    />
   </main>
 </template>
 
@@ -259,6 +284,10 @@ const {
 
 .error {
   color: #b42318;
+}
+
+.success {
+  color: #137333;
 }
 
 .actions {

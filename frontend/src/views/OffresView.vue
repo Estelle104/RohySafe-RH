@@ -36,7 +36,6 @@ const {
   voirDetails,
   fermerDetails,
   postuler,
-  voirCandidatsIdeaux,
 } = useOffre()
 </script>
 
@@ -51,7 +50,8 @@ const {
         placeholder="Rechercher une offre..."
       />
       <div class="nav-right">
-        <router-link class="nav-link" to="/backoffice/offres">Backoffice</router-link>
+        <router-link v-if="!candidat" class="nav-link" to="/entretiens">Entretiens</router-link>
+        <router-link class="nav-link" to="/backoffice">Backoffice</router-link>
         <template v-if="candidat">
           <span class="nav-link">{{ candidat.prenom }}</span>
           <button class="nav-link nav-button" type="button" @click="seDeconnecter">
@@ -90,7 +90,6 @@ const {
           :offre="o"
           @details="voirDetails"
           @postuler="postuler"
-          @candidats-ideaux="voirCandidatsIdeaux"
         />
 
         <p v-if="offresFiltrees.length === 0" class="end">Aucune offre trouvée</p>

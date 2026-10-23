@@ -16,8 +16,8 @@
 - **Frontend** : Vue 3, Vite, Vue Router, Pinia.
 - **Communication** : API JSON sous `/api`.
 - **Développement local** :
-  - Backend : `http://localhost:8080`
-  - Frontend : Vite avec proxy `/api` vers `http://localhost:8080`
+  - Backend : `http://localhost:8000`
+  - Frontend : Vite avec proxy `/api` vers `http://localhost:8000`
 - **Base de données** : `rohysafe_rh`
 - **Configuration DB locale** : `backend/app/Config/Database.php` et `backend/.env`.
   - La configuration locale n’est pas la configuration commitée. Ne pas commit les identifiants locaux.
@@ -437,15 +437,59 @@ Règles :
 - La suppression d’une exigence d’expérience est refusée si une candidature l’utilise déjà.
 - Les doublons renvoient `422`.
 
-### 3.4 Modules déjà présents
+### 3.4 Entretiens et évaluation du jury
+
+La planification d’un entretien se fait depuis la page des candidats idéaux d’une offre.
+Le bouton « Planifier un entretien » ouvre un dialogue avec date/heure, lieu et commentaire.
+
+Règles appliquées :
+
+- la candidature passe au statut `entretien` ;
+- l’entretien est créé avec le statut `planifie` ;
+- un historique de statut est enregistré pour la candidature et pour l’entretien ;
+- une candidature ne peut avoir qu’un seul entretien ;
+- seules les candidatures `en_attente`, `preselectionne` ou `selectionne` peuvent être planifiées.
+
+Après l’entretien, le jury saisit **une seule évaluation par candidature** :
+
+- note sur 20 ;
+- remarques libres ;
+- enregistrer une nouvelle évaluation remplace la précédente ;
+- l’entretien passe alors au statut `realise`.
+
+API :
+
+```text
+POST /api/candidatures/:id/entretiens
+GET  /api/entretiens/offres
+GET  /api/entretiens/offres/:id/candidats
+GET  /api/entretiens/candidatures/:id
+PUT  /api/entretiens/candidatures/:id/evaluation
+```
+
+Les routes de création et de consultation des entretiens sont protégées par
+`auth:Manager,RH`.
+
+Pages :
+
+- `/entretiens` : offres ayant des entretiens ;
+- `/entretiens/offres/:id` : candidats convoqués pour une offre ;
+- `/entretiens/candidatures/:id` : fiche d’évaluation du jury.
+
+Migration : `sql/23-10-26-004-evaluations-candidat-simplifiee.sql`.
+
+### 3.5 Modules déjà présents
 
 Les modules suivants existaient déjà dans le projet :
 
 - Finance : notifications, fiche de demande, validation/annulation.
 - Direction générale : notifications, fiche, validation/refus.
 - Offres : liste, détail, candidature.
-- Candidats idéaux : classement, CV, proposition d’embauche.
-- Login candidat fonctionnel (voir 3.1) ; login interne toujours en UI seulement, sans vraie authentification complète.
+- Candidats idéaux : classement, CV, planification d’entretien.
+  L’accès se fait désormais depuis le backoffice (`/backoffice/candidats-ideaux`) :
+  la liste publique des offres ne contient plus le bouton « Candidats idéaux ».
+- Authentification interne par session (`/api/auth/login`, `/api/auth/me`, `/api/auth/logout`)
+  avec contrôle des rôles `DG`, `RH`, `Manager`, `Finance`.
 
 ---
 
@@ -460,10 +504,15 @@ Les modules suivants existaient déjà dans le projet :
 /offres/:id/postuler                    → CV + candidature (login requis)
 /offres/:id/candidats                   → Candidats idéaux pour une offre
 /demandes/:id/candidats                 → Candidats idéaux pour une demande
+/backoffice/candidats-ideaux            → Liste des offres du backoffice
+/backoffice/candidats-ideaux/:id        → Candidats idéaux d’une offre (backoffice)
 /backoffice/offres                      → Liste backoffice des offres
 /backoffice/offres/:id/exigences        → Formulaire des exigences
 /finance                                → Espace finance
 /direction-generale                     → Espace direction générale
+/entretiens                             → Offres avec entretiens (Manager/RH)
+/entretiens/offres/:id                  → Candidats convoqués (Manager/RH)
+/entretiens/candidatures/:id            → Évaluation du jury (Manager/RH)
 ```
 
 Fichier : `frontend/src/router/index.js`
@@ -489,6 +538,11 @@ sql/22-10-26-007.vue.sql
 sql/22-10-26-008-vue-cv-candidat.sql
 sql/22-10-26-009-experiences-candidature.sql
 sql/22-10-26-010-login-candidat.sql
+sql/23-10-26-001-donee-test-grille-salariale.sql
+sql/23-10-26-002-donee-test-candidatures.sql
+sql/23-10-26-003-cdt.sql
+sql/23-10-26-004-evaluations-candidat-simplifiee.sql
+sql/23-10-26-005-vue-candidats-postes-sans-criteres.sql
 ```
 
 `00-reset-database.sql` supprime/réinitialise la base : à utiliser avec prudence.
@@ -503,6 +557,15 @@ sql/22-10-26-010-login-candidat.sql
   - Ajoute la contrainte unique `(id_poste_departement, id_poste_experience)` sur `exigences_experience`.
 - `sql/22-10-26-010-login-candidat.sql`
   - Réinitialise les mots de passe des comptes de démonstration `miora_test` et `tiana_test` avec `candidat123`.
+- `sql/23-10-26-004-evaluations-candidat-simplifiee.sql`
+  - Supprime les anciennes évaluations de test.
+  - Recrée `evaluations_candidat` avec une seule ligne par candidature :
+    `id`, `id_candidature` (unique), `note`, `remarques`, `date_evaluation`.
+- `sql/23-10-26-005-vue-candidats-postes-sans-criteres.sql`
+  - Met à jour `vue_classement_candidats_postes`.
+  - Pour un poste sans critère de compétence, tous les candidats sont classés avec
+    un score de 0 : ils restent ainsi visibles dans les candidats idéaux et la
+    présélection peut utiliser leurs expériences de candidature.
 
 ### Table `experiences_candidature`
 
@@ -652,8 +715,12 @@ rm -rf backend/public/assets
   - Liste backoffice des offres et CRUD des exigences.
 - `backend/app/Controllers/Api/CandidatIdeal.php`
   - Candidats idéaux, CV recruteur, proposition d’embauche.
+- `backend/app/Controllers/Api/EntretienController.php`
+  - Liste des offres avec entretiens, candidats convoqués, détail et évaluation.
 - `backend/app/Models/CandidatModel.php`
-  - `findByIdentifiant()`, `getCv()`, présélection par expériences.
+  - `findByIdentifiant()`, `getCv()`, présélection par expériences, état des entretiens.
+- `backend/app/Models/EntretienModel.php`
+  - Requêtes du suivi des entretiens et enregistrement de l’évaluation unique.
 - `backend/app/Models/OffreModel.php`
   - Offres publiées, liste backoffice, détail avec exigences.
 - `backend/app/Models/ExperienceCandidatureModel.php`
@@ -694,13 +761,27 @@ rm -rf backend/public/assets
 - `frontend/src/components/CvCard.vue`
   - Affichage du CV recruteur.
 - `frontend/src/views/CandidatsIdeauxView.vue`
-  - Candidats idéaux + bouton d’accès aux exigences.
+  - Candidats idéaux, accès aux exigences et dialogue de planification d’entretien.
+- `frontend/src/components/EntretienDialog.vue`
+  - Formulaire date/heure, lieu et commentaire pour un entretien.
+- `frontend/src/services/entretienService.js`
+  - Appels API de création et de suivi des entretiens.
+- `frontend/src/services/authInterne.js`
+  - Lecture de la session interne et contrôle des rôles.
+- `frontend/src/views/EntretiensOffresView.vue`
+  - Liste des offres ayant des entretiens.
+- `frontend/src/views/EntretiensCandidatsView.vue`
+  - Candidats convoqués pour une offre.
+- `frontend/src/views/EntretienEvaluationView.vue`
+  - Fiche d’évaluation du jury.
 
 ### SQL
 
 - `sql/22-10-26-008-vue-cv-candidat.sql`
 - `sql/22-10-26-009-experiences-candidature.sql`
 - `sql/22-10-26-010-login-candidat.sql`
+- `sql/23-10-26-004-evaluations-candidat-simplifiee.sql`
+- `sql/23-10-26-005-vue-candidats-postes-sans-criteres.sql`
 
 ---
 
@@ -711,8 +792,10 @@ rm -rf backend/public/assets
    des API CV. Un utilisateur peut modifier cet identifiant : il faudra ajouter un
    token/session vérifié côté backend.
 
-2. **Pas d’authentification réelle** pour le backoffice.
-   Les routes `/backoffice/*` et `/api/backoffice/*` ne vérifient aucun rôle.
+2. **Le backoffice n’applique pas encore le contrôle de rôle.**
+   L’authentification interne existe, mais les routes `/backoffice/*` et
+   `/api/backoffice/*` ne sont pas toutes protégées. Les routes d’entretiens,
+   elles, exigent le rôle `Manager` ou `RH`.
 
 3. **La route de candidature est protégée côté frontend seulement.**
    Les API CV restent appelables directement si l’on connaît l’identifiant du candidat.
@@ -787,7 +870,7 @@ cd backend
 php -l app/Controllers/Api/AuthCandidat.php
 php -l app/Controllers/Api/CvCandidature.php
 php -l app/Controllers/Api/ExigenceOffre.php
-php spark serve --port 8080
+php spark serve --port 8000
 ```
 
 ### Frontend
@@ -802,12 +885,19 @@ npm run build
 ### Vérification API
 
 ```bash
-curl http://127.0.0.1:8080/api/backoffice/offres
-curl http://127.0.0.1:8080/api/backoffice/offres/8/exigences
-curl -X POST http://127.0.0.1:8080/api/candidats/login \
+curl http://127.0.0.1:8000/api/backoffice/offres
+curl http://127.0.0.1:8000/api/backoffice/offres/8/exigences
+curl -X POST http://127.0.0.1:8000/api/candidats/login \
   -H 'Content-Type: application/json' \
   -d '{"identifiant":"miora_test","mot_de_passe":"candidat123"}'
-curl http://127.0.0.1:8080/api/candidats/1/offres/8/cv
+curl http://127.0.0.1:8000/api/candidats/1/offres/8/cv
+
+# Entretiens (session interne Manager ou RH)
+curl -c cookies.txt -H 'Content-Type: application/json' \
+  -d '{"login":"manager_info_test","mdp":"Password123!"}' \
+  http://127.0.0.1:8000/api/auth/login
+curl -b cookies.txt http://127.0.0.1:8000/api/entretiens/offres
+curl -b cookies.txt http://127.0.0.1:8000/api/entretiens/offres/8/candidats
 ```
 
 ### Nettoyage après build

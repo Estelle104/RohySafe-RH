@@ -66,7 +66,14 @@ $routes->group('api', ['namespace' => 'App\Controllers\Api'], function ($routes)
         $routes->post('demandes/(:num)/proposition-salaire', 'RHController::proposerSalaire/$1');
         $routes->post('demandes/(:num)/refuser', 'RHController::refuser/$1');
         $routes->get('candidatures', 'CandidatureController::index');
-        $routes->post('candidatures/(:num)/entretiens', 'CandidatureController::creerEntretien/$1');
+        $routes->post('candidatures/(:num)/entretiens', 'CandidatureController::creerEntretien/$1', ['filter' => 'auth:Manager,RH']);
         $routes->get('candidatures/(:num)/contrat', 'CandidatureController::ficheContrat/$1');
         $routes->post('candidatures/(:num)/contrat', 'CandidatureController::genererContrat/$1');
+
+        $routes->group('entretiens', ['filter' => 'auth:Manager,RH'], static function ($routes) {
+            $routes->get('offres', 'EntretienController::offres');
+            $routes->get('offres/(:num)/candidats', 'EntretienController::candidats/$1');
+            $routes->get('candidatures/(:num)', 'EntretienController::detail/$1');
+            $routes->put('candidatures/(:num)/evaluation', 'EntretienController::enregistrerEvaluation/$1');
+        });
 });

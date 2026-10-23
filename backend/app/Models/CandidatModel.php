@@ -76,8 +76,38 @@ class CandidatModel extends Model
             $idsParCandidat[(int) $candidature['id_candidat']] = (int) $candidature['id'];
         }
 
+        $entretiensParCandidature = [];
+        if ($idsParCandidat !== []) {
+            $entretiens = $this->db->table('entretiens e')
+                ->select('e.id AS id_entretien, e.id_candidature, e.date_entretien, e.lieu_entretien, se.libelle AS statut_entretien, ec.note AS note_evaluation, ec.remarques AS remarques_evaluation')
+                ->join('statut_entretiens se', 'se.id = e.id_statut_actuel', 'left')
+                ->join('evaluations_candidat ec', 'ec.id_candidature = e.id_candidature', 'left')
+                ->whereIn('e.id_candidature', array_values($idsParCandidat))
+                ->orderBy('e.date_entretien', 'DESC')
+                ->orderBy('e.id', 'DESC')
+                ->get()
+                ->getResultArray();
+
+            foreach ($entretiens as $entretien) {
+                $idCandidature = (int) $entretien['id_candidature'];
+                if (! isset($entretiensParCandidature[$idCandidature])) {
+                    $entretiensParCandidature[$idCandidature] = $entretien;
+                }
+            }
+        }
+
         foreach ($candidats as &$candidat) {
-            $candidat['id_candidature'] = $idsParCandidat[(int) $candidat['id_candidat']] ?? null;
+            $idCandidature = $idsParCandidat[(int) $candidat['id_candidat']] ?? null;
+            $entretien = $idCandidature !== null ? ($entretiensParCandidature[$idCandidature] ?? null) : null;
+
+            $candidat['id_candidature'] = $idCandidature;
+            $candidat['entretien_cree'] = $entretien !== null;
+            $candidat['id_entretien'] = $entretien['id_entretien'] ?? null;
+            $candidat['date_entretien'] = $entretien['date_entretien'] ?? null;
+            $candidat['lieu_entretien'] = $entretien['lieu_entretien'] ?? null;
+            $candidat['statut_entretien'] = $entretien['statut_entretien'] ?? null;
+            $candidat['note_evaluation'] = $entretien['note_evaluation'] ?? null;
+            $candidat['remarques_evaluation'] = $entretien['remarques_evaluation'] ?? null;
         }
         unset($candidat);
 
