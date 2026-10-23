@@ -18,10 +18,11 @@ class DemandeModel extends Model
     {
         return $this->db->table('demandes d')
             ->select('tc.libelle')
-            ->join('type_contrat tc', 'tc.id = d.id_type_contrat')
+            ->join('type_contrats tc', 'tc.id = d.id_type_contrat')
             ->where('d.id', $idDemande)
             ->get()
             ->getRowArray();
+    }
 
     public function trouverAvecDepartement(int $id): ?array
     {
