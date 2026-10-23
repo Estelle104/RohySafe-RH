@@ -82,8 +82,8 @@ class Database extends Config
        public array $default = [
            'DSN'        => '',
            'hostname'   => 'localhost',
-           'username'   => 'postgres',
-           'password'   => 'postgres',
+           'username'   => 'admin',
+           'password'   => 'admin',
            'database'   => 'rohysafe_rh',
            'schema'     => 'public',
            'DBDriver'   => 'Postgre',

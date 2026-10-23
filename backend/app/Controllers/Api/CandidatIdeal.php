@@ -35,7 +35,8 @@ class CandidatIdeal extends BaseController
         }
 
         try {
-            $cv = (new CandidatModel())->getCv($idCandidat);
+            $idOffre = (int) ($this->request->getGet('offre') ?? 0);
+            $cv = (new CandidatModel())->getCv($idCandidat, $idOffre > 0 ? $idOffre : null);
 
             if ($cv === null) {
                 return $this->response->setStatusCode(404)->setJSON([

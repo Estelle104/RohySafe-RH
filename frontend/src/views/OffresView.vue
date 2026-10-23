@@ -1,7 +1,26 @@
 <script setup>
+import { computed, ref } from 'vue'
+import { useRouter } from 'vue-router'
 import { useOffre } from '../composables/useOffre.js'
 import OffreCard from '../components/OffreCard.vue'
 import ContratCard from '../components/ContratCard.vue'
+import { deconnecterCandidat, getCandidatConnecte } from '../services/candidatAuth'
+
+const router = useRouter()
+const candidat = ref(getCandidatConnecte())
+const initiales = computed(() => {
+  if (!candidat.value) {
+    return ''
+  }
+
+  return `${candidat.value.prenom?.charAt(0) ?? ''}${candidat.value.nom?.charAt(0) ?? ''}`
+})
+
+function seDeconnecter() {
+  deconnecterCandidat()
+  candidat.value = null
+  router.push({ name: 'candidat-login' })
+}
 
 const {
   recherche,
@@ -32,8 +51,15 @@ const {
         placeholder="Rechercher une offre..."
       />
       <div class="nav-right">
-        <span class="nav-link">Mes candidatures</span>
-        <div class="avatar-me">TH</div>
+        <router-link class="nav-link" to="/backoffice/offres">Backoffice</router-link>
+        <template v-if="candidat">
+          <span class="nav-link">{{ candidat.prenom }}</span>
+          <button class="nav-link nav-button" type="button" @click="seDeconnecter">
+            Déconnexion
+          </button>
+          <div class="avatar-me">{{ initiales }}</div>
+        </template>
+        <router-link v-else class="nav-link" to="/candidats/login">Espace candidat</router-link>
       </div>
     </header>
 
@@ -139,10 +165,18 @@ const {
   font-weight: 700;
   color: #747474;
   cursor: pointer;
+  text-decoration: none;
 }
 
 .nav-link:hover {
   color: #000;
+}
+
+.nav-button {
+  border: 0;
+  background: transparent;
+  font-family: inherit;
+  padding: 0;
 }
 
 .avatar-me {
@@ -227,6 +261,8 @@ const {
   color: #667085;
   cursor: pointer;
 }
+
+
 
 .end {
   text-align: center;

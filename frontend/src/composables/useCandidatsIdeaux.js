@@ -39,7 +39,8 @@ export function useCandidatsIdeaux() {
     erreurAction.value = ''
 
     try {
-      const resultat = await getCvCandidat(candidat.id_candidat)
+      const idOffre = route.name === 'candidats-ideaux' ? route.params.id : null
+      const resultat = await getCvCandidat(candidat.id_candidat, idOffre)
       cvDetails.value = resultat.cv
       cvDocuments.value = resultat.cv?.documents ?? []
       cvCandidat.value = candidat
@@ -62,6 +63,14 @@ export function useCandidatsIdeaux() {
     router.push({ name: 'offres' })
   }
 
+  function gererExigences() {
+    if (route.name !== 'candidats-ideaux') {
+      return
+    }
+
+    router.push({ name: 'exigences-offre', params: { id: route.params.id } })
+  }
+
   async function faireProposition(candidat) {
     if (!candidat.id_candidature) {
       erreurAction.value = 'Ce candidat n’a pas de candidature pour cette offre.'
@@ -80,6 +89,8 @@ export function useCandidatsIdeaux() {
       propositionEnCours.value = null
     }
   }
+
+  const peutGererExigences = computed(() => route.name === 'candidats-ideaux')
 
   const candidatsFiltres = computed(() => {
     const rechercheNormalisee = recherche.value.trim().toLowerCase()
@@ -111,5 +122,7 @@ export function useCandidatsIdeaux() {
     fermerCv,
     faireProposition,
     retourner,
+    gererExigences,
+    peutGererExigences,
   }
 }

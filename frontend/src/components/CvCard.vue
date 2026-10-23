@@ -6,6 +6,14 @@ defineProps({
 })
 
 defineEmits(['close'])
+
+function experienceSatisfaite(experience) {
+  const dureeMin = Number(
+    experience.duree_min_jours ?? Number(experience.duree_min ?? 0) * 30
+  )
+
+  return Number(experience.duree_jours ?? 0) >= dureeMin
+}
 </script>
 
 <template>
@@ -50,6 +58,34 @@ defineEmits(['close'])
           <strong>{{ experience.poste }}</strong>
           <span>{{ experience.date_debut }} - {{ experience.date_fin || 'aujourd’hui' }}</span>
           <span>{{ experience.description }}</span>
+        </li>
+      </ul>
+    </section>
+
+    <section v-if="details?.experiences_exigences">
+      <h3>Expériences demandées pour cette offre</h3>
+      <p v-if="details.experiences_exigences.length === 0" class="empty">
+        Aucune expérience renseignée pour cette offre.
+      </p>
+      <ul v-else>
+        <li
+          v-for="experience in details.experiences_exigences"
+          :key="experience.id"
+        >
+          <strong>{{ experience.poste }}</strong>
+          <span>
+            {{ experience.date_debut }} - {{ experience.date_fin }} ·
+            {{ experience.duree_jours }} jour(s)
+          </span>
+          <span
+            class="statut"
+            :class="experienceSatisfaite(experience) ? 'ok' : 'ko'"
+          >
+            {{ experienceSatisfaite(experience) ? 'Satisfait' : 'Insuffisant' }} ·
+            requis {{ experience.duree_min }} mois
+            <template v-if="experience.duree_max"> à {{ experience.duree_max }} mois</template>
+            <template v-if="experience.obligatoire === true"> · obligatoire</template>
+          </span>
         </li>
       </ul>
     </section>
@@ -135,6 +171,24 @@ li span {
   display: block;
   color: #667085;
   font-size: 13px;
+}
+
+li span.statut {
+  display: inline-block;
+  margin-top: 4px;
+  padding: 3px 9px;
+  border-radius: 20px;
+  font-weight: 700;
+}
+
+li span.statut.ok {
+  background: #e7f6ec;
+  color: #067647;
+}
+
+li span.statut.ko {
+  background: #fdecec;
+  color: #b42318;
 }
 
 .close {

@@ -21,8 +21,20 @@ $routes->group('api', ['namespace' => 'App\Controllers\Api'], function ($routes)
     $routes->get('offres/(:num)', 'Offre::detail/$1');
     $routes->get('offres/(:num)/candidats-ideaux', 'CandidatIdeal::byOffre/$1');
     $routes->get('demandes/(:num)/candidats-ideaux', 'CandidatIdeal::byDemande/$1');
+    $routes->post('candidats/login', 'AuthCandidat::login');
+    $routes->post('candidats/inscription', 'AuthCandidat::inscrire');
     $routes->get('candidats/(:num)/cv', 'CandidatIdeal::cv/$1');
+    $routes->get('candidats/(:num)/offres/(:num)/cv', 'CvCandidature::formulaire/$1/$2');
+    $routes->post('candidats/(:num)/offres/(:num)/cv', 'CvCandidature::enregistrer/$1/$2');
     $routes->post('candidatures/(:num)/proposition', 'CandidatIdeal::createProposition/$1');
+
+    // Backoffice des exigences d'offre
+    $routes->get('backoffice/offres', 'ExigenceOffre::offres');
+    $routes->get('backoffice/offres/(:num)/exigences', 'ExigenceOffre::formulaire/$1');
+    $routes->post('backoffice/offres/(:num)/exigences/experience', 'ExigenceOffre::enregistrerExperience/$1');
+    $routes->delete('backoffice/offres/(:num)/exigences/experience/(:num)', 'ExigenceOffre::supprimerExperience/$1/$2');
+    $routes->post('backoffice/offres/(:num)/exigences/competence', 'ExigenceOffre::enregistrerCompetence/$1');
+    $routes->delete('backoffice/offres/(:num)/exigences/competence/(:num)', 'ExigenceOffre::supprimerCompetence/$1/$2');
 
     // Finance
     $routes->get('finance/notifications', 'FinanceController::notifications');
