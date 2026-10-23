@@ -10,5 +10,20 @@ export default createRouter({
     { path: '/candidats/login', component: LoginCandidatsView },
     { path: '/offres', name: 'offres', component: () => import('../views/OffresView.vue') },
     { path: '/demandes/nouvelle', name: 'demande-create', component: () => import('../views/demande/NouvelleDemandeView.vue') }
+
+    { path: '/offres', name: 'offres', component: () => import('../views/OffresView.vue') },
+    {
+      path: '/offres/:id/candidats',
+      name: 'candidats-ideaux',
+      component: () => import('../views/CandidatsIdeauxView.vue')
+    },
+    {
+      path: '/demandes/:id/candidats',
+      name: 'candidats-ideaux-demande',
+      component: () => import('../views/CandidatsIdeauxView.vue')
+    }
+    ,{ path: '/finance', name: 'finance', component: () => import('../views/FinanceView.vue') }
+    ,{ path: '/direction-generale', name: 'direction-generale', component: () => import('../views/DirectionGeneraleView.vue') }
+
   ],
 })

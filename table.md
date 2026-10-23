@@ -96,3 +96,6 @@ Dans `criteres_poste`, au moins l'un des champs `id_competence` ou `id_softskill
 | `statut_employes` | `id(PK)`, `libelle` - statut employes |
 | `employes`          | `id (PK)`, `id_candidat (FK, unique)`, `matricule`, `date_embauche` — Informations administratives de l'employé.                                                                            |
 | `historique_employes_statut` | `id_employes(PK)`, `id_statut_employes`, `daty` |
+
+
+est ce que tu as compris: voici comment ca marche , dans la page finance il y a une notification (cloche avec nombre de notification)quand on clique sur une notification => la fiche du demande avec les calcul automatique s'affiche et si la demande est valider alors le boutton valider peut etre cliquer sinon elle est griser et seul le boutton annuler peut etre cliquer ,  dans cette partie le system fait tout mais juste la fincance valide ou non 
