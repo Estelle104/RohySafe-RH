@@ -321,18 +321,6 @@ WHERE c.email = 'miora.rakoto@example.test'
       WHERE f.id_candidat = c.id AND f.diplome = 'Licence en informatique'
   );
 
-INSERT INTO competences_candidat (id_candidat, id_competence, niveau)
-SELECT c.id, comp.id, v.niveau
-FROM (
-    VALUES
-        ('miora.rakoto@example.test', 'PHP', 'Technique', 16::NUMERIC),
-        ('miora.rakoto@example.test', 'PostgreSQL', 'Technique', 14::NUMERIC),
-        ('tiana.andria@example.test', 'Gestion RH', 'Métier', 15::NUMERIC)
-) AS v(email, libelle, categorie, niveau)
-JOIN candidats c ON c.email = v.email
-JOIN competences comp ON comp.libelle = v.libelle AND comp.categorie = v.categorie
-ON CONFLICT (id_candidat, id_competence) DO NOTHING;
-
 INSERT INTO documents_candidat (
     id_candidat, id_type_document, nom_fichier, chemin_fichier
 )
@@ -364,6 +352,43 @@ WHERE NOT EXISTS (
     SELECT 1 FROM historique_candidature_status h
     WHERE h.id_candidature = ca.id
 );
+
+DO $$
+BEGIN
+    IF EXISTS (
+        SELECT 1
+        FROM information_schema.columns
+        WHERE table_schema = 'public'
+          AND table_name = 'competences_candidat'
+          AND column_name = 'id_candidature'
+    ) THEN
+        INSERT INTO competences_candidat (id_candidature, id_competence, niveau)
+        SELECT ca.id, comp.id, v.niveau
+        FROM (
+            VALUES
+                ('miora.rakoto@example.test', 'PHP', 'Technique', 16::NUMERIC),
+                ('miora.rakoto@example.test', 'PostgreSQL', 'Technique', 14::NUMERIC),
+                ('tiana.andria@example.test', 'Gestion RH', 'Métier', 15::NUMERIC)
+        ) AS v(email, libelle, categorie, niveau)
+        JOIN candidats c ON c.email = v.email
+        JOIN candidatures ca ON ca.id_candidat = c.id
+        JOIN competences comp ON comp.libelle = v.libelle AND comp.categorie = v.categorie
+        ON CONFLICT (id_candidature, id_competence) DO NOTHING;
+    ELSE
+        INSERT INTO competences_candidat (id_candidat, id_competence, niveau)
+        SELECT c.id, comp.id, v.niveau
+        FROM (
+            VALUES
+                ('miora.rakoto@example.test', 'PHP', 'Technique', 16::NUMERIC),
+                ('miora.rakoto@example.test', 'PostgreSQL', 'Technique', 14::NUMERIC),
+                ('tiana.andria@example.test', 'Gestion RH', 'Métier', 15::NUMERIC)
+        ) AS v(email, libelle, categorie, niveau)
+        JOIN candidats c ON c.email = v.email
+        JOIN competences comp ON comp.libelle = v.libelle AND comp.categorie = v.categorie
+        ON CONFLICT (id_candidat, id_competence) DO NOTHING;
+    END IF;
+END
+$$;
 
 -- 10. Entretien et évaluation
 INSERT INTO entretiens (

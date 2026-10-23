@@ -1,15 +1,18 @@
 import { computed, onMounted, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import {
-  creerProposition,
   getCandidatsIdeauxByDemande,
   getCandidatsIdeauxByOffre,
   getCvCandidat,
 } from '../services/candidatService'
+import { creerEntretien } from '../services/entretienService'
 
 export function useCandidatsIdeaux() {
   const route = useRoute()
   const router = useRouter()
+  const estContexteOffre = computed(() =>
+    ['candidats-ideaux', 'backoffice-candidats-ideaux-offre'].includes(route.name)
+  )
   const candidats = ref([])
   const chargement = ref(true)
   const erreur = ref('')
@@ -18,7 +21,9 @@ export function useCandidatsIdeaux() {
   const cvDetails = ref(null)
   const cvDocuments = ref([])
   const erreurAction = ref('')
-  const propositionEnCours = ref(null)
+  const messageAction = ref('')
+  const entretienCandidat = ref(null)
+  const entretienEnCours = ref(false)
 
   async function chargerCandidats() {
     chargement.value = true
@@ -39,7 +44,7 @@ export function useCandidatsIdeaux() {
     erreurAction.value = ''
 
     try {
-      const idOffre = route.name === 'candidats-ideaux' ? route.params.id : null
+      const idOffre = estContexteOffre.value ? route.params.id : null
       const resultat = await getCvCandidat(candidat.id_candidat, idOffre)
       cvDetails.value = resultat.cv
       cvDocuments.value = resultat.cv?.documents ?? []
@@ -55,6 +60,11 @@ export function useCandidatsIdeaux() {
     cvDocuments.value = []
   }
   function retourner() {
+    if (route.name === 'backoffice-candidats-ideaux-offre') {
+      router.push({ name: 'backoffice-candidats-ideaux' })
+      return
+    }
+
     if (window.history.length > 1) {
       router.back()
       return
@@ -64,33 +74,64 @@ export function useCandidatsIdeaux() {
   }
 
   function gererExigences() {
-    if (route.name !== 'candidats-ideaux') {
+    if (!estContexteOffre.value) {
       return
     }
 
     router.push({ name: 'exigences-offre', params: { id: route.params.id } })
   }
 
-  async function faireProposition(candidat) {
+  function ouvrirEntretien(candidat) {
+    erreurAction.value = ''
+    messageAction.value = ''
+
     if (!candidat.id_candidature) {
       erreurAction.value = 'Ce candidat n’a pas de candidature pour cette offre.'
       return
     }
 
+    if (candidat.entretien_cree) {
+      erreurAction.value = 'Un entretien est déjà planifié pour cette candidature.'
+      return
+    }
+
+    entretienCandidat.value = candidat
+  }
+
+  function fermerEntretien() {
+    if (entretienEnCours.value) {
+      return
+    }
+
+    entretienCandidat.value = null
     erreurAction.value = ''
-    propositionEnCours.value = candidat.id_candidat
+  }
+
+  async function planifierEntretien(donnees) {
+    if (!entretienCandidat.value) {
+      return
+    }
+
+    erreurAction.value = ''
+    entretienEnCours.value = true
+    const candidat = entretienCandidat.value
 
     try {
-      await creerProposition(candidat.id_candidature)
-      candidat.proposition_creee = true
+      await creerEntretien(candidat.id_candidature, donnees)
+      candidat.entretien_cree = true
+      candidat.date_entretien = donnees.date_entretien
+      candidat.lieu_entretien = donnees.lieu_entretien
+      candidat.statut_entretien = 'planifie'
+      entretienCandidat.value = null
+      messageAction.value = `L’entretien de ${candidat.prenom} ${candidat.nom} a été planifié.`
     } catch (e) {
       erreurAction.value = e.message
     } finally {
-      propositionEnCours.value = null
+      entretienEnCours.value = false
     }
   }
 
-  const peutGererExigences = computed(() => route.name === 'candidats-ideaux')
+  const peutGererExigences = estContexteOffre
 
   const candidatsFiltres = computed(() => {
     const rechercheNormalisee = recherche.value.trim().toLowerCase()
@@ -117,10 +158,14 @@ export function useCandidatsIdeaux() {
     cvDetails,
     cvDocuments,
     erreurAction,
-    propositionEnCours,
+    messageAction,
+    entretienCandidat,
+    entretienEnCours,
     voirCv,
     fermerCv,
-    faireProposition,
+    ouvrirEntretien,
+    fermerEntretien,
+    planifierEntretien,
     retourner,
     gererExigences,
     peutGererExigences,

@@ -17,8 +17,10 @@
 
 <script setup>
 import { ref } from 'vue'
-import { useRouter } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
+import { reinitialiserUtilisateurInterne } from '../services/authInterne'
 
+const route = useRoute()
 const router = useRouter()
 const login = ref('')
 const mdp = ref('')
@@ -41,7 +43,10 @@ async function connecter() {
       throw new Error(`Le serveur n’a pas renvoyé de réponse JSON (HTTP ${response.status}). Vérifiez le backend.`)
     }
     if (!response.ok) throw new Error(result.messages?.error || 'Identifiant ou mot de passe incorrect.')
-    await router.push('/demandes/nouvelle')
+
+    reinitialiserUtilisateurInterne(result.utilisateur)
+    const redirection = typeof route.query.redirect === 'string' ? route.query.redirect : ''
+    await router.push(redirection.startsWith('/') ? redirection : '/demandes/nouvelle')
   } catch (error) {
     erreur.value = error.message
   } finally {

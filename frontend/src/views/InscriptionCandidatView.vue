@@ -92,7 +92,54 @@ async function sInscrire() {
 
 <template>
   <div class="page">
-    <div class="form-container">
+    <!-- Moitié gauche : illustration -->
+    <section class="illustration">
+      <div class="illustration-content">
+        <svg class="art" viewBox="0 0 420 340" role="img" aria-label="Illustration de création de compte">
+          <!-- cercles décoratifs -->
+          <circle cx="55" cy="70" r="40" fill="#ffffff" opacity="0.08" />
+          <circle cx="372" cy="270" r="54" fill="#ffffff" opacity="0.08" />
+          <circle cx="360" cy="55" r="13" fill="#ffffff" opacity="0.15" />
+          <circle cx="45" cy="285" r="10" fill="#ffffff" opacity="0.15" />
+
+          <!-- carte profil -->
+          <rect x="105" y="45" width="210" height="240" rx="16" fill="#ffffff" />
+          <rect x="105" y="45" width="210" height="70" rx="16" fill="#b2dfdb" />
+          <rect x="105" y="90" width="210" height="25" fill="#b2dfdb" />
+
+          <!-- avatar -->
+          <circle cx="210" cy="115" r="38" fill="#ffffff" />
+          <circle cx="210" cy="115" r="32" fill="#00897b" />
+          <circle cx="210" cy="105" r="11" fill="#ffffff" />
+          <path d="M190 134 q20 -22 40 0" fill="#ffffff" />
+
+          <!-- lignes d'infos -->
+          <rect x="160" y="168" width="100" height="10" rx="5" fill="#004d4d" />
+          <rect x="177" y="188" width="66" height="7" rx="3.5" fill="#9ecfcb" />
+
+          <rect x="135" y="215" width="150" height="9" rx="4.5" fill="#d5ebe9" />
+          <rect x="135" y="233" width="150" height="9" rx="4.5" fill="#d5ebe9" />
+          <rect x="135" y="251" width="104" height="9" rx="4.5" fill="#d5ebe9" />
+
+          <!-- badge + -->
+          <circle cx="306" cy="270" r="32" fill="#00897b" stroke="#ffffff" stroke-width="6" />
+          <line x1="306" y1="254" x2="306" y2="286" stroke="#ffffff" stroke-width="7" stroke-linecap="round" />
+          <line x1="290" y1="270" x2="322" y2="270" stroke="#ffffff" stroke-width="7" stroke-linecap="round" />
+
+          <!-- enveloppe -->
+          <rect x="40" y="180" width="76" height="54" rx="9" fill="#ffffff" opacity="0.9" />
+          <path d="M44 188 l34 24 l34 -24" fill="none" stroke="#008080" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" />
+        </svg>
+
+        <h2 class="illustration-title">Rejoignez RohySafe en quelques minutes</h2>
+        <p class="illustration-text">
+          Créez votre compte, enregistrez votre CV et postulez aux offres qui vous intéressent.
+        </p>
+      </div>
+    </section>
+
+    <!-- Moitié droite : formulaire -->
+    <section class="panneau-form">
       <p class="title">Créer un compte</p>
       <p class="sub-title">
         Inscrivez-vous pour postuler aux offres et enregistrer votre CV.
@@ -208,30 +255,67 @@ async function sInscrire() {
       <router-link class="page-link" to="/offres">
         Retour aux offres
       </router-link>
-    </div>
+    </section>
   </div>
 </template>
 
 <style scoped>
 .page {
   min-height: 100vh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 24px 16px;
-  background: #f1f3f6;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
   font-family: "Lucida Sans", "Lucida Sans Regular", "Lucida Grande",
     "Lucida Sans Unicode", Geneva, Verdana, sans-serif;
 }
 
-.form-container {
+/* ---------- Gauche : illustration ---------- */
+.illustration {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40px;
+  background: linear-gradient(145deg, #006666 0%, #008080 55%, #26a69a 100%);
+  color: #fff;
+}
+
+.illustration-content {
+  max-width: 440px;
+  text-align: center;
+}
+
+.art {
   width: 100%;
-  max-width: 520px;
-  background-color: #fff;
-  box-shadow: rgba(0, 0, 0, 0.35) 0 5px 15px;
-  border-radius: 10px;
-  box-sizing: border-box;
-  padding: 30px;
+  height: auto;
+  margin-bottom: 28px;
+}
+
+.illustration-title {
+  margin: 0 0 10px;
+  font-size: 26px;
+  font-weight: 800;
+  line-height: 1.25;
+}
+
+.illustration-text {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.6;
+  opacity: 0.85;
+}
+
+/* ---------- Droite : formulaire ---------- */
+.panneau-form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 32px 24px;
+  background: #fff;
+}
+
+.panneau-form > * {
+  width: 100%;
+  max-width: 480px;
 }
 
 .title {
@@ -340,6 +424,17 @@ async function sInscrire() {
   margin-top: 14px;
   text-align: center;
   font-size: 12px;
+}
+
+/* ---------- Mobile / tablette ---------- */
+@media (max-width: 900px) {
+  .page {
+    grid-template-columns: 1fr;
+  }
+
+  .illustration {
+    display: none;
+  }
 }
 
 @media (max-width: 520px) {

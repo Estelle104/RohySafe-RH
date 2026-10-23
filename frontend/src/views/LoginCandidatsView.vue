@@ -53,8 +53,55 @@ async function seConnecter() {
 </script>
 
 <template>
-  <div class="login-container">
-    <div class="form-container">
+  <div class="login-page">
+    <!-- Moitié gauche : illustration -->
+    <section class="illustration">
+      <div class="illustration-content">
+        <svg class="art" viewBox="0 0 420 340" role="img" aria-label="Illustration d'un CV et d'une recherche d'emploi">
+          <!-- cercles décoratifs -->
+          <circle cx="60" cy="60" r="38" fill="#ffffff" opacity="0.08" />
+          <circle cx="370" cy="280" r="52" fill="#ffffff" opacity="0.08" />
+          <circle cx="350" cy="50" r="14" fill="#ffffff" opacity="0.15" />
+          <circle cx="40" cy="290" r="10" fill="#ffffff" opacity="0.15" />
+
+          <!-- carte CV arrière -->
+          <rect x="95" y="52" width="190" height="240" rx="14" fill="#ffffff" opacity="0.25" transform="rotate(-6 190 172)" />
+
+          <!-- carte CV principale -->
+          <rect x="120" y="40" width="190" height="250" rx="14" fill="#ffffff" />
+          <circle cx="170" cy="92" r="26" fill="#b2dfdb" />
+          <circle cx="170" cy="86" r="9" fill="#00796b" />
+          <path d="M152 108 q18 -16 36 0" fill="#00796b" />
+          <rect x="208" y="76" width="82" height="9" rx="4.5" fill="#004d4d" />
+          <rect x="208" y="94" width="56" height="7" rx="3.5" fill="#9ecfcb" />
+
+          <rect x="142" y="140" width="146" height="7" rx="3.5" fill="#d5ebe9" />
+          <rect x="142" y="158" width="120" height="7" rx="3.5" fill="#d5ebe9" />
+          <rect x="142" y="176" width="136" height="7" rx="3.5" fill="#d5ebe9" />
+
+          <rect x="142" y="204" width="48" height="20" rx="10" fill="#e0f2f1" />
+          <rect x="196" y="204" width="56" height="20" rx="10" fill="#e0f2f1" />
+          <rect x="142" y="232" width="62" height="20" rx="10" fill="#e0f2f1" />
+
+          <!-- pastille validée -->
+          <circle cx="300" cy="258" r="30" fill="#00897b" stroke="#ffffff" stroke-width="6" />
+          <path d="M286 258 l10 10 l18 -20" fill="none" stroke="#ffffff" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" />
+
+          <!-- loupe -->
+          <circle cx="92" cy="206" r="34" fill="none" stroke="#ffffff" stroke-width="9" />
+          <circle cx="92" cy="206" r="26" fill="#ffffff" opacity="0.18" />
+          <line x1="117" y1="232" x2="146" y2="262" stroke="#ffffff" stroke-width="11" stroke-linecap="round" />
+        </svg>
+
+        <h2 class="illustration-title">Trouvez le poste qui vous correspond</h2>
+        <p class="illustration-text">
+          Déposez votre CV, suivez vos candidatures et soyez présélectionné plus vite.
+        </p>
+      </div>
+    </section>
+
+    <!-- Moitié droite : formulaire -->
+    <section class="panneau-form">
       <p class="title">RohySafe</p>
       <p class="sub-title">Connectez-vous pour postuler et gérer votre CV.</p>
 
@@ -96,30 +143,67 @@ async function seConnecter() {
       <router-link class="page-link" to="/offres">
         Retour aux offres
       </router-link>
-    </div>
+    </section>
   </div>
 </template>
 
 <style scoped>
-.login-container {
+.login-page {
   min-height: 100vh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 16px;
-  background: #f1f3f6;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
   font-family: "Lucida Sans", "Lucida Sans Regular", "Lucida Grande",
     "Lucida Sans Unicode", Geneva, Verdana, sans-serif;
 }
 
-.form-container {
+/* ---------- Gauche : illustration ---------- */
+.illustration {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40px;
+  background: linear-gradient(145deg, #006666 0%, #008080 55%, #26a69a 100%);
+  color: #fff;
+}
+
+.illustration-content {
+  max-width: 440px;
+  text-align: center;
+}
+
+.art {
+  width: 100%;
+  height: auto;
+  margin-bottom: 28px;
+}
+
+.illustration-title {
+  margin: 0 0 10px;
+  font-size: 26px;
+  font-weight: 800;
+  line-height: 1.25;
+}
+
+.illustration-text {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.6;
+  opacity: 0.85;
+}
+
+/* ---------- Droite : formulaire ---------- */
+.panneau-form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 32px 24px;
+  background: #fff;
+}
+
+.panneau-form > * {
   width: 100%;
   max-width: 380px;
-  background-color: #fff;
-  box-shadow: rgba(0, 0, 0, 0.35) 0 5px 15px;
-  border-radius: 10px;
-  box-sizing: border-box;
-  padding: 30px;
 }
 
 .title {
@@ -225,5 +309,16 @@ async function seConnecter() {
   font-weight: 700;
   text-decoration: underline;
   text-decoration-color: teal;
+}
+
+/* ---------- Mobile / tablette : on masque l'illustration ---------- */
+@media (max-width: 900px) {
+  .login-page {
+    grid-template-columns: 1fr;
+  }
+
+  .illustration {
+    display: none;
+  }
 }
 </style>
