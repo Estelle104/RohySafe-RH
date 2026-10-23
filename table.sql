@@ -200,11 +200,11 @@ CREATE TABLE competences (
 
 CREATE TABLE competences_candidat (
     id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-    id_candidat BIGINT NOT NULL REFERENCES candidats(id),
+    id_candidature BIGINT NOT NULL REFERENCES candidatures(id) ON DELETE CASCADE,
     id_competence BIGINT NOT NULL REFERENCES competences(id),
     niveau NUMERIC(5,2)CHECK (niveau BETWEEN 0 AND 20),
 
-    UNIQUE (id_candidat, id_competence)
+    UNIQUE (id_candidature, id_competence)
 );
 
 CREATE TABLE softskills (

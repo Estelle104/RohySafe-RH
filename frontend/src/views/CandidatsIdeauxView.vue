@@ -76,7 +76,7 @@ function formaterDate(valeur) {
     <section v-else class="candidats">
       <article
         v-for="(candidat, index) in candidatsFiltres"
-        :key="candidat.id_candidat"
+        :key="candidat.id_candidature"
         class="card"
       >
         <div class="rank">{{ index + 1 }}</div>

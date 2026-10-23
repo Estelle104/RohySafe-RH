@@ -237,7 +237,7 @@ Les autres sections du CV sont stockées dans :
 
 - `experiences_candidat`
 - `formations_candidat`
-- `competences_candidat`
+- `competences_candidat`, rattachées à une candidature (`id_candidature`)
 - `candidatures`
 - `experiences_candidature` pour les périodes répondant aux exigences d’une offre
 
@@ -543,6 +543,7 @@ sql/23-10-26-002-donee-test-candidatures.sql
 sql/23-10-26-003-cdt.sql
 sql/23-10-26-004-evaluations-candidat-simplifiee.sql
 sql/23-10-26-005-vue-candidats-postes-sans-criteres.sql
+sql/23-10-26-006-competences-par-candidature.sql
 ```
 
 `00-reset-database.sql` supprime/réinitialise la base : à utiliser avec prudence.
@@ -566,6 +567,11 @@ sql/23-10-26-005-vue-candidats-postes-sans-criteres.sql
   - Pour un poste sans critère de compétence, tous les candidats sont classés avec
     un score de 0 : ils restent ainsi visibles dans les candidats idéaux et la
     présélection peut utiliser leurs expériences de candidature.
+- `sql/23-10-26-006-competences-par-candidature.sql`
+  - Remplace `competences_candidat.id_candidat` par `id_candidature`.
+  - Recrée `vue_cv_candidats` et `vue_classement_candidats_postes`.
+  - Le classement part désormais des candidatures : supprimer une candidature la
+    retire immédiatement des candidats idéaux.
 
 ### Table `experiences_candidature`
 
@@ -782,6 +788,7 @@ rm -rf backend/public/assets
 - `sql/22-10-26-010-login-candidat.sql`
 - `sql/23-10-26-004-evaluations-candidat-simplifiee.sql`
 - `sql/23-10-26-005-vue-candidats-postes-sans-criteres.sql`
+- `sql/23-10-26-006-competences-par-candidature.sql`
 
 ---
 

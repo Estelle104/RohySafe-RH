@@ -66,7 +66,7 @@ Usage probable : vérifier que le `salaire_propose` d'une demande respecte la gr
 | `experiences_candidat` | Expériences passées (liées à `postes`) avec dates |
 | `formations_candidat` | Diplômes, établissements, dates |
 | `competences` | Référentiel de compétences (libellé + catégorie) |
-| `competences_candidat` | Niveau du candidat par compétence (0–20) |
+| `competences_candidat` | Niveau du candidat par compétence pour une candidature (0–20) |
 | `softskills` | Référentiel de soft skills |
 
 ### 2.7 Candidatures & sélection

@@ -10,5 +10,5 @@ class CompetenceCandidatModel extends Model
     protected $primaryKey    = 'id';
     protected $returnType    = 'array';
     protected $useTimestamps = false;
-    protected $allowedFields = ['id_candidat', 'id_competence', 'niveau'];
+    protected $allowedFields = ['id_candidature', 'id_competence', 'niveau'];
 }
