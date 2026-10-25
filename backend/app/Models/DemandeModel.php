@@ -170,7 +170,7 @@ class DemandeModel extends Model
             ->join('utilisateurs uc', 'uc.id = dm.id_createur', 'left')
             ->join('utilisateurs ua', 'ua.id = dm.id_utilisateur_actuel', 'left')
             ->join('roles ra', 'ra.id = ua.id_role', 'left')
-            ->where('ra.libelle', 'RH')
+            // ->where('ra.libelle', 'RH')
             ->orderBy('dm.date_creation', 'DESC');
 
         log_message(
