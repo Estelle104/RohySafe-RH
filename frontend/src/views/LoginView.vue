@@ -17,8 +17,10 @@
 
 <script setup>
 import { ref } from 'vue'
-import { useRouter } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
+import { reinitialiserUtilisateurInterne } from '../services/authInterne'
 
+const route = useRoute()
 const router = useRouter()
 const login = ref('')
 const mdp = ref('')
@@ -49,6 +51,9 @@ async function connecter() {
       DG: '/direction-generale',
     }
     await router.push(destinations[role] || '/offres')
+
+    reinitialiserUtilisateurInterne(result.utilisateur)
+
   } catch (error) {
     erreur.value = error.message
   } finally {

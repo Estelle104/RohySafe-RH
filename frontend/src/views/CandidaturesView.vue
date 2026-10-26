@@ -1,287 +1,66 @@
 <script setup>
-import { computed, onMounted, ref } from 'vue'
-import { useRouter } from 'vue-router'
-import SidebarMenu from '../components/SidebarMenu.vue'
-
-const router = useRouter(), items = ref([]), filtre = ref('Tous'), erreur = ref('')
-const menuOuvert = ref(false)
-
-const statuts = computed(() => ['Tous', ...new Set(items.value.map(i => i.statut))])
-const liste = computed(() => filtre.value === 'Tous' ? items.value : items.value.filter(i => i.statut === filtre.value))
-
-onMounted(async () => {
-  try {
-    const r = await fetch('/api/candidatures')
-    if (!r.ok) throw new Error()
-    items.value = await r.json()
-  } catch {
-    erreur.value = 'Impossible de charger les candidatures.'
-  }
-})
+import { computed, onMounted, ref } from 'vue'; import { useRouter } from 'vue-router'; const router = useRouter(), items = ref([]), filtre = ref('Tous'), erreur = ref(''); const statuts = computed(() => ['Tous', ...new Set(items.value.map(i => i.statut))]); const liste = computed(() => filtre.value === 'Tous' ? items.value : items.value.filter(i => i.statut === filtre.value)); onMounted(async () => { try { const r = await fetch('/api/candidatures'); if (!r.ok) throw new Error(); items.value = await r.json() } catch { erreur.value = 'Impossible de charger les candidatures.' } })
 </script>
-
 <template>
-  <div class="app-layout">
-    <!-- Nom / initiales : à remplacer par l'utilisateur connecté -->
-    <SidebarMenu
-      nom="Ressources humaines"
-      role="RH"
-      code-role="RH"
-      initiales="RH"
-      :ouvert="menuOuvert"
-      @fermer="menuOuvert = false"
-    />
-
     <main class="page">
-      <button class="burger" type="button" @click="menuOuvert = true">☰ Menu</button>
-
-      <div class="contenu">
-        <p class="eyebrow">Recrutement</p>
         <h1>Candidatures</h1>
-
-        <nav class="filtres">
-          <button
-            v-for="s in statuts"
-            :key="s"
-            class="chip"
-            :class="{ actif: s === filtre }"
-            @click="filtre = s"
-          >
-            {{ s }}
-          </button>
-        </nav>
-
-        <p v-if="erreur" class="erreur">{{ erreur }}</p>
-        <p v-else-if="liste.length === 0" class="vide">Aucune candidature.</p>
-
-        <article v-for="c in liste" :key="c.id" class="carte">
-          <div class="carte-entete">
-            <div class="avatar">{{ (c.prenom?.[0] ?? '') + (c.nom?.[0] ?? '') }}</div>
-            <div class="infos">
-              <h2>{{ c.prenom }} {{ c.nom }}</h2>
-              <p>{{ c.offre }} · {{ c.email }}</p>
-            </div>
-            <span class="statut">{{ c.statut }}</span>
-          </div>
-
-          <div v-if="c.statut === 'preselectionne' || c.statut === 'retenu'" class="actions">
-            <button
-              v-if="c.statut === 'preselectionne'"
-              class="btn"
-              @click="router.push({ name: 'entretien-formulaire', params: { id: c.id } })"
-            >
-              Créer l’entretien
-            </button>
-            <button
-              v-if="c.statut === 'retenu'"
-              class="btn"
-              @click="router.push({ name: 'contrat-fiche', params: { id: c.id } })"
-            >
-              Générer le contrat
-            </button>
-          </div>
+        <nav><button v-for="s in statuts" :class="{ actif: s === filtre }" @click="filtre = s">{{ s }}</button></nav>
+        <p v-if="erreur">{{ erreur }}</p>
+        <article v-for="c in liste" :key="c.id">
+            <h2>{{ c.prenom }} {{ c.nom }}</h2>
+            <p>{{ c.offre }} · {{ c.email }}</p><span>{{ c.statut }}</span><button v-if="c.statut === 'preselectionne'"
+                @click="router.push({ name: 'entretien-formulaire', params: { id: c.id } })">Créer l’entretien</button><button
+                v-if="c.statut === 'retenu'" @click="router.push({ name: 'contrat-fiche', params: { id: c.id } })">Générer le
+                contrat</button>
         </article>
-      </div>
     </main>
-  </div>
 </template>
+<style
+    scoped>
+    .page {
+        max-width: 850px;
+        margin: auto;
+        padding: 24px
+    }
 
-<style scoped>
-/* Structure globale : sidebar + page */
-.app-layout {
-  display: grid;
-  grid-template-columns: 260px minmax(0, 1fr);
-  min-height: 100vh;
-  background: #f1f3f6;
-  color: #222;
-  font-family: "Lucida Sans", "Lucida Sans Regular", "Lucida Grande",
-    "Lucida Sans Unicode", Geneva, Verdana, sans-serif;
-}
+    nav {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap
+    }
 
-.page {
-  position: relative;
-  min-width: 0;
-  min-height: 100vh;
-}
+    nav button,
+    .page article button {
+        border: 1px solid #aaa;
+        border-radius: 8px;
+        padding: 8px;
+        background: #fff
+    }
 
-.burger {
-  display: none;
-  margin: 16px 0 0 16px;
-  padding: 8px 16px;
-  border: 0;
-  border-radius: 20px;
-  background: #fff;
-  color: teal;
-  font-family: inherit;
-  font-weight: 700;
-  cursor: pointer;
-  box-shadow: rgba(0, 0, 0, 0.24) 0 3px 8px;
-}
+    .actif {
+        border-color: teal !important;
+        color: teal
+    }
 
-.contenu {
-  max-width: 850px;
-  margin: 0 auto;
-  padding: 32px 20px 60px;
-}
+    .page article {
+        margin: 14px 0;
+        padding: 16px;
+        border: 1px solid #ddd;
+        border-radius: 14px;
+        background: #fff
+    }
 
-.eyebrow {
-  margin: 0 0 6px;
-  color: #747474;
-  font-size: 12px;
-  font-weight: 700;
-  text-transform: uppercase;
-}
+    .page article h2,
+    .page article p {
+        margin: 0 0 8px
+    }
 
-h1 {
-  margin: 0 0 20px;
-  color: teal;
-  font-size: 28px;
-  font-weight: 800;
-}
-
-/* Filtres */
-.filtres {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  margin-bottom: 20px;
-}
-
-.chip {
-  padding: 8px 16px;
-  border: 1px solid #c0c0c0;
-  border-radius: 20px;
-  background: #fff;
-  font-family: inherit;
-  font-size: 13px;
-  cursor: pointer;
-  transition: all 0.2s;
-}
-
-.chip:hover {
-  border-color: teal;
-}
-
-.chip.actif {
-  border-color: teal;
-  background: teal;
-  color: #fff;
-}
-
-/* Cartes */
-.carte {
-  margin: 0 0 16px;
-  padding: 20px;
-  border-radius: 10px;
-  background: #fff;
-  box-shadow: rgba(0, 0, 0, 0.35) 0 5px 15px;
-}
-
-.carte-entete {
-  display: flex;
-  align-items: center;
-  gap: 14px;
-}
-
-.avatar {
-  display: flex;
-  flex: none;
-  align-items: center;
-  justify-content: center;
-  width: 44px;
-  height: 44px;
-  border-radius: 50%;
-  background: teal;
-  color: #fff;
-  font-weight: 800;
-  text-transform: uppercase;
-}
-
-.infos {
-  min-width: 0;
-  flex: 1;
-}
-
-.infos h2 {
-  margin: 0 0 4px;
-  font-size: 17px;
-  font-weight: 800;
-}
-
-.infos p {
-  margin: 0;
-  overflow: hidden;
-  color: #747474;
-  font-size: 13px;
-  text-overflow: ellipsis;
-}
-
-.statut {
-  flex: none;
-  padding: 4px 12px;
-  border-radius: 20px;
-  background: #e6f2f2;
-  color: #006666;
-  font-size: 12px;
-  font-weight: 700;
-}
-
-.actions {
-  display: flex;
-  justify-content: flex-end;
-  margin-top: 16px;
-  padding-top: 16px;
-  border-top: 1px solid #e5e5e5;
-}
-
-.btn {
-  padding: 10px 22px;
-  border: 0;
-  border-radius: 20px;
-  background: teal;
-  color: #fff;
-  font-family: inherit;
-  font-size: 13px;
-  font-weight: 700;
-  cursor: pointer;
-  box-shadow: rgba(0, 0, 0, 0.24) 0 3px 8px;
-}
-
-.btn:hover {
-  background: #006666;
-}
-
-.btn:active {
-  box-shadow: none;
-}
-
-.erreur {
-  padding: 12px 15px;
-  border-radius: 8px;
-  background: #fdecec;
-  color: #b42318;
-  font-size: 13px;
-}
-
-.vide {
-  color: #747474;
-  font-size: 13px;
-  text-align: center;
-}
-
-@media (max-width: 960px) {
-  .app-layout {
-    grid-template-columns: 1fr;
-  }
-
-  .burger {
-    display: block;
-  }
-}
-
-@media (max-width: 520px) {
-  .carte-entete {
-    flex-wrap: wrap;
-  }
-}
+    .page article button {
+        display: block;
+        margin: 16px 0 0 auto;
+        background: teal;
+        color: #fff;
+        border: 0;
+        font-weight: bold
+    }
 </style>

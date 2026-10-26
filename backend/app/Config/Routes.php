@@ -44,6 +44,7 @@ $routes->group('api', ['namespace' => 'App\Controllers\Api'], function ($routes)
     $routes->post('backoffice/offres/(:num)/exigences/competence', 'ExigenceOffre::enregistrerCompetence/$1');
     $routes->delete('backoffice/offres/(:num)/exigences/competence/(:num)', 'ExigenceOffre::supprimerCompetence/$1/$2');
 
+    $routes->get('backoffice/candidats' , 'ExigenceOffre::formulaire/$1');
     // Finance
     $routes->get('finance/notifications', 'FinanceController::notifications', ['filter' => 'auth:Finance']);
     $routes->get('finance/demandes/(:num)', 'FinanceController::fiche/$1', ['filter' => 'auth:Finance']);
@@ -67,7 +68,14 @@ $routes->group('api', ['namespace' => 'App\Controllers\Api'], function ($routes)
         $routes->post('demandes/(:num)/validation', 'RHController::proposerSalaire/$1', ['filter' => 'auth:RH']);
         $routes->post('demandes/(:num)/refuser', 'RHController::refuser/$1', ['filter' => 'auth:RH']);
         $routes->get('candidatures', 'CandidatureController::index');
-        $routes->post('candidatures/(:num)/entretiens', 'CandidatureController::creerEntretien/$1');
+        $routes->post('candidatures/(:num)/entretiens', 'CandidatureController::creerEntretien/$1', ['filter' => 'auth:Manager,RH']);
         $routes->get('candidatures/(:num)/contrat', 'CandidatureController::ficheContrat/$1');
         $routes->post('candidatures/(:num)/contrat', 'CandidatureController::genererContrat/$1');
+
+        $routes->group('entretiens', ['filter' => 'auth:Manager,RH'], static function ($routes) {
+            $routes->get('offres', 'EntretienController::offres');
+            $routes->get('offres/(:num)/candidats', 'EntretienController::candidats/$1');
+            $routes->get('candidatures/(:num)', 'EntretienController::detail/$1');
+            $routes->put('candidatures/(:num)/evaluation', 'EntretienController::enregistrerEvaluation/$1');
+        });
 });

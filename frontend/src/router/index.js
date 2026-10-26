@@ -2,6 +2,7 @@ import { createRouter, createWebHistory } from 'vue-router'
 import LoginView from '../views/LoginView.vue'
 import LoginCandidatsView from '../views/LoginCandidatsView.vue'
 import { estCandidatConnecte } from '../services/candidatAuth'
+import { chargerUtilisateurInterne, peutAccederAuxEntretiens } from '../services/authInterne'
 import NotificationsPage from '../components/NotificationsPage.vue'
 import DemandeDetailView from '../views/DemandeDetailView.vue'
 import ConfirmationDemandeView from '../views/ConfirmationDemandeView.vue'
@@ -10,7 +11,7 @@ const router = createRouter({
   history: createWebHistory(),
   routes: [
     { path: '/', redirect: '/login' },
-    { path: '/login', component: LoginView },
+    { path: '/login', name: 'login', component: LoginView },
     { path: '/candidats/login', name: 'candidat-login', component: LoginCandidatsView },
     {
       path: '/candidats/inscription',
@@ -31,6 +32,21 @@ const router = createRouter({
     {
       path: '/offres/:id/candidats',
       name: 'candidats-ideaux',
+      component: () => import('../views/CandidatsIdeauxView.vue')
+    },
+    {
+      path: '/backoffice',
+      name: 'backoffice',
+      component: () => import('../views/BackofficeAccueilView.vue')
+    },
+    {
+      path: '/backoffice/candidats-ideaux',
+      name: 'backoffice-candidats-ideaux',
+      component: () => import('../views/CandidatsOffresView.vue')
+    },
+    {
+      path: '/backoffice/candidats-ideaux/:id',
+      name: 'backoffice-candidats-ideaux-offre',
       component: () => import('../views/CandidatsIdeauxView.vue')
     },
     {
@@ -74,19 +90,19 @@ router.beforeEach(async (to) => {
     }
   }
 
-  if (!to.meta.requiresAuth) return true
+  if (to.meta.rolesEntretiens) {
+    const utilisateur = await chargerUtilisateurInterne(true)
 
-  try {
-    const response = await fetch('/api/auth/me', { credentials: 'include' })
-    if (!response.ok) throw new Error()
-    const { utilisateur } = await response.json()
-    if (!utilisateur) throw new Error()
-    if (to.meta.roles && !to.meta.roles.includes(utilisateur.role)) {
-      return '/login'
+    if (utilisateur === null) {
+      return {
+        name: 'login',
+        query: { redirect: to.fullPath },
+      }
     }
-    return true
-  } catch {
-    return { path: '/login', query: { redirect: to.fullPath } }
+
+    if (!peutAccederAuxEntretiens(utilisateur)) {
+      return { name: 'offres' }
+    }
   }
 })
 
