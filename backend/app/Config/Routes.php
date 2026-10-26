@@ -36,6 +36,8 @@ $routes->group('api', ['namespace' => 'App\Controllers\Api'], function ($routes)
     $routes->post('candidats/(:num)/offres/(:num)/cv', 'CvCandidature::enregistrer/$1/$2');
     $routes->post('candidatures/(:num)/proposition', 'CandidatIdeal::createProposition/$1');
 
+    $routes->post('candidatures/(:num)/engager', 'CandidatIdeal::engager/$1');
+
     // Backoffice des exigences d'offre
     $routes->get('backoffice/offres', 'ExigenceOffre::offres');
     $routes->get('backoffice/offres/(:num)/exigences', 'ExigenceOffre::formulaire/$1');

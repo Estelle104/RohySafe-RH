@@ -121,4 +121,23 @@ class CandidatIdeal extends BaseController
                 ->setJSON(['message' => 'Impossible de récupérer les candidats idéaux.']);
         }
     }
+
+    public function engager(int $id_candidature)
+    {
+        if ($id_candidature <= 0) {
+            return $this->response
+                ->setStatusCode(400)
+                ->setJSON(['message' => 'Identifiant invalide.']);
+        }
+
+        try {
+            $model = new CandidatureModel();
+
+            $model->updateStatutCandidatureEngage($id_candidature);
+
+
+        } catch (\Throwable $th) {
+            //throw $th;
+        }
+    }
 }

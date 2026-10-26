@@ -85,4 +85,11 @@ class CandidatureModel extends Model
         $this->db->table('contrats')->insert(['id_employe' => $employe['id'], 'id_type_contrat' => $donnees['id_type_contrat'], 'date_debut' => $donnees['date_prise_poste'] ?: date('Y-m-d'), 'date_fin' => null, 'salaire' => $donnees['salaire_propose'], 'id_statut_actuel' => $statut['id'], 'date_signature' => date('Y-m-d')]);
         $contrat = (int) $this->db->insertID(); $this->db->transComplete(); if (! $this->db->transStatus()) throw new \RuntimeException('Échec de génération du contrat.'); return $contrat;
     }
+
+    public function updateStatutCandidatureEngage($id){
+        $data = [];
+        $data['id_statut_actuel'] = 5;    
+        $a = $this->update($id,$data);
+        return $a;
+    }
 }
