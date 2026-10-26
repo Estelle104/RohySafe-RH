@@ -25,7 +25,12 @@ class OffreController extends BaseController
 
     public function demandesAPublier()
     {
-        try { return $this->response->setJSON((new OffreModel())->getDemandesAPublier()); }
+        try {
+            $utilisateur = session()->get('utilisateur');
+            return $this->response->setJSON(
+                (new OffreModel())->getDemandesAPublier((int) ($utilisateur['id'] ?? 0))
+            );
+        }
         catch (Throwable $e) { log_message('error', $e->getMessage()); return $this->response->setStatusCode(500)->setJSON(['message' => 'Impossible de récupérer les demandes.']); }
     }
 
@@ -45,7 +50,8 @@ class OffreController extends BaseController
         }
         if ($data['date_limite'] < $data['date_publication']) return $this->response->setStatusCode(422)->setJSON(['message' => 'La date limite doit être postérieure à la date de publication.']);
         try {
-            $id = (new OffreModel())->publierDemande($data);
+            $utilisateur = session()->get('utilisateur');
+            $id = (new OffreModel())->publierDemande($data, (int) ($utilisateur['id'] ?? 0));
             return $this->response->setJSON(['id' => $id, 'message' => 'Offre publiée.']);
         } catch (Throwable $e) { log_message('error', $e->getMessage()); return $this->response->setStatusCode(500)->setJSON(['message' => 'Impossible de publier l’offre.']); }
     }
