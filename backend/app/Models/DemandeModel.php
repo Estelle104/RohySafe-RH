@@ -36,17 +36,38 @@ class DemandeModel extends Model
     {
         $statut = $this->db->table('statut_demandes')->where('libelle', 'cree')->get()->getRowArray();
         if (! $statut) return ['erreur' => "Le statut 'cree' doit exister dans statut_demandes."];
+        $rh = $this->db->table('utilisateurs u')
+            ->select('u.id')
+            ->join('roles r', 'r.id = u.id_role')
+            ->where('r.libelle', 'RH')
+            ->orderBy('u.id', 'ASC')
+            ->get()->getRowArray();
+        if (! $rh) return ['erreur' => 'Aucun utilisateur RH trouvé.'];
+        $this->db->transStart();
         $id = $this->insert([
             'id_poste_departement' => (int) $data['id_poste_departement'],
             'id_createur' => $utilisateurId,
-            'id_utilisateur_actuel' => $utilisateurId,
+            'id_utilisateur_actuel' => $rh['id'],
             'id_statut_actuel' => (int) $statut['id'],
             'nombre_demande' => (int) $data['nombre_demande'],
             'id_type_contrat' => (int) $data['id_type_contrat'],
             'date_prise_poste' => empty($data['date_prise_poste']) ? null : $data['date_prise_poste'],
             'salaire_propose' => $data['salaire_propose'],
         ], true);
-        return $id ? ['id' => $id] : ['erreur' => $this->errors() ?: 'Impossible de créer la demande.'];
+        if ($id) {
+            $this->db->table('historique_demandes')->insert([
+                'id_demande' => $id,
+                'id_statut_demande' => $statut['id'],
+                'id_utilisateur' => $utilisateurId,
+                'salaire_propose' => $data['salaire_propose'],
+                'remarque' => 'Demande créée par le Manager et transmise au RH.',
+            ]);
+        }
+        $this->db->transComplete();
+
+        return $id && $this->db->transStatus()
+            ? ['id' => $id]
+            : ['erreur' => $this->errors() ?: 'Impossible de créer la demande.'];
     }
 
 
@@ -78,8 +99,13 @@ class DemandeModel extends Model
                     WHEN 'cree' THEN 'Créée'
                     WHEN 'en_attente' THEN 'En attente'
                     WHEN 'valide' THEN 'Validée'
+                    WHEN 'EN_VALIDATION_FINANCE' THEN 'En validation Finance'
+                    WHEN 'EN_VALIDATION_DIRECTION' THEN 'En validation Direction générale'
+                    WHEN 'VALIDEE' THEN 'Validée'
                     WHEN 'refusee' THEN 'Refusée'
+                    WHEN 'REFUSEE' THEN 'Refusée'
                     WHEN 'annulee' THEN 'Annulée'
+                    WHEN 'ANNULEE_FINANCE' THEN 'Annulée par la Finance'
                     ELSE INITCAP(REPLACE(sd.libelle, '_', ' '))
                 END AS statut
             ", false)
@@ -123,8 +149,13 @@ class DemandeModel extends Model
                     WHEN 'cree' THEN 'Créée'
                     WHEN 'en_attente' THEN 'En attente'
                     WHEN 'valide' THEN 'Validée'
+                    WHEN 'EN_VALIDATION_FINANCE' THEN 'En validation Finance'
+                    WHEN 'EN_VALIDATION_DIRECTION' THEN 'En validation Direction générale'
+                    WHEN 'VALIDEE' THEN 'Validée'
                     WHEN 'refusee' THEN 'Refusée'
+                    WHEN 'REFUSEE' THEN 'Refusée'
                     WHEN 'annulee' THEN 'Annulée'
+                    WHEN 'ANNULEE_FINANCE' THEN 'Annulée par la Finance'
                     ELSE INITCAP(REPLACE(sd.libelle, '_', ' '))
                 END AS statut
             ", false)
@@ -138,7 +169,8 @@ class DemandeModel extends Model
             ->join('statut_demandes sd', 'sd.id = dm.id_statut_actuel')
             ->join('utilisateurs uc', 'uc.id = dm.id_createur', 'left')
             ->join('utilisateurs ua', 'ua.id = dm.id_utilisateur_actuel', 'left')
-            ->where('dm.id_utilisateur_actuel', $idUtilisateur)
+            ->join('roles ra', 'ra.id = ua.id_role', 'left')
+            // ->where('ra.libelle', 'RH')
             ->orderBy('dm.date_creation', 'DESC');
 
         log_message(
@@ -154,7 +186,7 @@ class DemandeModel extends Model
     public function getDetail(int $id): ?array
     {
         return $this->db->table('demandes dm')
-            ->select("dm.id, dm.date_creation, dm.nombre_demande AS nombre_poste, dm.date_prise_poste, dm.salaire_propose, d.libelle AS departement, p.libelle AS poste, tc.libelle AS type_contrat, uc.login AS createur, ua.login AS utilisateur_actuel, CASE sd.libelle WHEN 'cree' THEN 'Créée' WHEN 'en_attente' THEN 'En attente' WHEN 'valide' THEN 'Validée' WHEN 'refusee' THEN 'Refusée' WHEN 'annulee' THEN 'Annulée' ELSE INITCAP(REPLACE(sd.libelle, '_', ' ')) END AS statut", false)
+            ->select("dm.id, dm.date_creation, dm.nombre_demande AS nombre_poste, dm.date_prise_poste, dm.salaire_propose, d.libelle AS departement, p.libelle AS poste, tc.libelle AS type_contrat, uc.login AS createur, ua.login AS utilisateur_actuel, CASE sd.libelle WHEN 'cree' THEN 'Créée' WHEN 'en_attente' THEN 'En attente' WHEN 'valide' THEN 'Validée' WHEN 'EN_VALIDATION_FINANCE' THEN 'En validation Finance' WHEN 'EN_VALIDATION_DIRECTION' THEN 'En validation Direction générale' WHEN 'VALIDEE' THEN 'Validée' WHEN 'refusee' THEN 'Refusée' WHEN 'REFUSEE' THEN 'Refusée' WHEN 'annulee' THEN 'Annulée' WHEN 'ANNULEE_FINANCE' THEN 'Annulée par la Finance' ELSE INITCAP(REPLACE(sd.libelle, '_', ' ')) END AS statut", false)
             ->join('poste_departement pd', 'pd.id = dm.id_poste_departement')
             ->join('postes p', 'p.id = pd.id_poste')
             ->join('departements d', 'd.id = pd.id_departement')
@@ -226,7 +258,7 @@ class DemandeModel extends Model
             ->getResultArray();
     }
 
-    public function enregistrerPropositionSalaire(int $id, float $salaire, ?string $remarque): bool
+    public function enregistrerPropositionSalaire(int $id, float $salaire, ?string $remarque, int $utilisateurId = 0): bool
     {
         $demande = $this->find($id);
         if ($demande === null) {
@@ -243,27 +275,43 @@ class DemandeModel extends Model
             throw new \RuntimeException('Le Finance est introuvable.');
         }
 
-        $finance_utilisateur = $this->db->table('utilisateurs')
+        $financeUtilisateur = $this->db->table('utilisateurs')
             ->select('id')
             ->where('id_role', $finance['id'])
             ->get()
             ->getRowArray();
 
-        if ($finance_utilisateur === null) {
+        if ($financeUtilisateur === null) {
             throw new \RuntimeException('Aucun utilisateur Finance trouvé.');
+        }
+
+        $statutFinance = $this->db->table('statut_demandes')
+            ->where('libelle', 'EN_VALIDATION_FINANCE')
+            ->get()->getRowArray();
+        if ($statutFinance === null) {
+            throw new \RuntimeException("Le statut 'EN_VALIDATION_FINANCE' est introuvable.");
+        }
+
+        $statutsRH = array_map('intval', array_column(
+            $this->db->table('statut_demandes')->whereIn('libelle', ['cree', 'en_attente'])->get()->getResultArray(),
+            'id'
+        ));
+        if (! in_array((int) $demande['id_statut_actuel'], $statutsRH, true)) {
+            throw new \RuntimeException('Cette demande n’est pas en attente de validation RH.');
         }
 
         $this->db->transStart();
         $this->update($id, [
             'salaire_propose'       => $salaire,
-            'id_utilisateur_actuel' => $finance_utilisateur['id'],
+            'id_utilisateur_actuel' => $financeUtilisateur['id'],
+            'id_statut_actuel'      => $statutFinance['id'],
         ]);
         $this->db->table('historique_demandes')->insert([
             'id_demande'        => $id,
-            'id_statut_demande' => $demande['id_statut_actuel'],
-            'id_utilisateur'    => $demande['id_utilisateur_actuel'],
+            'id_statut_demande' => $statutFinance['id'],
+            'id_utilisateur'    => $utilisateurId ?: $demande['id_utilisateur_actuel'],
             'salaire_propose'   => $salaire,
-            'remarque'          => $remarque,
+            'remarque'          => $remarque ?: 'Demande validée par le RH et transmise à la Finance.',
         ]);
         $this->db->transComplete();
 
@@ -299,6 +347,11 @@ class DemandeModel extends Model
         $this->db->transComplete();
 
         return $this->db->transStatus();
+    }
+
+    public function validerParRH(int $id, int $utilisateurId, float $salaire, ?string $remarque): bool
+    {
+        return $this->enregistrerPropositionSalaire($id, $salaire, $remarque, $utilisateurId);
     }
 
 }

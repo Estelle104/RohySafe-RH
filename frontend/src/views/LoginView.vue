@@ -43,10 +43,17 @@ async function connecter() {
       throw new Error(`Le serveur n’a pas renvoyé de réponse JSON (HTTP ${response.status}). Vérifiez le backend.`)
     }
     if (!response.ok) throw new Error(result.messages?.error || 'Identifiant ou mot de passe incorrect.')
+    const role = result.utilisateur?.role
+    const destinations = {
+      Manager: '/demandes/nouvelle',
+      RH: '/notification',
+      Finance: '/finance',
+      DG: '/direction-generale',
+    }
+    await router.push(destinations[role] || '/offres')
 
     reinitialiserUtilisateurInterne(result.utilisateur)
-    const redirection = typeof route.query.redirect === 'string' ? route.query.redirect : ''
-    await router.push(redirection.startsWith('/') ? redirection : '/demandes/nouvelle')
+
   } catch (error) {
     erreur.value = error.message
   } finally {
