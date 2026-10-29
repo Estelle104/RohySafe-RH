@@ -18,11 +18,12 @@ defineEmits(['fermer', 'deconnexion'])
 const liens = [
   { to: '/dashboard', label: 'Dashboard', icone: 'accueil' },                       // tous
   { groupe: 'Recrutement' },
-  { to: '/demandes/nouvelle', label: 'Demandes de personnel', icone: 'demandes', roles: ['Manager'] },
+  { to: '/demandes/nouvelle', label: 'Demandes de personnel', icone: 'demandes', roles: ['Manager','DG'] },
   { groupe: 'Mon espace' },
   { to: '/candidatures', label: 'Liste des candidatures', icone: 'demandes', roles: ['RH'] },
   { to: '/notification', label: 'Notifications', icone: 'notifications', badge: true },  // tous
-  { to: '/profil', label: 'Mon profil', icone: 'profil' },                          // tous
+  { to: '/backoffice', label: 'Gerer les offres d\'emplois', icone: 'demandes', roles: ['RH','DG'] },                          // tous
+  { to: '/profil', label: 'Mon profil', icone: 'profil' },
 ]
 
 const liensVisibles = computed(() => {

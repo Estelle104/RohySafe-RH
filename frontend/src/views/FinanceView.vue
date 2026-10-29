@@ -56,6 +56,7 @@ onMounted(chargerNotifications)
     <SidebarMenu
       nom="Espace Finance"
       role="Gestionnaire de finance"
+      codeRole="Finance"
       initiales="FI"
       :notifications="nombre"
       :ouvert="menuOuvert"

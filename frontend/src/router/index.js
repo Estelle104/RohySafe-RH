@@ -37,6 +37,7 @@ const router = createRouter({
     {
       path: '/backoffice',
       name: 'backoffice',
+      meta: { requiresAuth: true, roles: ['DG','RH','rh'] },
       component: () => import('../views/BackofficeAccueilView.vue')
     },
     {

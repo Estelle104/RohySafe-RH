@@ -39,12 +39,11 @@ $routes->group('api', ['namespace' => 'App\Controllers\Api'], function ($routes)
     $routes->post('candidatures/(:num)/engager', 'CandidatIdeal::engager/$1');
 
     // Backoffice des exigences d'offre
-    $routes->get('backoffice/offres', 'ExigenceOffre::offres');
-    $routes->get('backoffice/offres/(:num)/exigences', 'ExigenceOffre::formulaire/$1');
-    $routes->post('backoffice/offres/(:num)/exigences/experience', 'ExigenceOffre::enregistrerExperience/$1');
-    $routes->delete('backoffice/offres/(:num)/exigences/experience/(:num)', 'ExigenceOffre::supprimerExperience/$1/$2');
-    $routes->post('backoffice/offres/(:num)/exigences/competence', 'ExigenceOffre::enregistrerCompetence/$1');
-    $routes->delete('backoffice/offres/(:num)/exigences/competence/(:num)', 'ExigenceOffre::supprimerCompetence/$1/$2');
+    $routes->get('backoffice/offres', 'ExigenceOffre::offres', ['filter' => 'auth:RH']);
+    $routes->post('backoffice/offres/(:num)/exigences/experience', 'ExigenceOffre::enregistrerExperience/$1', ['filter' => 'auth:RH']);
+    $routes->delete('backoffice/offres/(:num)/exigences/experience/(:num)', 'ExigenceOffre::supprimerExperience/$1/$2', ['filter' => 'auth:RH']);
+    $routes->post('backoffice/offres/(:num)/exigences/competence', 'ExigenceOffre::enregistrerCompetence/$1', ['filter' => 'auth:RH']);
+    $routes->delete('backoffice/offres/(:num)/exigences/competence/(:num)', 'ExigenceOffre::supprimerCompetence/$1/$2', ['filter' => 'auth:RH']);
 
     $routes->get('backoffice/candidats' , 'ExigenceOffre::formulaire/$1');
     // Finance

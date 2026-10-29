@@ -17,6 +17,7 @@ onMounted(charger)
     <SidebarMenu
       nom="Direction générale"
       role="Directeur Général"
+      codeRole="DG"
       initiales="DG"
       :notifications="nombre"
       :ouvert="menuOuvert"
