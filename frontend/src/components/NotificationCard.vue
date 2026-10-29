@@ -160,7 +160,7 @@ function formaterSalaire(salaire) {
   display: inline-block;
   flex-shrink: 0;
   padding: 5px 10px;
-  border-radius: 20px;
+  border-radius: 10px;
   background: #e0f2f1;
   color: #00695c;
   font-size: 11px;

@@ -99,7 +99,7 @@ onMounted(async () => {
   margin: 16px 0 0 16px;
   padding: 8px 16px;
   border: 0;
-  border-radius: 20px;
+  border-radius: 10px;
   background: #fff;
   color: teal;
   font-family: inherit;
@@ -175,7 +175,7 @@ h1 {
 
 .tag {
   padding: 4px 12px;
-  border-radius: 20px;
+  border-radius: 10px;
   background: #e6f2f2;
   color: #006666;
   font-size: 12px;
@@ -186,7 +186,7 @@ h1 {
   flex: none;
   padding: 10px 22px;
   border: 0;
-  border-radius: 20px;
+  border-radius: 10px;
   background: teal;
   color: #fff;
   font-family: inherit;

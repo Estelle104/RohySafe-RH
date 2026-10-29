@@ -37,6 +37,11 @@ $routes->group('api', ['namespace' => 'App\Controllers\Api'], function ($routes)
     $routes->post('candidatures/(:num)/proposition', 'CandidatIdeal::createProposition/$1');
 
     $routes->post('candidatures/(:num)/engager', 'CandidatIdeal::engager/$1');
+    $routes->post('candidatures/(:num)/attente', 'CandidatIdeal::attente/$1');
+
+    // Notifications candidats
+    $routes->get('candidats/(:num)/notifications', 'NotificationCandidat::index/$1');
+    $routes->post('candidats/notifications/(:num)/lu', 'NotificationCandidat::marquerLu/$1');
 
     // Backoffice des exigences d'offre
     $routes->get('backoffice/offres', 'ExigenceOffre::offres', ['filter' => 'auth:RH']);

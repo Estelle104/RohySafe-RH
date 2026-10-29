@@ -289,7 +289,7 @@ h1 {
 .statut {
   align-self: flex-start;
   padding: 5px 11px;
-  border-radius: 20px;
+  border-radius: 10px;
   background: #e6f2f2;
   color: #006666;
   font-size: 11px;

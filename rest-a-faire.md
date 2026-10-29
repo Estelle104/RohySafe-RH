@@ -1,7 +1,7 @@
 - [ok/2]Ajout des liens dans le sidebar 
 - Historiser les candidatures, statuts candidatures , statut ddemandes , statut offres ,....
 - [ok]Deplacer "Backoffice" (dans la page candidat) vers le crm
-- Design des pages :
+- [ok]Design des pages :
     - Publier offres , 
     - 
 - Page de negociations :

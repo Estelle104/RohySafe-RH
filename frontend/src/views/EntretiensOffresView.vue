@@ -110,7 +110,7 @@ onMounted(charger)
   margin: 16px 0 0 16px;
   padding: 8px 16px;
   border: 0;
-  border-radius: 20px;
+  border-radius: 10px;
   background: #fff;
   color: teal;
   font-family: inherit;
@@ -189,7 +189,7 @@ h1 {
 .btn {
   flex-shrink: 0;
   border: 0;
-  border-radius: 20px;
+  border-radius: 10px;
   padding: 10px 16px;
   background: teal;
   color: #fff;

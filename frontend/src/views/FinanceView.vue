@@ -162,7 +162,7 @@ onMounted(chargerNotifications)
   margin-right: auto;
   padding: 8px 16px;
   border: 0;
-  border-radius: 20px;
+  border-radius: 10px;
   background: #fff;
   color: teal;
   font-family: inherit;
@@ -197,7 +197,7 @@ onMounted(chargerNotifications)
   right: -8px;
   min-width: 18px;
   padding: 2px 5px;
-  border-radius: 20px;
+  border-radius: 10px;
   background: teal;
   color: #fff;
   font-size: 11px;
@@ -321,7 +321,7 @@ onMounted(chargerNotifications)
 
 .status {
   padding: 5px 10px;
-  border-radius: 20px;
+  border-radius: 10px;
   background: #e6f2f2;
   color: #006666;
   font-size: 12px;
@@ -404,7 +404,7 @@ textarea:focus {
 .btn {
   padding: 11px 22px;
   border: 0;
-  border-radius: 20px;
+  border-radius: 10px;
   background: teal;
   color: #fff;
   font-family: inherit;

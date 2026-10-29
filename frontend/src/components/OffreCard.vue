@@ -104,7 +104,7 @@ function formatDate(d) {
 
 .tag {
   padding: 4px 12px;
-  border-radius: 20px;
+  border-radius: 10px;
   background: #e6f2f2;
   color: #006666;
   font-size: 12px;
@@ -138,7 +138,7 @@ function formatDate(d) {
 .btn {
   padding: 10px 22px;
   font-family: inherit;
-  border-radius: 20px;
+  border-radius: 10px;
   border: 0;
   outline: 0;
   background: teal;

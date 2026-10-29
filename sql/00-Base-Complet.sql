@@ -995,3 +995,15 @@ INSERT INTO competences (libelle, categorie) VALUES
 ('Résolution de problèmes', 'Technique');
 
 INSERT INTO statut_offres(libelle) VALUES('En attente');
+
+-- Notifications pour candidats
+CREATE TABLE notifications_candidats (
+    id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    id_candidat BIGINT NOT NULL REFERENCES candidats(id) ON DELETE CASCADE,
+    id_candidature BIGINT REFERENCES candidatures(id) ON DELETE SET NULL,
+    id_offre BIGINT REFERENCES offres(id) ON DELETE SET NULL,
+    type VARCHAR(50) NOT NULL,
+    message TEXT NOT NULL,
+    lu BOOLEAN NOT NULL DEFAULT FALSE,
+    date_creation TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+);

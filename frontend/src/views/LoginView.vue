@@ -95,7 +95,7 @@ async function connecter() {
 
     .input {
       width: 100%;
-      border-radius: 20px;
+      border-radius: 10px;
       border: 1px solid #c0c0c0;
       padding: 12px 15px;
       outline: 0;
@@ -127,7 +127,7 @@ async function connecter() {
     .form-btn {
       padding: 12px 15px;
       font-family: inherit;
-      border-radius: 20px;
+      border-radius: 10px;
       border: 0;
       outline: 0;
       background: teal;

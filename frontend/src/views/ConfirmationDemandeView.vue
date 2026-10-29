@@ -155,7 +155,7 @@ onMounted(charger)
   margin: 16px 0 0 16px;
   padding: 8px 16px;
   border: 0;
-  border-radius: 20px;
+  border-radius: 10px;
   background: #fff;
   color: teal;
   font-family: inherit;
@@ -176,7 +176,7 @@ onMounted(charger)
   justify-self: start;
   padding: 8px 16px;
   border: 1px solid teal;
-  border-radius: 20px;
+  border-radius: 10px;
   background: #fff;
   color: teal;
   font-family: inherit;
@@ -243,7 +243,7 @@ onMounted(charger)
 .succes button {
   padding: 11px 22px;
   border: 0;
-  border-radius: 20px;
+  border-radius: 10px;
   font-family: inherit;
   font-size: 13px;
   font-weight: 700;

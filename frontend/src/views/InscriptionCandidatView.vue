@@ -357,7 +357,7 @@ async function sInscrire() {
 
 .input {
   width: 100%;
-  border-radius: 20px;
+  border-radius: 10px;
   border: 1px solid #c0c0c0;
   outline: 0;
   box-sizing: border-box;
@@ -377,7 +377,7 @@ async function sInscrire() {
   font-family: inherit;
   font-size: 14px;
   font-weight: 700;
-  border-radius: 20px;
+  border-radius: 10px;
   border: 0;
   outline: 0;
   background: teal;

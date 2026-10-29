@@ -218,7 +218,7 @@ async function deconnecter() {
     margin: 16px 0 0 16px;
     padding: 8px 16px;
     border: 0;
-    border-radius: 20px;
+    border-radius: 10px;
     background: #fff;
     color: teal;
     font-family: inherit;
@@ -261,7 +261,7 @@ h1 {
     padding: 12px 22px;
     font-family: inherit;
     font-weight: 700;
-    border-radius: 20px;
+    border-radius: 10px;
     border: 0;
     background: teal;
     color: #fff;

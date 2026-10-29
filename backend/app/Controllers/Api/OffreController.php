@@ -15,6 +15,16 @@ class OffreController extends BaseController
             $offres = (new OffreModel())->getOffresPubliees();
             $utilisateur = session()->get('candidat');
 
+            $filtrees = [];
+            foreach ($offres as $offre) {
+                $libelleStatut = strtolower((string) ($offre['statut'] ?? ''));
+                if ($libelleStatut === 'en attente') {
+                    continue;
+                }
+                $filtrees[] = $offre;
+            }
+            $offres = $filtrees;
+
             if ($utilisateur && !empty($utilisateur['id'])) {
                 $dejaPostulees = [];
                 foreach ((new CandidatureModel())->getByCandidat((int) $utilisateur['id']) as $ligne) {

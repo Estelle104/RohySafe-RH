@@ -193,7 +193,7 @@ onMounted(charger)
   margin: 16px 0 0 16px;
   padding: 8px 16px;
   border: 0;
-  border-radius: 20px;
+  border-radius: 10px;
   background: #fff;
   color: teal;
   font-family: inherit;
@@ -285,7 +285,7 @@ h1 {
 .statut {
   display: inline-block;
   padding: 4px 10px;
-  border-radius: 20px;
+  border-radius: 10px;
   background: #e6f2f2;
   color: #006666;
   font-size: 11px;
@@ -325,7 +325,7 @@ h1 {
 
 .btn {
   border: 0;
-  border-radius: 20px;
+  border-radius: 10px;
   padding: 9px 16px;
   background: teal;
   color: #fff;

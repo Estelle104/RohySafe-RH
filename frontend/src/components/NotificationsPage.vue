@@ -105,7 +105,7 @@ function ouvrir(notification) {
 .burger {
   padding: 8px 16px;
   border: 0;
-  border-radius: 20px;
+  border-radius: 10px;
   background: #fff;
   color: teal;
   font-family: inherit;

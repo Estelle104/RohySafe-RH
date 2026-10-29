@@ -98,7 +98,7 @@ defineEmits(['modifier', 'confirmer'])
 .form-btn {
   padding: 12px 15px;
   border: 0;
-  border-radius: 20px;
+  border-radius: 10px;
   color: white;
   cursor: pointer;
 }

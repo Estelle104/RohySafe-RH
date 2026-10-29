@@ -153,7 +153,7 @@ const liensVisibles = computed(() => {
   align-items: center;
   gap: 12px;
   padding: 12px 16px;
-  border-radius: 20px;
+  border-radius: 10px;
   color: #555;
   font-size: 14px;
   font-weight: 700;
@@ -187,7 +187,7 @@ const liensVisibles = computed(() => {
   min-width: 22px;
   margin-left: auto;
   padding: 2px 7px;
-  border-radius: 20px;
+  border-radius: 10px;
   background: #b42318;
   color: #fff;
   font-size: 11px;

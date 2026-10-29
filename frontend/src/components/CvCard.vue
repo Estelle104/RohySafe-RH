@@ -177,7 +177,7 @@ li span.statut {
   display: inline-block;
   margin-top: 4px;
   padding: 3px 9px;
-  border-radius: 20px;
+  border-radius: 10px;
   font-weight: 700;
 }
 
