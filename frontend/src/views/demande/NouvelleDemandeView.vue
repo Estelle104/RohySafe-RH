@@ -145,18 +145,21 @@ async function deconnecter() {
         />
 
         <main class="page">
+
+            
             <button class="burger" type="button" @click="menuOuvert = true">
                 ☰ Menu
             </button>
 
-            <section class="form-container">
-                <p class="subtitle">Demande de recrutement</p>
+            <!-- Contenu directement dans la page (plus de carte centrée). -->
+            <section class="contenu">
+                <p class="eyebrow">Demande de recrutement</p>
 
                 <!-- Résultat après l'enregistrement. -->
                 <template v-if="route.query.cree">
                     <h1>Demande enregistrée</h1>
 
-                    <p>
+                    <p class="texte">
                         La demande #{{ route.query.cree }} a bien été créée.
                     </p>
 
@@ -205,21 +208,14 @@ async function deconnecter() {
 }
 
 .page {
-    position: relative;
     min-width: 0;
     min-height: 100vh;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 16px;
     background: #f1f3f6;
 }
 
 .burger {
     display: none;
-    position: absolute;
-    top: 16px;
-    left: 16px;
+    margin: 16px 0 0 16px;
     padding: 8px 16px;
     border: 0;
     border-radius: 20px;
@@ -231,25 +227,40 @@ async function deconnecter() {
     box-shadow: rgba(0, 0, 0, 0.24) 0 3px 8px;
 }
 
-.form-container {
+/* Contenu intégré à la page, aligné en haut comme les autres pages. */
+.contenu {
     box-sizing: border-box;
     width: 100%;
-    max-width: 480px;
-    background: #fff;
-    box-shadow: rgba(0, 0, 0, 0.35) 0 5px 15px;
-    border-radius: 10px;
-    padding: 30px;
+    max-width: 760px;
+    margin: 0 auto;
+    padding: 32px 20px 60px;
 }
 
-.subtitle {
-    text-align: center;
-    margin: 0 0 18px;
+.eyebrow {
+    margin: 0 0 6px;
     color: #747474;
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+}
+
+h1 {
+    margin: 0 0 20px;
+    color: teal;
+    font-size: 28px;
+    font-weight: 800;
+}
+
+.texte {
+    margin: 0 0 18px;
+    color: #475467;
+    font-size: 14px;
 }
 
 .form-btn {
-    padding: 12px 15px;
+    padding: 12px 22px;
     font-family: inherit;
+    font-weight: 700;
     border-radius: 20px;
     border: 0;
     background: teal;
@@ -263,23 +274,17 @@ async function deconnecter() {
 }
 
 .error {
+    margin: 0 0 16px;
+    padding: 12px 15px;
+    border-radius: 8px;
+    background: #fdecec;
     color: #b42318;
-    margin: 0;
     font-size: 14px;
-}
-
-h1 {
-    font-size: 22px;
 }
 
 @media (max-width: 960px) {
     .app-layout {
         grid-template-columns: 1fr;
-    }
-
-    .page {
-        align-items: flex-start;
-        padding-top: 72px;
     }
 
     .burger {

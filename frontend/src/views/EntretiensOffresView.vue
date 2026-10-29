@@ -2,11 +2,13 @@
 import { onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { getOffresEntretiens } from '../services/entretienService'
+import SidebarMenu from '../components/SidebarMenu.vue'
 
 const router = useRouter()
 const offres = ref([])
 const chargement = ref(true)
 const erreur = ref('')
+const menuOuvert = ref(false)
 
 function formaterDate(valeur) {
   if (!valeur) {
@@ -36,106 +38,85 @@ onMounted(charger)
 </script>
 
 <template>
-  <div class="page">
-    <header class="navbar">
-      <span class="brand">RohySafe</span>
-      <div class="nav-right">
-        <router-link class="nav-link" :to="{ name: 'offres' }">Offres</router-link>
-        <span class="avatar-me">RH</span>
-      </div>
-    </header>
+  <div class="app-layout">
+    <!-- Nom / initiales : à remplacer par l'utilisateur connecté -->
+    <SidebarMenu
+      nom="Ressources humaines"
+      role="RH"
+      codeRole="RH"
+      initiales="RH"
+      :ouvert="menuOuvert"
+      @fermer="menuOuvert = false"
+    />
 
-    <main class="contenu">
-      <div class="entete">
-        <div>
+    <main class="page">
+      <button class="burger" type="button" @click="menuOuvert = true">☰ Menu</button>
+
+      <div class="contenu">
+        <div class="entete">
           <p class="surtitre">Suivi des candidatures</p>
           <h1>Entretiens</h1>
           <p class="sous-titre">
             Choisissez une offre pour retrouver les candidats convoqués et saisir leur évaluation.
           </p>
         </div>
+
+        <p v-if="chargement" class="message">Chargement des offres...</p>
+        <p v-else-if="erreur" class="message erreur">{{ erreur }}</p>
+        <p v-else-if="offres.length === 0" class="message">
+          Aucun entretien n’a encore été planifié.
+        </p>
+
+        <section v-else class="liste">
+          <article v-for="offre in offres" :key="offre.id" class="carte">
+            <div>
+              <p class="compteur">{{ offre.nb_candidats }} candidat(s)</p>
+              <h2>{{ offre.titre }}</h2>
+              <p class="date">Prochain entretien : {{ formaterDate(offre.prochaine_date) }}</p>
+            </div>
+            <button
+              class="btn"
+              type="button"
+              @click="router.push({ name: 'entretiens-candidats', params: { id: offre.id } })"
+            >
+              Voir les candidats
+            </button>
+          </article>
+        </section>
       </div>
-
-      <p v-if="chargement" class="message">Chargement des offres...</p>
-      <p v-else-if="erreur" class="message erreur">{{ erreur }}</p>
-      <p v-else-if="offres.length === 0" class="message">
-        Aucun entretien n’a encore été planifié.
-      </p>
-
-      <section v-else class="liste">
-        <article v-for="offre in offres" :key="offre.id" class="carte">
-          <div>
-            <p class="compteur">{{ offre.nb_candidats }} candidat(s)</p>
-            <h2>{{ offre.titre }}</h2>
-            <p class="date">Prochain entretien : {{ formaterDate(offre.prochaine_date) }}</p>
-          </div>
-          <button
-            class="btn"
-            type="button"
-            @click="router.push({ name: 'entretiens-candidats', params: { id: offre.id } })"
-          >
-            Voir les candidats
-          </button>
-        </article>
-      </section>
     </main>
   </div>
 </template>
 
 <style scoped>
-.page {
+/* Structure globale : sidebar + page */
+.app-layout {
+  display: grid;
+  grid-template-columns: 260px minmax(0, 1fr);
   min-height: 100vh;
   background: #f1f3f6;
   color: #222;
-  font-family: "Lucida Sans", sans-serif;
+  font-family: "Lucida Sans", "Lucida Sans Regular", "Lucida Grande",
+    "Lucida Sans Unicode", Geneva, Verdana, sans-serif;
 }
 
-.navbar {
-  position: sticky;
-  top: 0;
-  z-index: 10;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  padding: 10px 20px;
+.page {
+  min-width: 0;
+  min-height: 100vh;
+}
+
+.burger {
+  display: none;
+  margin: 16px 0 0 16px;
+  padding: 8px 16px;
+  border: 0;
+  border-radius: 20px;
   background: #fff;
-  box-shadow: rgba(0, 0, 0, 0.15) 0 2px 8px;
-}
-
-.brand {
   color: teal;
-  font-size: 22px;
-  font-weight: 800;
-}
-
-.nav-right {
-  display: flex;
-  align-items: center;
-  gap: 14px;
-}
-
-.nav-link {
-  color: #747474;
-  font-size: 13px;
+  font-family: inherit;
   font-weight: 700;
-  text-decoration: none;
-}
-
-.nav-link:hover {
-  color: teal;
-}
-
-.avatar-me {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 36px;
-  height: 36px;
-  border-radius: 50%;
-  background: teal;
-  color: #fff;
-  font-weight: 700;
+  cursor: pointer;
+  box-shadow: rgba(0, 0, 0, 0.24) 0 3px 8px;
 }
 
 .contenu {
@@ -227,6 +208,16 @@ h1 {
 
 .erreur {
   color: #b42318;
+}
+
+@media (max-width: 960px) {
+  .app-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .burger {
+    display: block;
+  }
 }
 
 @media (max-width: 640px) {

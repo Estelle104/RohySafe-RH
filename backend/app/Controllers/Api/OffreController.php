@@ -3,6 +3,7 @@
 namespace App\Controllers\Api;
 
 use App\Controllers\BaseController;
+use App\Models\CandidatureModel;
 use App\Models\OffreModel;
 use Throwable;
 
@@ -12,6 +13,25 @@ class OffreController extends BaseController
     {
         try {
             $offres = (new OffreModel())->getOffresPubliees();
+            $utilisateur = session()->get('candidat');
+
+            if ($utilisateur && !empty($utilisateur['id'])) {
+                $dejaPostulees = [];
+                foreach ((new CandidatureModel())->getByCandidat((int) $utilisateur['id']) as $ligne) {
+                    if (isset($ligne['id_offre'])) {
+                        $dejaPostulees[] = (int) $ligne['id_offre'];
+                    }
+                }
+
+                foreach ($offres as &$offre) {
+                    if (isset($offre['id']) && in_array((int) $offre['id'], $dejaPostulees, true)) {
+                        $offre['deja_postule'] = true;
+                    } else {
+                        $offre['deja_postule'] = false;
+                    }
+                }
+                unset($offre);
+            }
 
             return $this->response->setJSON($offres);
         } catch (Throwable $e) {

@@ -2,6 +2,7 @@
 import { onMounted, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { getCandidatsEntretiens } from '../services/entretienService'
+import SidebarMenu from '../components/SidebarMenu.vue'
 
 const route = useRoute()
 const router = useRouter()
@@ -10,6 +11,7 @@ const candidats = ref([])
 const chargement = ref(true)
 const erreur = ref('')
 const enAction = ref(null)
+const menuOuvert = ref(false)
 
 // Note minimale (sur 20) pour pouvoir engager un candidat.
 const NOTE_ENGAGEMENT = 15
@@ -77,17 +79,21 @@ onMounted(charger)
 </script>
 
 <template>
-  <div class="page">
-    <header class="navbar">
-      <span class="brand">RohySafe</span>
-      <div class="nav-right">
-        <router-link class="nav-link" :to="{ name: 'entretiens-offres' }">Entretiens</router-link>
-        <router-link class="nav-link" :to="{ name: 'offres' }">Offres</router-link>
-        <span class="avatar-me">RH</span>
-      </div>
-    </header>
+  <div class="app-layout">
+    <!-- Nom / initiales : à remplacer par l'utilisateur connecté -->
+    <SidebarMenu
+      nom="Ressources humaines"
+      role="RH"
+      codeRole="RH"
+      initiales="RH"
+      :ouvert="menuOuvert"
+      @fermer="menuOuvert = false"
+    />
 
-    <main class="contenu">
+    <main class="page">
+      <button class="burger" type="button" @click="menuOuvert = true">☰ Menu</button>
+
+      <div class="contenu">
       <button class="retour" type="button" @click="router.push({ name: 'entretiens-offres' })">
         ← Retour aux offres
       </button>
@@ -160,64 +166,40 @@ onMounted(charger)
           </article>
         </section>
       </template>
+      </div>
     </main>
   </div>
 </template>
 
 <style scoped>
-.page {
+/* Structure globale : sidebar + page */
+.app-layout {
+  display: grid;
+  grid-template-columns: 260px minmax(0, 1fr);
   min-height: 100vh;
   background: #f1f3f6;
   color: #222;
-  font-family: "Lucida Sans", sans-serif;
+  font-family: "Lucida Sans", "Lucida Sans Regular", "Lucida Grande",
+    "Lucida Sans Unicode", Geneva, Verdana, sans-serif;
 }
 
-.navbar {
-  position: sticky;
-  top: 0;
-  z-index: 10;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  padding: 10px 20px;
+.page {
+  min-width: 0;
+  min-height: 100vh;
+}
+
+.burger {
+  display: none;
+  margin: 16px 0 0 16px;
+  padding: 8px 16px;
+  border: 0;
+  border-radius: 20px;
   background: #fff;
-  box-shadow: rgba(0, 0, 0, 0.15) 0 2px 8px;
-}
-
-.brand {
   color: teal;
-  font-size: 22px;
-  font-weight: 800;
-}
-
-.nav-right {
-  display: flex;
-  align-items: center;
-  gap: 14px;
-}
-
-.nav-link {
-  color: #747474;
-  font-size: 13px;
+  font-family: inherit;
   font-weight: 700;
-  text-decoration: none;
-}
-
-.nav-link:hover {
-  color: teal;
-}
-
-.avatar-me {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 36px;
-  height: 36px;
-  border-radius: 50%;
-  background: teal;
-  color: #fff;
-  font-weight: 700;
+  cursor: pointer;
+  box-shadow: rgba(0, 0, 0, 0.24) 0 3px 8px;
 }
 
 .contenu {
@@ -387,6 +369,16 @@ h1 {
 
 .erreur {
   color: #b42318;
+}
+
+@media (max-width: 960px) {
+  .app-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .burger {
+    display: block;
+  }
 }
 
 @media (max-width: 640px) {

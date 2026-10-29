@@ -66,6 +66,10 @@ export function useOffre() {
     }
 
     function postuler(offre) {
+      if (offre.deja_postule) {
+        alert('Vous avez deja postule a cet offre , Veuillez verifier vos notifications')
+        return
+      }
       router.push({ name: 'postuler', params: { id: offre.id } })
     }
 

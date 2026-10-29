@@ -22,6 +22,7 @@ const liens = [
   { to: '/offres/a-publier', label: 'Offres à publier', icone: 'offres', roles: ['RH','DG','Direction'] },
   { groupe: 'Mon espace' },
   { to: '/candidatures', label: 'Liste des candidatures', icone: 'demandes', roles: ['RH'] },
+  { to: { name: 'entretiens-offres' }, label: 'Entretiens', icone: 'entretiens', roles: ['RH'] },
   { to: '/notification', label: 'Notifications', icone: 'notifications', badge: true },  // tous
   { to: '/backoffice', label: 'Gerer les offres d\'emplois', icone: 'demandes', roles: ['RH','DG'] },                          // tous
   { to: '/profil', label: 'Mon profil', icone: 'profil' },
@@ -59,6 +60,11 @@ const liensVisibles = computed(() => {
             <template v-else-if="l.icone === 'demandes'">
               <rect x="5" y="3" width="14" height="18" rx="2" />
               <path d="M9 8h6M9 12h6M9 16h4" />
+            </template>
+            <template v-else-if="l.icone === 'entretiens'">
+              <rect x="3" y="5" width="18" height="16" rx="2" />
+              <path d="M3 10h18M8 3v4M16 3v4" />
+              <path d="M9 15l2 2 4-4" />
             </template>
             <template v-else-if="l.icone === 'offres'">
               <rect x="3" y="7" width="18" height="13" rx="2" />

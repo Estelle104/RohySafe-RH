@@ -993,3 +993,5 @@ INSERT INTO competences (libelle, categorie) VALUES
 ('Maintenance informatique', 'Technique'),
 ('Analyse de données', 'Technique'),
 ('Résolution de problèmes', 'Technique');
+
+INSERT INTO statut_offres(libelle) VALUES('En attente');

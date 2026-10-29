@@ -299,6 +299,8 @@ export function useCvCandidature() {
       appliquerCv(resultat.cv)
       experiences.value = construireLignes(offre.value, resultat.experiences)
       succes.value = resultat.message
+      erreur.value = ''
+      setTimeout(() => router.push({ name: 'offres' }), 1800)
     } catch (e) {
       erreur.value = e.message
     } finally {

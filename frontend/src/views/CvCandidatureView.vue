@@ -363,8 +363,8 @@ const {
             <button class="btn secondary" type="button" @click="retourner">
               Annuler
             </button>
-            <button class="btn" type="button" :disabled="enregistrement" @click="enregistrer">
-              {{ enregistrement ? 'Enregistrement...' : 'Enregistrer mon CV et postuler' }}
+            <button class="btn" type="button" :disabled="enregistrement || !!candidature" @click="enregistrer">
+              {{ candidature ? 'Déjà postulé' : enregistrement ? 'Enregistrement...' : 'Enregistrer mon CV et postuler' }}
             </button>
           </div>
         </section>
