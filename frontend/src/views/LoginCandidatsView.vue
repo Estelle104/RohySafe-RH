@@ -25,6 +25,14 @@ const lienInscription = computed(() => ({
       : {},
 }))
 
+const login = computed(() => ({
+  name: 'login',
+  query:
+    typeof route.query.redirect === 'string'
+      ? { redirect: route.query.redirect }
+      : {},
+}))
+
 onMounted(() => {
   if (estCandidatConnecte()) {
     router.replace(redirection.value)
@@ -65,7 +73,8 @@ async function seConnecter() {
           <circle cx="40" cy="290" r="10" fill="#ffffff" opacity="0.15" />
 
           <!-- carte CV arrière -->
-          <rect x="95" y="52" width="190" height="240" rx="14" fill="#ffffff" opacity="0.25" transform="rotate(-6 190 172)" />
+          <rect x="95" y="52" width="190" height="240" rx="14" fill="#ffffff" opacity="0.25"
+            transform="rotate(-6 190 172)" />
 
           <!-- carte CV principale -->
           <rect x="120" y="40" width="190" height="250" rx="14" fill="#ffffff" />
@@ -85,7 +94,8 @@ async function seConnecter() {
 
           <!-- pastille validée -->
           <circle cx="300" cy="258" r="30" fill="#00897b" stroke="#ffffff" stroke-width="6" />
-          <path d="M286 258 l10 10 l18 -20" fill="none" stroke="#ffffff" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" />
+          <path d="M286 258 l10 10 l18 -20" fill="none" stroke="#ffffff" stroke-width="6" stroke-linecap="round"
+            stroke-linejoin="round" />
 
           <!-- loupe -->
           <circle cx="92" cy="206" r="34" fill="none" stroke="#ffffff" stroke-width="9" />
@@ -108,24 +118,13 @@ async function seConnecter() {
       <form class="form" @submit.prevent="seConnecter">
         <label class="field">
           Identifiant ou email
-          <input
-            v-model="identifiant"
-            class="input"
-            type="text"
-            autocomplete="username"
-            placeholder="miora_test"
-          />
+          <input v-model="identifiant" class="input" type="text" autocomplete="username" placeholder="miora_test" />
         </label>
 
         <label class="field">
           Mot de passe
-          <input
-            v-model="motDePasse"
-            class="input"
-            type="password"
-            autocomplete="current-password"
-            placeholder="Mot de passe"
-          />
+          <input v-model="motDePasse" class="input" type="password" autocomplete="current-password"
+            placeholder="Mot de passe" />
         </label>
 
         <p v-if="erreur" class="error">{{ erreur }}</p>
@@ -143,6 +142,12 @@ async function seConnecter() {
       <router-link class="page-link" to="/offres">
         Retour aux offres
       </router-link>
+
+      <p class="bas-de-page">
+        Admin ?
+        <router-link :to="login">Se connecter</router-link>
+      </p>
+
     </section>
   </div>
 </template>
@@ -201,7 +206,7 @@ async function seConnecter() {
   background: #fff;
 }
 
-.panneau-form > * {
+.panneau-form>* {
   width: 100%;
   max-width: 380px;
 }

@@ -127,9 +127,9 @@ class OffreModel extends Model
     }
     
     /** @return list<array<string, mixed>> */
-    public function getDemandesAPublier(): array
+    public function getDemandesAPublier(?int $rhId = null): array
     {
-        return $this->db->table('demandes dm')
+        $builder = $this->db->table('demandes dm')
             ->select('dm.id, dm.nombre_demande, dm.date_prise_poste, dm.salaire_propose, p.libelle AS poste, d.libelle AS departement, tc.libelle AS type_contrat')
             ->join('poste_departement pd', 'pd.id = dm.id_poste_departement')
             ->join('postes p', 'p.id = pd.id_poste')
@@ -141,11 +141,15 @@ class OffreModel extends Model
             ->join('roles role_actuel', 'role_actuel.id = actuel.id_role')
             ->join('statut_demandes sd', 'sd.id = dm.id_statut_actuel')
             ->join('offres o', 'o.id_demande = dm.id', 'left')
-            ->where('role_createur.libelle', 'DG')
             ->where('role_actuel.libelle', 'RH')
             ->where('sd.libelle', 'valide')
-            ->where('o.id IS NULL', null, false)
-            ->orderBy('dm.date_creation', 'DESC')
+            ->where('o.id IS NULL', null, false);
+
+        if ($rhId !== null) {
+            $builder->where('dm.id_utilisateur_actuel', $rhId);
+        }
+
+        return $builder->orderBy('dm.date_creation', 'DESC')
             ->get()->getResultArray();
     }
 
@@ -159,10 +163,10 @@ class OffreModel extends Model
             ->join('type_contrats tc', 'tc.id = dm.id_type_contrat')->where('o.id', $id)->get()->getRowArray();
     }
 
-    public function publierDemande(array $data): int
+    public function publierDemande(array $data, ?int $rhId = null): int
     {
         $demandePossible = false;
-        foreach ($this->getDemandesAPublier() as $demande) {
+        foreach ($this->getDemandesAPublier($rhId) as $demande) {
             if ((int) $demande['id'] === (int) $data['id_demande']) { $demandePossible = true; break; }
         }
         if (! $demandePossible) throw new \DomainException('Cette demande ne peut pas être publiée.');

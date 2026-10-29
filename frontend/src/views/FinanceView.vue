@@ -1,6 +1,7 @@
 <script setup>
 import { computed, onMounted, ref } from 'vue'
 import { annulerFinance, getFinanceFiche, getFinanceNotifications, validerFinance } from '../services/financeService'
+import SidebarMenu from '../components/SidebarMenu.vue'
 
 const demandes = ref([])
 const nombre = ref(0)
@@ -9,6 +10,7 @@ const motif = ref('')
 const loading = ref(false)
 const error = ref('')
 const message = ref('')
+const menuOuvert = ref(false)
 
 const peutValider = computed(() => fiche.value?.est_suffisant === true && fiche.value?.demande?.statut_libelle === 'EN_VALIDATION_FINANCE')
 
@@ -50,65 +52,81 @@ onMounted(chargerNotifications)
 </script>
 
 <template>
-  <main class="finance-page">
-    <header class="navbar">
-      <span class="brand">RohySafe</span>
-      <div class="header-right">
-        <span class="role">Espace Finance</span>
-      <button class="bell" type="button" @click="chargerNotifications" aria-label="Actualiser les notifications">
-        🔔 <span>{{ nombre }}</span>
-      </button>
-        <div class="avatar-me">FI</div>
+  <div class="app-layout">
+    <SidebarMenu
+      nom="Espace Finance"
+      role="Gestionnaire de finance"
+      codeRole="Finance"
+      initiales="FI"
+      :notifications="nombre"
+      :ouvert="menuOuvert"
+      @fermer="menuOuvert = false"
+    />
+
+    <main class="finance-page">
+      <header class="navbar">
+        <button class="burger" type="button" @click="menuOuvert = true">☰ Menu</button>
+        <div class="header-right">
+          <span class="role">Espace Finance</span>
+          <button class="bell" type="button" @click="chargerNotifications" aria-label="Actualiser les notifications">
+            🔔 <span>{{ nombre }}</span>
+          </button>
+          <div class="avatar-me">FI</div>
+        </div>
+      </header>
+
+      <div class="content">
+        <h1 class="page-title">Demandes financières</h1>
+        <p class="subtitle">Vérifiez automatiquement le budget avant de transmettre une demande à la Direction générale.</p>
+        <p v-if="message" class="alert success">{{ message }}</p>
+        <p v-if="error" class="alert error">{{ error }}</p>
+        <section class="finance-layout">
+          <aside class="panel">
+            <h2 class="panel-title">Notifications ({{ nombre }})</h2>
+            <button v-for="demande in demandes" :key="demande.id" class="notification" type="button" @click="ouvrirFiche(demande.id)">
+              <strong>{{ demande.poste }}</strong>
+              <small>{{ demande.departement }} · {{ demande.nombre_demande }} personne(s)</small>
+              <small>{{ demande.date_creation }}</small>
+            </button>
+            <p v-if="!demandes.length" class="empty">Aucune demande en attente.</p>
+          </aside>
+
+          <section class="fiche">
+            <p v-if="loading" class="loading">Chargement...</p>
+            <p v-else-if="!fiche" class="empty">Sélectionnez une notification pour afficher sa fiche.</p>
+            <template v-else>
+              <div class="fiche-header"><h2>Fiche de validation</h2><span class="status">À traiter</span></div>
+              <div class="calculs">
+                <div class="calcul"><span class="calcul-label">Poste</span><span class="calcul-value">{{ fiche.demande.poste }}</span></div>
+                <div class="calcul"><span class="calcul-label">Département</span><span class="calcul-value">{{ fiche.demande.departement }}</span></div>
+                <div class="calcul"><span class="calcul-label">Salaire par personne</span><span class="calcul-value">{{ fiche.demande.salaire_propose }}</span></div>
+                <div class="calcul"><span class="calcul-label">Nombre de personnes</span><span class="calcul-value">{{ fiche.demande.nombre_demande }}</span></div>
+                <div class="calcul"><span class="calcul-label">Montant total demandé</span><span class="calcul-value">{{ fiche.montant }}</span></div>
+                <div class="calcul"><span class="calcul-label">Budget disponible</span><span class="calcul-value">{{ fiche.disponible }}</span></div>
+              </div>
+              <p class="budget-result" :class="fiche.est_suffisant ? 'budget-ok' : 'budget-ko'">
+                {{ fiche.est_suffisant ? 'Budget suffisant' : 'Budget insuffisant' }}
+              </p>
+              <label class="motif-label" for="motif">Motif d’annulation</label>
+              <textarea id="motif" v-model="motif" placeholder="Saisissez un motif si vous annulez la demande" rows="4" />
+              <div class="actions">
+                <button class="btn" type="button" :disabled="loading || !peutValider" @click="valider">Valider</button>
+                <button class="btn cancel" type="button" :disabled="loading" @click="annuler">Annuler</button>
+              </div>
+            </template>
+          </section>
+        </section>
       </div>
-    </header>
-
-    <div class="content">
-      <h1 class="page-title">Demandes financières</h1>
-      <p class="subtitle">Vérifiez automatiquement le budget avant de transmettre une demande à la Direction générale.</p>
-      <p v-if="message" class="alert success">{{ message }}</p>
-      <p v-if="error" class="alert error">{{ error }}</p>
-      <section class="finance-layout">
-      <aside class="panel">
-        <h2 class="panel-title">Notifications ({{ nombre }})</h2>
-        <button v-for="demande in demandes" :key="demande.id" class="notification" type="button" @click="ouvrirFiche(demande.id)">
-          <strong>{{ demande.poste }}</strong>
-          <small>{{ demande.departement }} · {{ demande.nombre_demande }} personne(s)</small>
-          <small>{{ demande.date_creation }}</small>
-        </button>
-        <p v-if="!demandes.length" class="empty">Aucune demande en attente.</p>
-      </aside>
-
-      <section class="fiche">
-        <p v-if="loading" class="loading">Chargement...</p>
-        <p v-else-if="!fiche" class="empty">Sélectionnez une notification pour afficher sa fiche.</p>
-        <template v-else>
-          <div class="fiche-header"><h2>Fiche de validation</h2><span class="status">À traiter</span></div>
-          <div class="calculs">
-            <div class="calcul"><span class="calcul-label">Poste</span><span class="calcul-value">{{ fiche.demande.poste }}</span></div>
-            <div class="calcul"><span class="calcul-label">Département</span><span class="calcul-value">{{ fiche.demande.departement }}</span></div>
-            <div class="calcul"><span class="calcul-label">Salaire par personne</span><span class="calcul-value">{{ fiche.demande.salaire_propose }}</span></div>
-            <div class="calcul"><span class="calcul-label">Nombre de personnes</span><span class="calcul-value">{{ fiche.demande.nombre_demande }}</span></div>
-            <div class="calcul"><span class="calcul-label">Montant total demandé</span><span class="calcul-value">{{ fiche.montant }}</span></div>
-            <div class="calcul"><span class="calcul-label">Budget disponible</span><span class="calcul-value">{{ fiche.disponible }}</span></div>
-          </div>
-          <p class="budget-result" :class="fiche.est_suffisant ? 'budget-ok' : 'budget-ko'">
-            {{ fiche.est_suffisant ? 'Budget suffisant' : 'Budget insuffisant' }}
-          </p>
-          <label class="motif-label" for="motif">Motif d’annulation</label>
-          <textarea id="motif" v-model="motif" placeholder="Saisissez un motif si vous annulez la demande" rows="4" />
-          <div class="actions">
-            <button class="btn" type="button" :disabled="loading || !peutValider" @click="valider">Valider</button>
-            <button class="btn cancel" type="button" :disabled="loading" @click="annuler">Annuler</button>
-          </div>
-        </template>
-      </section>
-      </section>
-    </div>
-  </main>
+    </main>
+  </div>
 </template>
 
 <style scoped>
+/* Structure globale : sidebar + page */
+.app-layout { display: grid; grid-template-columns: 260px minmax(0, 1fr); min-height: 100vh; background: #f1f3f6; }
+
 .finance-page {
+  min-width: 0;
   min-height: 100vh;
   background: #f1f3f6;
   color: #222;
@@ -116,20 +134,21 @@ onMounted(chargerNotifications)
   letter-spacing: .01em;
 }
 
+/* La marque est maintenant dans la sidebar */
 .navbar {
   position: sticky;
   top: 0;
-  z-index: 10;
+  z-index: 5;
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: flex-end;
   gap: 12px;
   padding: 10px 20px;
   background: #fff;
   box-shadow: rgba(0, 0, 0, .15) 0 2px 8px;
 }
 
-.brand { color: teal; font-size: 21px; font-weight: 800; letter-spacing: -.02em; }
+.burger { display: none; margin-right: auto; padding: 8px 16px; border: 0; border-radius: 20px; background: #fff; color: teal; font-family: inherit; font-weight: 700; cursor: pointer; box-shadow: rgba(0, 0, 0, .24) 0 3px 8px; }
 .header-right { display: flex; align-items: center; gap: 12px; }
 .role { color: #747474; font-size: 13px; font-weight: 700; }
 .bell { position: relative; border: 0; background: transparent; font-size: 22px; cursor: pointer; }
@@ -171,6 +190,8 @@ textarea:focus { border-color: teal; }
 .alert.success { background: #e8f5e9; color: #137333; }
 .alert.error { background: #fdecec; color: #b42318; }
 .loading { color: #747474; font-size: 13px; }
+
+@media (max-width: 960px) { .app-layout { grid-template-columns: 1fr; } .burger { display: block; } }
 @media (max-width: 720px) { .finance-layout { grid-template-columns: 1fr; } .navbar { padding: 10px 16px; } .role { display: none; } }
 @media (max-width: 480px) { .calculs { grid-template-columns: 1fr; } .content { padding: 22px 14px 40px; } }
 </style>

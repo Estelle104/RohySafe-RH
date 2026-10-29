@@ -14,60 +14,9 @@ class CandidatureModel extends Model
 
     public function getListe(): array
     {
-        return $this->db->table('candidatures c')->select('c.id, ca.nom, ca.prenom, ca.email, o.titre AS offre, sc.libelle AS statut, c.date_candidature')
+        return $this->db->table('candidatures c')->select('c.id, c.id_offre, ca.nom, ca.prenom, ca.email, o.titre AS offre, sc.libelle AS statut, c.date_candidature')
             ->join('candidats ca', 'ca.id = c.id_candidat')->join('offres o', 'o.id = c.id_offre')->join('statut_candidatures sc', 'sc.id = c.id_statut_actuel')
             ->orderBy('c.date_candidature', 'DESC')->get()->getResultArray();
-    }
-
-    public function preselectionner(int $id): array
-    {
-        $candidature = $this->find($id);
-        if ($candidature === null) {
-            throw new \DomainException('Candidature introuvable.');
-        }
-
-        $statut = $this->db->table('statut_candidatures')
-            ->select('id, libelle')
-            ->where('libelle', 'preselectionne')
-            ->get()
-            ->getRowArray();
-
-        if ($statut === null) {
-            throw new \RuntimeException('Statut de candidature preselectionne introuvable.');
-        }
-
-        if ((int) $candidature['id_statut_actuel'] === (int) $statut['id']) {
-            return [
-                'id' => (int) $candidature['id'],
-                'statut' => $statut['libelle'],
-                'modifie' => false,
-            ];
-        }
-
-        $this->db->transBegin();
-
-        try {
-            $this->db->table('historique_candidature_status')->insert([
-                'id_candidature' => $id,
-                'id_statut_candidature' => $candidature['id_statut_actuel'],
-            ]);
-            $this->update($id, ['id_statut_actuel' => $statut['id']]);
-
-            if (! $this->db->transStatus()) {
-                throw new \RuntimeException('Échec de la présélection de la candidature.');
-            }
-
-            $this->db->transCommit();
-        } catch (\Throwable $e) {
-            $this->db->transRollback();
-            throw $e;
-        }
-
-        return [
-            'id' => (int) $candidature['id'],
-            'statut' => $statut['libelle'],
-            'modifie' => true,
-        ];
     }
 
     public function creerEntretien(int $id, array $data): int
@@ -135,5 +84,12 @@ class CandidatureModel extends Model
         if ($statut === null) throw new \RuntimeException('Le statut de contrat cree (id 1) est introuvable.');
         $this->db->table('contrats')->insert(['id_employe' => $employe['id'], 'id_type_contrat' => $donnees['id_type_contrat'], 'date_debut' => $donnees['date_prise_poste'] ?: date('Y-m-d'), 'date_fin' => null, 'salaire' => $donnees['salaire_propose'], 'id_statut_actuel' => $statut['id'], 'date_signature' => date('Y-m-d')]);
         $contrat = (int) $this->db->insertID(); $this->db->transComplete(); if (! $this->db->transStatus()) throw new \RuntimeException('Échec de génération du contrat.'); return $contrat;
+    }
+
+    public function updateStatutCandidatureEngage($id){
+        $data = [];
+        $data['id_statut_actuel'] = 5;    
+        $a = $this->update($id,$data);
+        return $a;
     }
 }

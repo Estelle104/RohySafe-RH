@@ -1,0 +1,12 @@
+- [ok/2]Ajout des liens dans le sidebar 
+- Historiser les candidatures, statuts candidatures , statut ddemandes , statut offres ,....
+- [ok]Deplacer "Backoffice" (dans la page candidat) vers le crm
+- Design des pages :
+    - Publier offres , 
+    - 
+- Page de negociations :
+    - Apres que le candidat est engage , il recoit une notification dans sa page , pour dire "Vous etes engages" , quand il clique ca va rediriger vers une page de negociation : deja il revoit les infos sur son contrat et poste , salaire : Puis il peut modifier le salaire propose et refuser un contrat d'essai : (un bouton modifier et accepter a cote) si il modifie , ca redirige vers la page , apres avoir modifie , cela va envoyer une demande vers le rh ( le rh peut donc voir ces modifications de salaire et accepter a nouveau ou pas ) , si il accepte le candidat est pris , il recoit une notification et l'offre est supprime si tout les places de l'offre sont pris 
+
+- Generer contrat apres negociation
+- Notifications candidat dans sa page 
+- Enlever le poste apres poste remplis

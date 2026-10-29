@@ -9,6 +9,10 @@ const offre = ref(null)
 const candidats = ref([])
 const chargement = ref(true)
 const erreur = ref('')
+const enAction = ref(null)
+
+// Note minimale (sur 20) pour pouvoir engager un candidat.
+const NOTE_ENGAGEMENT = 15
 
 function formaterDate(valeur) {
   if (!valeur) {
@@ -25,6 +29,10 @@ function aUneEvaluation(candidat) {
   return candidat.note !== null && candidat.note !== undefined && candidat.note !== ''
 }
 
+function peutEngager(candidat) {
+  return Number(candidat.note) >= NOTE_ENGAGEMENT
+}
+
 async function charger() {
   chargement.value = true
   erreur.value = ''
@@ -39,6 +47,31 @@ async function charger() {
     chargement.value = false
   }
 }
+
+// Change le statut de la candidature : "engager" ou "attente".
+// Adapter les URL à tes routes CodeIgniter 4.
+async function changerStatut(candidat, action) {
+  enAction.value = candidat.id_candidature
+  erreur.value = ''
+
+  try {
+    const res = await fetch(`/api/candidatures/${candidat.id_candidature}/${action}`, {
+      method: 'POST',
+      headers: { Accept: 'application/json' },
+      credentials: 'include',
+    })
+    const resultat = await res.json().catch(() => ({}))
+    if (!res.ok) throw new Error(resultat.message || 'Action impossible.')
+    await charger()
+  } catch (e) {
+    erreur.value = e.message
+  } finally {
+    enAction.value = null
+  }
+}
+
+const engager = candidat => changerStatut(candidat, 'engager')
+const mettreEnAttente = candidat => changerStatut(candidat, 'attente')
 
 onMounted(charger)
 </script>
@@ -64,40 +97,69 @@ onMounted(charger)
       <p class="sous-titre">Une note et des remarques par candidature après l’entretien.</p>
 
       <p v-if="chargement" class="message">Chargement des candidats...</p>
-      <p v-else-if="erreur" class="message erreur">{{ erreur }}</p>
+      <p v-else-if="erreur && candidats.length === 0" class="message erreur">{{ erreur }}</p>
       <p v-else-if="candidats.length === 0" class="message">
         Aucun candidat n’a d’entretien planifié pour cette offre.
       </p>
 
-      <section v-else class="liste">
-        <article v-for="candidat in candidats" :key="candidat.id_candidature" class="carte">
-          <div class="identite">
-            <h2>{{ candidat.prenom }} {{ candidat.nom }}</h2>
-            <p>{{ candidat.email }} · {{ candidat.ville || 'Ville non renseignée' }}</p>
-            <p class="entretien">
-              {{ formaterDate(candidat.date_entretien) }}
-              <span v-if="candidat.lieu_entretien"> · {{ candidat.lieu_entretien }}</span>
-            </p>
-          </div>
+      <template v-else>
+        <p v-if="erreur" class="message erreur">{{ erreur }}</p>
 
-          <div class="etat">
-            <span class="statut" :class="candidat.statut_entretien">
-              {{ candidat.statut_entretien || 'planifie' }}
-            </span>
-            <p v-if="aUneEvaluation(candidat)" class="note">
-              {{ Number(candidat.note).toFixed(2) }} / 20
-            </p>
-            <p v-else class="sans-note">Pas encore évalué</p>
-            <button
-              class="btn"
-              type="button"
-              @click="router.push({ name: 'entretien-evaluation', params: { id: candidat.id_candidature } })"
-            >
-              {{ aUneEvaluation(candidat) ? 'Modifier l’évaluation' : 'Évaluer' }}
-            </button>
-          </div>
-        </article>
-      </section>
+        <section class="liste">
+          <article v-for="candidat in candidats" :key="candidat.id_candidature" class="carte">
+            <div class="identite">
+              <h2>{{ candidat.prenom }} {{ candidat.nom }}</h2>
+              <p>{{ candidat.email }} · {{ candidat.ville || 'Ville non renseignée' }}</p>
+              <p class="entretien">
+                {{ formaterDate(candidat.date_entretien) }}
+                <span v-if="candidat.lieu_entretien"> · {{ candidat.lieu_entretien }}</span>
+              </p>
+            </div>
+
+            <div class="etat">
+              <span class="statut" :class="candidat.statut_entretien">
+                {{ candidat.statut_entretien || 'planifie' }}
+              </span>
+              <p v-if="aUneEvaluation(candidat)" class="note">
+                {{ Number(candidat.note).toFixed(2) }} / 20
+              </p>
+              <p v-else class="sans-note">Pas encore évalué</p>
+
+              <div class="actions">
+                <button
+                  class="btn"
+                  type="button"
+                  @click="router.push({ name: 'entretien-evaluation', params: { id: candidat.id_candidature } })"
+                >
+                  {{ aUneEvaluation(candidat) ? 'Modifier l’évaluation' : 'Évaluer' }}
+                </button>
+
+                <!-- Décision : seulement une fois la note saisie -->
+                <template v-if="aUneEvaluation(candidat)">
+                  <button
+                    v-if="peutEngager(candidat)"
+                    class="btn engager"
+                    type="button"
+                    :disabled="enAction === candidat.id_candidature"
+                    @click="engager(candidat)"
+                  >
+                    Engager
+                  </button>
+                  <button
+                    v-else
+                    class="btn attente"
+                    type="button"
+                    :disabled="enAction === candidat.id_candidature"
+                    @click="mettreEnAttente(candidat)"
+                  >
+                    En attente
+                  </button>
+                </template>
+              </div>
+            </div>
+          </article>
+        </section>
+      </template>
     </main>
   </div>
 </template>
@@ -272,6 +334,13 @@ h1 {
   font-size: 12px;
 }
 
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
 .btn {
   border: 0;
   border-radius: 20px;
@@ -282,6 +351,31 @@ h1 {
   font-size: 13px;
   font-weight: 700;
   cursor: pointer;
+}
+
+.btn:disabled {
+  opacity: 0.6;
+  cursor: wait;
+}
+
+/* Décision : engager (note >= 15) */
+.btn.engager {
+  background: #137333;
+}
+
+.btn.engager:hover:not(:disabled) {
+  background: #0f5c28;
+}
+
+/* Décision : en attente (note < 15) */
+.btn.attente {
+  border: 1px solid #b54708;
+  background: #fff;
+  color: #b54708;
+}
+
+.btn.attente:hover:not(:disabled) {
+  background: #fef3e6;
 }
 
 .message {
@@ -304,6 +398,10 @@ h1 {
   .etat {
     width: 100%;
     text-align: left;
+  }
+
+  .actions {
+    justify-content: flex-start;
   }
 }
 </style>

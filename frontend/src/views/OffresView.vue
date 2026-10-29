@@ -40,6 +40,8 @@ const {
 </script>
 
 <template>
+ 
+    
   <div class="page">
     <header class="navbar">
       <span class="brand">RohySafe</span>
@@ -51,7 +53,7 @@ const {
       />
       <div class="nav-right">
         <router-link v-if="!candidat" class="nav-link" to="/entretiens">Entretiens</router-link>
-        <router-link class="nav-link" to="/backoffice">Backoffice</router-link>
+        <!-- <router-link class="nav-link" to="/backoffice">Backoffice</router-link> -->
         <template v-if="candidat">
           <span class="nav-link">{{ candidat.prenom }}</span>
           <button class="nav-link nav-button" type="button" @click="seDeconnecter">
@@ -111,6 +113,15 @@ const {
 </template>
 
 <style scoped>
+.app-layout {
+  display: grid;
+  grid-template-columns: 260px minmax(0, 1fr);
+  min-height: 100vh;
+  background: #f1f3f6;
+  color: #222;
+  font-family: "Lucida Sans", "Lucida Sans Regular", "Lucida Grande",
+    "Lucida Sans Unicode", Geneva, Verdana, sans-serif;
+}
 .page {
   min-height: 100vh;
   background: #f1f3f6;
