@@ -14,7 +14,7 @@ class CandidatureModel extends Model
 
     public function getListe(): array
     {
-        return $this->db->table('candidatures c')->select('c.id, ca.nom, ca.prenom, ca.email, o.titre AS offre, sc.libelle AS statut, c.date_candidature')
+        return $this->db->table('candidatures c')->select('c.id, c.id_offre, ca.nom, ca.prenom, ca.email, o.titre AS offre, sc.libelle AS statut, c.date_candidature')
             ->join('candidats ca', 'ca.id = c.id_candidat')->join('offres o', 'o.id = c.id_offre')->join('statut_candidatures sc', 'sc.id = c.id_statut_actuel')
             ->orderBy('c.date_candidature', 'DESC')->get()->getResultArray();
     }

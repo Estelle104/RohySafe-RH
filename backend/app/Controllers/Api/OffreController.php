@@ -27,8 +27,15 @@ class OffreController extends BaseController
     {
         try {
             $utilisateur = session()->get('utilisateur');
+            $role = $utilisateur['role'] ?? '';
+
+            // La Direction générale consulte toutes les demandes prêtes à publier,
+            // tandis qu'un RH ne voit que celles qui lui sont attribuées.
+            $estDirection = in_array($role, ['DG', 'Direction'], true);
+            $rhId = $estDirection ? null : (int) ($utilisateur['id'] ?? 0);
+
             return $this->response->setJSON(
-                (new OffreModel())->getDemandesAPublier((int) ($utilisateur['id'] ?? 0))
+                (new OffreModel())->getDemandesAPublier($rhId)
             );
         }
         catch (Throwable $e) { log_message('error', $e->getMessage()); return $this->response->setStatusCode(500)->setJSON(['message' => 'Impossible de récupérer les demandes.']); }
@@ -51,7 +58,10 @@ class OffreController extends BaseController
         if ($data['date_limite'] < $data['date_publication']) return $this->response->setStatusCode(422)->setJSON(['message' => 'La date limite doit être postérieure à la date de publication.']);
         try {
             $utilisateur = session()->get('utilisateur');
-            $id = (new OffreModel())->publierDemande($data, (int) ($utilisateur['id'] ?? 0));
+            $role = $utilisateur['role'] ?? '';
+            $estDirection = in_array($role, ['DG', 'Direction'], true);
+            $rhId = $estDirection ? null : (int) ($utilisateur['id'] ?? 0);
+            $id = (new OffreModel())->publierDemande($data, $rhId);
             return $this->response->setJSON(['id' => $id, 'message' => 'Offre publiée.']);
         } catch (Throwable $e) { log_message('error', $e->getMessage()); return $this->response->setStatusCode(500)->setJSON(['message' => 'Impossible de publier l’offre.']); }
     }

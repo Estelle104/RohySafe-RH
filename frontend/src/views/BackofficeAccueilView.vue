@@ -1,4 +1,38 @@
 <script setup>
+import { computed, onMounted, ref } from 'vue'
+import { useRouter } from 'vue-router'
+import SidebarMenu from '../components/SidebarMenu.vue'
+
+const router = useRouter()
+const utilisateur = ref(null)
+const menuOuvert = ref(false)
+
+// Rôles autorisés sur cette page.
+const ROLES_AUTORISES = ['DG', 'RH']
+
+const initiales = computed(() =>
+  (utilisateur.value?.login ?? '').slice(0, 2).toUpperCase()
+)
+
+// Récupère l'utilisateur connecté pour la sidebar.
+onMounted(async () => {
+  try {
+    const r = await fetch('/api/auth/me', { credentials: 'include' })
+    if (!r.ok) throw new Error()
+    const me = await r.json()
+    if (!me.utilisateur) throw new Error()
+    utilisateur.value = me.utilisateur
+
+    // Masquage côté interface seulement : la vraie protection reste côté serveur.
+    const role = String(me.utilisateur.role ?? '').toUpperCase()
+    if (!ROLES_AUTORISES.includes(role)) {
+      router.replace('/dashboard')
+    }
+  } catch {
+    router.replace('/login')
+  }
+})
+
 // Liens de navigation du backoffice : adapter les chemins à ton router/index.js
 const liens = [
   {
@@ -19,56 +53,66 @@ const liens = [
 </script>
 
 <template>
-  <div class="page">
-    <header class="navbar">
-      <span class="brand">RohySafe</span>
-      <span class="role">Backoffice</span>
-      <router-link class="btn secondary" to="/offres">Retour aux offres</router-link>
-    </header>
+  <div class="app-layout">
+    <SidebarMenu
+      :nom="utilisateur?.login ?? ''"
+      :role="utilisateur?.departement || utilisateur?.role || ''"
+      :code-role="utilisateur?.role ?? ''"
+      :initiales="initiales"
+      :ouvert="menuOuvert"
+      @fermer="menuOuvert = false"
+    />
 
-    <main class="contenu">
-      <section class="entete">
-        <p class="eyebrow">Administration</p>
-        <h1>Espace de gestion</h1>
-        <p class="sous-titre">
-          Choisissez une section pour gérer la présélection des candidats et les
-          critères des offres.
-        </p>
-      </section>
+    <main class="page">
+      <button class="burger" type="button" @click="menuOuvert = true">☰ Menu</button>
 
-      <section class="grille">
-        <router-link
-          v-for="lien in liens"
-          :key="lien.to"
-          :to="lien.to"
-          class="carte"
-        >
-          <div class="pastille">
-            <!-- Candidats -->
-            <svg v-if="lien.icone === 'candidats'" viewBox="0 0 24 24" aria-hidden="true">
-              <circle cx="9" cy="8" r="3.5" />
-              <path d="M2.5 20c0-3.6 2.9-6 6.5-6s6.5 2.4 6.5 6" />
-              <path d="M16 11.5l2 2 4-4.5" />
-            </svg>
-            <!-- Exigences -->
-            <svg v-else viewBox="0 0 24 24" aria-hidden="true">
-              <rect x="4" y="3" width="16" height="18" rx="2.5" />
-              <path d="M8 8h8M8 12h8M8 16h5" />
-            </svg>
-          </div>
+      <div class="contenu">
+        <section class="entete">
+          <p class="eyebrow">Administration</p>
+          <h1>Espace de gestion</h1>
+          <p class="sous-titre">
+            Choisissez une section pour gérer la présélection des candidats et les
+            critères des offres.
+          </p>
+        </section>
 
-          <h2>{{ lien.titre }}</h2>
-          <p class="description">{{ lien.description }}</p>
+        <section class="grille">
+          <router-link
+            v-for="lien in liens"
+            :key="lien.to"
+            :to="lien.to"
+            class="carte"
+          >
+            <div class="pastille">
+              <!-- Candidats -->
+              <svg v-if="lien.icone === 'candidats'" viewBox="0 0 24 24" aria-hidden="true">
+                <circle cx="9" cy="8" r="3.5" />
+                <path d="M2.5 20c0-3.6 2.9-6 6.5-6s6.5 2.4 6.5 6" />
+                <path d="M16 11.5l2 2 4-4.5" />
+              </svg>
+              <!-- Exigences -->
+              <svg v-else viewBox="0 0 24 24" aria-hidden="true">
+                <rect x="4" y="3" width="16" height="18" rx="2.5" />
+                <path d="M8 8h8M8 12h8M8 16h5" />
+              </svg>
+            </div>
 
-          <span class="acces">Accéder →</span>
-        </router-link>
-      </section>
+            <h2>{{ lien.titre }}</h2>
+            <p class="description">{{ lien.description }}</p>
+
+            <span class="acces">Accéder →</span>
+          </router-link>
+        </section>
+      </div>
     </main>
   </div>
 </template>
 
 <style scoped>
-.page {
+/* Structure globale : sidebar + page */
+.app-layout {
+  display: grid;
+  grid-template-columns: 260px minmax(0, 1fr);
   min-height: 100vh;
   background: #f1f3f6;
   color: #222;
@@ -76,29 +120,23 @@ const liens = [
     "Lucida Sans Unicode", Geneva, Verdana, sans-serif;
 }
 
-.navbar {
-  position: sticky;
-  top: 0;
-  z-index: 10;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  padding: 10px 20px;
+.page {
+  min-width: 0;
+  min-height: 100vh;
+}
+
+.burger {
+  display: none;
+  margin: 16px 0 0 16px;
+  padding: 8px 16px;
+  border: 0;
+  border-radius: 20px;
   background: #fff;
-  box-shadow: rgba(0, 0, 0, 0.15) 0 2px 8px;
-}
-
-.brand {
   color: teal;
-  font-size: 22px;
-  font-weight: 800;
-}
-
-.role {
-  color: #667085;
-  font-size: 13px;
+  font-family: inherit;
   font-weight: 700;
+  cursor: pointer;
+  box-shadow: rgba(0, 0, 0, 0.24) 0 3px 8px;
 }
 
 .contenu {
@@ -202,44 +240,19 @@ h2 {
   color: #006666;
 }
 
-.btn {
-  padding: 10px 20px;
-  border: 0;
-  border-radius: 20px;
-  background: teal;
-  color: #fff;
-  cursor: pointer;
-  font-family: inherit;
-  font-size: 14px;
-  text-decoration: none;
-  box-shadow: rgba(0, 0, 0, 0.24) 0 3px 8px;
-}
+@media (max-width: 960px) {
+  .app-layout {
+    grid-template-columns: 1fr;
+  }
 
-.btn.secondary {
-  border: 1px solid teal;
-  background: #fff;
-  color: teal;
-  box-shadow: none;
-}
-
-.btn.secondary:hover {
-  background: #e6f2f2;
+  .burger {
+    display: block;
+  }
 }
 
 @media (max-width: 720px) {
   .grille {
     grid-template-columns: 1fr;
-  }
-}
-
-@media (max-width: 620px) {
-  .navbar {
-    flex-wrap: wrap;
-  }
-
-  .role {
-    order: 3;
-    width: 100%;
   }
 }
 </style>

@@ -954,3 +954,42 @@ JOIN departements d ON d.libelle = v.departement;
 
 COMMIT;
 
+
+INSERT INTO competences (libelle, categorie) VALUES
+-- Compétences informatiques
+('Java', 'Informatique'),
+('Python', 'Informatique'),
+('Développement Web', 'Informatique'),
+('SQL', 'Informatique'),
+('Administration de bases de données', 'Informatique'),
+('Réseaux informatiques', 'Informatique'),
+('Cybersécurité', 'Informatique'),
+('Git et GitHub', 'Informatique'),
+
+-- Compétences en gestion
+('Gestion de projet', 'Management'),
+('Leadership', 'Management'),
+('Gestion du temps', 'Management'),
+('Prise de décision', 'Management'),
+
+-- Compétences en communication
+('Communication orale', 'Communication'),
+('Rédaction professionnelle', 'Communication'),
+('Travail en équipe', 'Communication'),
+('Négociation', 'Communication'),
+
+-- Compétences administratives et financières
+('Comptabilité générale', 'Finance'),
+('Gestion budgétaire', 'Finance'),
+('Analyse financière', 'Finance'),
+('Gestion administrative', 'Administration'),
+
+-- Compétences linguistiques
+('Français', 'Langues'),
+('Anglais', 'Langues'),
+('Malagasy', 'Langues'),
+
+-- Compétences techniques
+('Maintenance informatique', 'Technique'),
+('Analyse de données', 'Technique'),
+('Résolution de problèmes', 'Technique');

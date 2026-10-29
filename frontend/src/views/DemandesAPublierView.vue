@@ -1,15 +1,28 @@
 <script setup>
-import { onMounted, ref } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import SidebarMenu from '../components/SidebarMenu.vue'
+import { chargerUtilisateurInterne } from '../services/authInterne'
 
 const router = useRouter()
 const demandes = ref([])
 const erreur = ref('')
 const chargement = ref(true)
 const menuOuvert = ref(false)
+const utilisateur = ref(null)
+
+const codeRole = computed(() => utilisateur.value?.role ?? '')
+const estDirection = computed(() => ['DG', 'Direction'].includes(codeRole.value))
+const libelleRole = computed(() => estDirection.value ? 'Direction générale' : codeRole.value)
+const nomUtilisateur = computed(() => utilisateur.value?.login ?? '')
+const initiales = computed(() => {
+  if (estDirection.value || codeRole.value === 'RH') return codeRole.value === 'RH' ? 'RH' : 'DG'
+  return nomUtilisateur.value.slice(0, 2).toUpperCase()
+})
 
 onMounted(async () => {
+  utilisateur.value = await chargerUtilisateurInterne()
+
   try {
     const r = await fetch('/api/offres/a-publier', { credentials: 'include' })
     if (!r.ok) throw new Error()
@@ -24,12 +37,11 @@ onMounted(async () => {
 
 <template>
   <div class="app-layout">
-    <!-- Nom / initiales : à remplacer par l'utilisateur connecté -->
     <SidebarMenu
-      nom="Ressources humaines"
-      role="RH"
-      code-role="RH"
-      initiales="RH"
+      :nom="nomUtilisateur"
+      :role="libelleRole"
+      :code-role="codeRole"
+      :initiales="initiales"
       :ouvert="menuOuvert"
       @fermer="menuOuvert = false"
     />

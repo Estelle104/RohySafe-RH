@@ -18,11 +18,8 @@ const router = createRouter({
       name: 'candidat-inscription',
       component: () => import('../views/InscriptionCandidatView.vue'),
     },
-    { path: '/candidats/login', component: LoginCandidatsView },
     { path: '/offres', name: 'offres', component: () => import('../views/OffresView.vue') },
     { path: '/demandes/nouvelle', name: 'demande-create', meta: { requiresAuth: true, roles: ['Manager'] }, component: () => import('../views/demande/NouvelleDemandeView.vue') },
-
-    { path: '/offres', name: 'offres', component: () => import('../views/OffresView.vue') },
     {
       path: '/offres/:id/postuler',
       name: 'postuler',
@@ -71,40 +68,31 @@ const router = createRouter({
     { path: '/notification', meta: { requiresAuth: true, roles: ['RH'] }, component: NotificationsPage },
     { path: '/demandes/:id', name: 'demande-detail', meta: { requiresAuth: true, roles: ['RH'] }, component: DemandeDetailView },
     { path: '/demandes/:id/confirmation/:action', name: 'demande-confirmation', component: ConfirmationDemandeView },
-    { path: '/candidats/login', component: LoginCandidatsView },
-    { path: '/offres', name: 'offres', component: () => import('../views/OffresView.vue') }
-    , { path: '/offres/a-publier', name: 'offres-a-publier', component: () => import('../views/DemandesAPublierView.vue') }
-    , { path: '/offres/nouvelle/:id', name: 'offre-formulaire', component: () => import('../views/OffreFormView.vue') }
-    , { path: '/offres/publiee/:id', name: 'offre-publiee', component: () => import('../views/OffrePublieeView.vue') }
-    , { path: '/candidatures', name: 'candidatures', component: () => import('../views/CandidaturesView.vue') }
-    , { path: '/candidatures/:id/entretien', name: 'entretien-formulaire', component: () => import('../views/EntretienFormView.vue') }
-    , { path: '/candidatures/:id/entretien/confirmation', name: 'entretien-confirme', component: () => import('../views/EntretienConfirmationView.vue') }
-    , { path: '/candidatures/:id/contrat', name: 'contrat-fiche', component: () => import('../views/ContratFicheView.vue') }
-    , {
+    { path: '/offres/a-publier', name: 'offres-a-publier', meta: { requiresAuth: true, roles: ['RH','DG','Direction'] }, component: () => import('../views/DemandesAPublierView.vue') },
+    { path: '/offres/nouvelle/:id', name: 'offre-formulaire', meta: { requiresAuth: true, roles: ['RH','DG','Direction'] }, component: () => import('../views/OffreFormView.vue') },
+    { path: '/offres/publiee/:id', name: 'offre-publiee', meta: { requiresAuth: true, roles: ['RH','DG','Direction'] }, component: () => import('../views/OffrePublieeView.vue') },
+    { path: '/candidatures', name: 'candidatures', component: () => import('../views/CandidaturesView.vue') },
+    { path: '/candidatures/:id/entretien', name: 'entretien-formulaire', component: () => import('../views/EntretienFormView.vue') },
+    { path: '/candidatures/:id/entretien/confirmation', name: 'entretien-confirme', component: () => import('../views/EntretienConfirmationView.vue') },
+    { path: '/candidatures/:id/contrat', name: 'contrat-fiche', component: () => import('../views/ContratFicheView.vue') },
+    {
       path: '/entretiens',
       name: 'entretiens-offres',
       meta: { rolesEntretiens: true },
       component: () => import('../views/EntretiensOffresView.vue')
-    }
-    , {
+    },
+    {
       path: '/entretiens/offres/:id',
       name: 'entretiens-candidats',
       meta: { rolesEntretiens: true },
       component: () => import('../views/EntretiensCandidatsView.vue')
-    }
-    , {
+    },
+    {
       path: '/entretiens/candidatures/:id',
       name: 'entretien-evaluation',
       meta: { rolesEntretiens: true },
       component: () => import('../views/EntretienEvaluationView.vue')
-    }
-    ,{ path: '/offres/a-publier', name: 'offres-a-publier', meta: { requiresAuth: true, roles: ['RH'] }, component: () => import('../views/DemandesAPublierView.vue') }
-    ,{ path: '/offres/nouvelle/:id', name: 'offre-formulaire', meta: { requiresAuth: true, roles: ['RH'] }, component: () => import('../views/OffreFormView.vue') }
-    ,{ path: '/offres/publiee/:id', name: 'offre-publiee', component: () => import('../views/OffrePublieeView.vue') }
-    ,{ path: '/candidatures', name: 'candidatures', component: () => import('../views/CandidaturesView.vue') }
-    ,{ path: '/candidatures/:id/entretien', name: 'entretien-formulaire', component: () => import('../views/EntretienFormView.vue') }
-    ,{ path: '/candidatures/:id/entretien/confirmation', name: 'entretien-confirme', component: () => import('../views/EntretienConfirmationView.vue') }
-    ,{ path: '/candidatures/:id/contrat', name: 'contrat-fiche', component: () => import('../views/ContratFicheView.vue') }
+    },
   ],
 })
 

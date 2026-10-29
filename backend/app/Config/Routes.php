@@ -40,6 +40,7 @@ $routes->group('api', ['namespace' => 'App\Controllers\Api'], function ($routes)
 
     // Backoffice des exigences d'offre
     $routes->get('backoffice/offres', 'ExigenceOffre::offres', ['filter' => 'auth:RH']);
+    $routes->get('backoffice/offres/(:num)/exigences', 'ExigenceOffre::formulaire/$1', ['filter' => 'auth:RH']);
     $routes->post('backoffice/offres/(:num)/exigences/experience', 'ExigenceOffre::enregistrerExperience/$1', ['filter' => 'auth:RH']);
     $routes->delete('backoffice/offres/(:num)/exigences/experience/(:num)', 'ExigenceOffre::supprimerExperience/$1/$2', ['filter' => 'auth:RH']);
     $routes->post('backoffice/offres/(:num)/exigences/competence', 'ExigenceOffre::enregistrerCompetence/$1', ['filter' => 'auth:RH']);
@@ -59,9 +60,9 @@ $routes->group('api', ['namespace' => 'App\Controllers\Api'], function ($routes)
     $routes->post('direction-generale/demandes/(:num)/refus', 'DirectionGeneraleController::refuser/$1', ['filter' => 'auth:DG']);
     
         $routes->get('offres', 'OffreController::index');
-        $routes->get('offres/a-publier', 'OffreController::demandesAPublier', ['filter' => 'auth:RH']);
+        $routes->get('offres/a-publier', 'OffreController::demandesAPublier', ['filter' => 'auth:RH,DG,Direction']);
         $routes->get('offres/(:num)', 'OffreController::show/$1');
-        $routes->post('offres', 'OffreController::publier', ['filter' => 'auth:RH']);
+        $routes->post('offres', 'OffreController::publier', ['filter' => 'auth:RH,DG,Direction']);
         $routes->get('demandes/notifications', 'RHController::notifications', ['filter' => 'auth:RH']);
         $routes->get('demandes/(:num)', 'RHController::show/$1', ['filter' => 'auth:RH']);
         $routes->get('demandes/(:num)/grille-salariale', 'RHController::grilleSalariale/$1', ['filter' => 'auth:RH']);
