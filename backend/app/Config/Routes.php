@@ -42,6 +42,15 @@ $routes->group('api', ['namespace' => 'App\Controllers\Api'], function ($routes)
     // Notifications candidats
     $routes->get('candidats/(:num)/notifications', 'NotificationCandidat::index/$1');
     $routes->post('candidats/notifications/(:num)/lu', 'NotificationCandidat::marquerLu/$1');
+    $routes->get('candidats/(:num)/negociation/(:num)', 'NegociationCandidat::show/$1/$2');
+    $routes->post('candidats/(:num)/negociation/(:num)/modifier', 'NegociationCandidat::modifierSalaire/$1/$2');
+    $routes->post('candidats/(:num)/negociation/(:num)/accepter', 'NegociationCandidat::accepter/$1/$2');
+    $routes->post('candidats/(:num)/negociation/(:num)/refuser', 'NegociationCandidat::refuserContratEssai/$1/$2');
+
+    // Négociations RH
+    $routes->get('rh/negociations', 'NegociationRH::index', ['filter' => 'auth:RH']);
+    $routes->post('rh/negociations/proposition/(:num)/valider', 'NegociationRH::valider/$1', ['filter' => 'auth:RH']);
+    $routes->post('rh/negociations/proposition/(:num)/refuser', 'NegociationRH::refuser/$1', ['filter' => 'auth:RH']);
 
     // Backoffice des exigences d'offre
     $routes->get('backoffice/offres', 'ExigenceOffre::offres', ['filter' => 'auth:RH']);

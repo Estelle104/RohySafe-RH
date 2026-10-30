@@ -27,7 +27,8 @@
           <p class="message-notif">{{ notif.message }}</p>
           <div class="actions">
             <button v-if="!notif.lu" class="btn" type="button" @click="marquerLu(notif)">Marquer comme lu</button>
-            <button class="btn secondary" type="button" @click="retourOffres">Voir les offres</button>
+            <button v-if="notif.type === 'engage'" class="btn" type="button" @click="allerNegociation(notif)">Détails du contrat</button>
+            <button v-else class="btn secondary" type="button" @click="retourOffres">Voir les offres</button>
           </div>
         </article>
       </section>
@@ -89,6 +90,14 @@ async function marquerLu(notif) {
 
 function retourOffres() {
   router.push({ name: 'offres' })
+}
+
+function allerNegociation(notif) {
+  if (notif.id_candidature) {
+    router.push({ name: 'candidat-negociation', params: { idCandidature: notif.id_candidature } })
+  } else {
+    retourOffres()
+  }
 }
 
 function seDeconnecter() {

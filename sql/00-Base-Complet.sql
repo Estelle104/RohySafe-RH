@@ -1007,3 +1007,5 @@ CREATE TABLE notifications_candidats (
     lu BOOLEAN NOT NULL DEFAULT FALSE,
     date_creation TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
+
+INSERT INTO statut_candidatures(libelle) VALUES('Embauche');

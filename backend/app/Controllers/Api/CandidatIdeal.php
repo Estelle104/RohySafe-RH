@@ -155,7 +155,7 @@ class CandidatIdeal extends BaseController
                 'id_candidature' => $id_candidature,
                 'id_offre' => $idOffre,
                 'type' => 'engage',
-                'message' => "Félicitations ! Vous avez été engagé(e) pour l'offre concernée. Veuillez vérifier vos notifications.",
+                'message' => "Vous êtes engagés(e). Veuillez consulter les détails du contrat pour négocier.",
                 'lu' => false,
                 'date_creation' => date('Y-m-d H:i:s'),
             ]);
