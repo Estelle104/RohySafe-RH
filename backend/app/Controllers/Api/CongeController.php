@@ -8,6 +8,44 @@ use Throwable;
 
 class CongeController extends BaseController
 {
+    /** Retourne les soldes de congés des employés. */
+    public function soldes()
+    {
+        try {
+            $filtres = [
+                'id_employe' => $this->request->getGet('id_employe'),
+                'periode_debut' => $this->request->getGet('periode_debut'),
+                'periode_fin' => $this->request->getGet('periode_fin'),
+            ];
+
+            return $this->response->setJSON([
+                'soldes' => (new CongeModel())->getSoldes($filtres),
+            ]);
+        } catch (Throwable $e) {
+            log_message('error', $e->getMessage());
+            return $this->response->setStatusCode(500)->setJSON([
+                'message' => 'Impossible de récupérer les soldes de congés.',
+            ]);
+        }
+    }
+
+    /** Recalcule les soldes de l'année courante. */
+    public function recalculerSoldes()
+    {
+        try {
+            $nombre = (new CongeModel())->recalculerSoldes();
+            return $this->response->setJSON([
+                'message' => 'Les soldes de congés ont été recalculés.',
+                'nombre_soldes' => $nombre,
+            ]);
+        } catch (Throwable $e) {
+            log_message('error', $e->getMessage());
+            return $this->response->setStatusCode(500)->setJSON([
+                'message' => 'Impossible de recalculer les soldes de congés.',
+            ]);
+        }
+    }
+
     /** Retourne les règles d'acquisition configurées. */
     public function configurations()
     {

@@ -30,6 +30,8 @@ $routes->group('api', ['namespace' => 'App\Controllers\Api'], function ($routes)
     $routes->group('rh/conges', ['filter' => 'auth:RH'], static function ($routes) {
         $routes->get('configurations', 'CongeController::configurations');
         $routes->put('configurations/(:num)', 'CongeController::updateConfiguration/$1');
+        $routes->get('soldes', 'CongeController::soldes');
+        $routes->post('soldes/recalculer', 'CongeController::recalculerSoldes');
     });
     $routes->get('departements', 'Departement::index');
     $routes->get('offres', 'Offre::index');

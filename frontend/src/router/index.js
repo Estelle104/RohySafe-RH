@@ -11,6 +11,8 @@ const router = createRouter({
   history: createWebHistory(),
   routes: [
     { path: '/', redirect: '/login' },
+    { path: '/dashboard', redirect: '/backoffice' },
+    { path: '/profil', redirect: '/backoffice' },
     { path: '/login', name: 'login', component: LoginView },
     { path: '/candidats/login', name: 'candidat-login', component: LoginCandidatsView },
     {
@@ -41,6 +43,7 @@ const router = createRouter({
     },
     { path: '/backoffice/rh/relations', name: 'relation-hierarchique', meta: { requiresAuth: true, roles: ['RH', 'rh'] }, component: () => import('../views/RelationHierarchiqueView.vue') },
     { path: '/backoffice/rh/conges/configuration', name: 'configuration-conge', meta: { requiresAuth: true, roles: ['RH', 'rh'] }, component: () => import('../views/ConfigurationConge.vue') },
+    { path: '/backoffice/rh/conges/soldes', name: 'solde-conge', meta: { requiresAuth: true, roles: ['RH', 'rh'] }, component: () => import('../views/SoldeConge.vue') },
     { path: '/backoffice/rh/organigramme', name: 'organigramme-employe', meta: { requiresAuth: true, roles: ['RH', 'rh'] }, component: () => import('../views/OrganigrammeEmployeView.vue') },
     {
       path: '/backoffice/candidats-ideaux',
