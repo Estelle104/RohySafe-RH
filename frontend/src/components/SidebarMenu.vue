@@ -20,6 +20,7 @@ const liens = [
   { groupe: 'Recrutement' },
   { to: '/demandes/nouvelle', label: 'Demandes de personnel', icone: 'demandes', roles: ['Manager','DG'] },
   { to: '/offres/a-publier', label: 'Offres à publier', icone: 'offres', roles: ['RH','DG','Direction'] },
+  { to: '/planning', label: 'Planning EDT', icone: 'calendar', roles: ['RH','DG','Direction','Manager'] },
   { to: '/horaires/postes', label: 'Horaires postes', icone: 'entretiens', roles: ['RH','DG','Direction','Manager'] },
   { to: '/regimes/travail', label: 'Régimes travail', icone: 'notifications', roles: ['RH','DG','Direction','Manager'] },
   { groupe: 'Mon espace' },

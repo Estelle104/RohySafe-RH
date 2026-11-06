@@ -206,3 +206,16 @@ export async function deleteRegime(id) {
 
   return lireReponse(reponse, 'Erreur lors de la suppression du régime.')
 }
+
+export async function getPlanningsEDT() {
+  const reponse = await fetch('/api/plannings-edt', {
+    method: 'GET',
+    credentials: 'include',
+    headers: {
+      Accept: 'application/json',
+    },
+  })
+
+  const donnees = await lireReponse(reponse, 'Erreur lors du chargement des plannings EDT.')
+  return Array.isArray(donnees) ? donnees : []
+}
