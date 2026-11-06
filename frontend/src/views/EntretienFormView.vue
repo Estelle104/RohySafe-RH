@@ -93,7 +93,7 @@ async function envoyer() {
   margin: 16px 0 0 16px;
   padding: 8px 16px;
   border: 0;
-  border-radius: 20px;
+  border-radius: 10px;
   background: #fff;
   color: teal;
   font-family: inherit;
@@ -112,7 +112,7 @@ async function envoyer() {
   margin-bottom: 16px;
   padding: 8px 16px;
   border: 1px solid teal;
-  border-radius: 20px;
+  border-radius: 10px;
   background: #fff;
   color: teal;
   font-family: inherit;
@@ -167,7 +167,7 @@ h1 {
   box-sizing: border-box;
   padding: 12px 15px;
   border: 1px solid #c0c0c0;
-  border-radius: 20px;
+  border-radius: 10px;
   outline: 0;
   font-family: inherit;
   font-size: 14px;
@@ -187,7 +187,7 @@ h1 {
   margin-top: 4px;
   padding: 12px 15px;
   border: 0;
-  border-radius: 20px;
+  border-radius: 10px;
   background: teal;
   color: #fff;
   font-family: inherit;

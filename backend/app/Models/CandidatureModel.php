@@ -88,8 +88,17 @@ class CandidatureModel extends Model
 
     public function updateStatutCandidatureEngage($id){
         $data = [];
-        $data['id_statut_actuel'] = 5;    
+        $data['id_statut_actuel'] = 5;
         $a = $this->update($id,$data);
         return $a;
+    }
+
+    public function getByCandidat(int $idCandidat): array
+    {
+        return $this->db->table('candidatures c')
+            ->select('c.id_offre')
+            ->where('c.id_candidat', $idCandidat)
+            ->get()
+            ->getResultArray();
     }
 }

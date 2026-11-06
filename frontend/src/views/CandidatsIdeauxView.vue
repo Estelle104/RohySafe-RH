@@ -170,7 +170,7 @@ function formaterDate(valeur) {
 .search {
   flex: 1;
   max-width: 360px;
-  border-radius: 20px;
+  border-radius: 10px;
   border: 1px solid #c0c0c0;
   padding: 10px 15px;
   outline: 0;

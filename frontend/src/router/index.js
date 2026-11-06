@@ -18,6 +18,8 @@ const router = createRouter({
       name: 'candidat-inscription',
       component: () => import('../views/InscriptionCandidatView.vue'),
     },
+    { path: '/candidats/notifications', name: 'candidat-notifications', meta: { requiresCandidat: true }, component: () => import('../views/NotificationsCandidatView.vue') },
+    { path: '/candidats/negociation/:idCandidature', name: 'candidat-negociation', meta: { requiresCandidat: true }, component: () => import('../views/NegociationCandidatView.vue') },
     { path: '/offres', name: 'offres', component: () => import('../views/OffresView.vue') },
     { path: '/demandes/nouvelle', name: 'demande-create', meta: { requiresAuth: true, roles: ['Manager'] }, component: () => import('../views/demande/NouvelleDemandeView.vue') },
     {

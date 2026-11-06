@@ -328,7 +328,7 @@ h3 {
 
 .infos span,
 .badge {
-  border-radius: 20px;
+  border-radius: 10px;
   background: #e6f2f2;
   color: #006666;
   font-size: 12px;
@@ -485,7 +485,7 @@ select:focus {
 .btn {
   padding: 10px 20px;
   border: 0;
-  border-radius: 20px;
+  border-radius: 10px;
   background: teal;
   color: #fff;
   cursor: pointer;

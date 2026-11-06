@@ -233,10 +233,14 @@ class CvCandidature extends BaseController
             $experiencesEnregistrees = (new ExperienceCandidatureModel())
                 ->getByCandidature($idCandidature);
 
+            $message = $creee
+                ? 'CV et candidature enregistrés.'
+                : 'Vous avez deja postule a cet offre , Veuillez verifier vos notifications';
+
             return $this->response
                 ->setStatusCode($creee ? 201 : 200)
                 ->setJSON([
-                    'message' => 'CV et candidature enregistrés.',
+                    'message' => $message,
                     'candidature' => $candidature,
                     'cv' => (new CandidatModel())->getCv($idCandidat, $idOffre),
                     'experiences' => $experiencesEnregistrees,

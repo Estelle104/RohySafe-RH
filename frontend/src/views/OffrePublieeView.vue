@@ -86,7 +86,7 @@ onMounted(async () => {
   margin-bottom: 16px;
   padding: 8px 16px;
   border: 0;
-  border-radius: 20px;
+  border-radius: 10px;
   background: #fff;
   color: teal;
   font-family: inherit;
@@ -153,7 +153,7 @@ h1 {
   margin-top: 20px;
   padding: 12px 24px;
   border: 0;
-  border-radius: 20px;
+  border-radius: 10px;
   background: teal;
   color: #fff;
   font-family: inherit;

@@ -25,7 +25,7 @@ const emit = defineEmits(['choisir'])
 .filtres { display: flex; gap: 8px; flex-wrap: wrap; }
 .filtres button {
   padding: 6px 14px;
-  border-radius: 20px;
+  border-radius: 10px;
   border: 1px solid #c0c0c0;
   background: #fff;
   color: #747474;

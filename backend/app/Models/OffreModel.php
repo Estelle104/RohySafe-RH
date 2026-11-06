@@ -27,7 +27,7 @@ class OffreModel extends Model
     public function getOffresPubliees(): array
     {
         return $this->db->table('offres o')
-            ->select('o.id, d.libelle AS departement, o.titre, o.descriptions, o.date_publication, o.date_limite, tc.libelle AS type_contrat, NULL AS ville, dm.nombre_demande')
+            ->select('o.id, d.libelle AS departement, o.titre, o.descriptions, o.date_publication, o.date_limite, tc.libelle AS type_contrat, NULL AS ville, dm.nombre_demande, so.libelle AS statut')
             ->join('statut_offres so', 'so.id = o.id_statut')
             ->join('demandes dm', 'dm.id = o.id_demande')
             ->join('poste_departement pd', 'pd.id = dm.id_poste_departement')
