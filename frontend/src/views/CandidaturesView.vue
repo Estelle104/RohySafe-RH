@@ -5,6 +5,37 @@ import SidebarMenu from '../components/SidebarMenu.vue'
 
 const router = useRouter(), items = ref([]), filtre = ref('Tous'), offreFiltre = ref(''), offres = ref([]), erreur = ref('')
 const menuOuvert = ref(false)
+const enAction = ref(null)
+
+async function assignerPoste(c) {
+  enAction.value = c.id
+  erreur.value = ''
+  try {
+    const r = await fetch(`/api/candidatures/${c.id}/contrat/accepter`, { method: 'POST', headers: { Accept: 'application/json', 'Content-Type': 'application/json' }, body: JSON.stringify({}) })
+    const o = await r.json().catch(() => ({}))
+    if (!r.ok) throw new Error(o.message || 'Action impossible.')
+    alert(o.message + (o.matricule ? ` Matricule: ${o.matricule}` : ''))
+    await charger()
+  } catch (e) {
+    erreur.value = e.message
+  } finally {
+    enAction.value = null
+  }
+}
+
+async function charger() {
+  try {
+    const r = await fetch('/api/candidatures')
+    if (!r.ok) throw new Error()
+    items.value = await r.json()
+  } catch {
+    erreur.value = 'Impossible de charger les candidatures.'
+  }
+  try {
+    const r = await fetch('/api/offres')
+    if (r.ok) offres.value = await r.json()
+  } catch {}
+}
 
 const statuts = computed(() => ['Tous', ...new Set(items.value.map(i => i.statut))])
 
@@ -44,22 +75,7 @@ const liste = computed(() => {
   return resultat
 })
 
-onMounted(async () => {
-  try {
-    const r = await fetch('/api/candidatures')
-    if (!r.ok) throw new Error()
-    items.value = await r.json()
-  } catch {
-    erreur.value = 'Impossible de charger les candidatures.'
-  }
-
-  try {
-    const r = await fetch('/api/offres')
-    if (r.ok) offres.value = await r.json()
-  } catch {
-    // Le sélecteur reste utilisable avec les offres présentes dans les candidatures.
-  }
-})
+onMounted(charger)
 </script>
 
 <template>
@@ -119,7 +135,7 @@ onMounted(async () => {
             <span class="statut">{{ c.statut }}</span>
           </div>
 
-          <div v-if="c.statut === 'preselectionne' || c.statut === 'retenu'" class="actions">
+          <div v-if="['preselectionne', 'retenu', 'Embauche'].includes(c.statut)" class="actions">
             <button
               v-if="c.statut === 'preselectionne'"
               class="btn"
@@ -130,9 +146,19 @@ onMounted(async () => {
             <button
               v-if="c.statut === 'retenu'"
               class="btn"
-              @click="router.push({ name: 'contrat-fiche', params: { id: c.id } })"
+              disabled
+              type="button"
             >
-              Générer le contrat
+              En attente de confirmation
+            </button>
+            <button
+              v-if="c.statut === 'Embauche'"
+              class="btn"
+              type="button"
+              :disabled="enAction === c.id"
+              @click="assignerPoste(c)"
+            >
+              {{ enAction === c.id ? 'Traitement...' : 'Assigner le poste' }}
             </button>
           </div>
         </article>
