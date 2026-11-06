@@ -33,6 +33,11 @@ $routes->group('api', ['namespace' => 'App\Controllers\Api'], function ($routes)
         $routes->get('soldes', 'CongeController::soldes');
         $routes->post('soldes/recalculer', 'CongeController::recalculerSoldes');
     });
+    $routes->group('rh/pointages', ['filter' => 'auth:RH'], static function ($routes) {
+        $routes->get('', 'PointageController::index');
+        $routes->get('employe/(:num)', 'PointageController::parEmploye/$1');
+        $routes->post('', 'PointageController::create');
+    });
     $routes->get('departements', 'Departement::index');
     $routes->get('offres', 'Offre::index');
     $routes->group('demandes', ['filter' => 'auth'], static function ($routes) {
