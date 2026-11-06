@@ -22,6 +22,17 @@ CREATE TABLE relation_hierarchiques (
     CHECK (date_fin IS NULL OR date_fin >= date_debut)
 );
 
+CREATE INDEX idx_relation_hierarchiques_subordonne_actif
+    ON relation_hierarchiques(id_subordonne, date_fin);
+
+-- Données initiales : rattache le deuxième employé au premier lorsqu'une
+-- base contient déjà au moins deux employés et aucune relation.
+INSERT INTO relation_hierarchiques (id_superieur, id_subordonne, date_debut)
+SELECT MIN(id), MAX(id), CURRENT_DATE
+FROM employes
+HAVING COUNT(*) >= 2
+   AND NOT EXISTS (SELECT 1 FROM relation_hierarchiques);
+
 
 ALTER TABLE histo_employes
 DROP COLUMN id_societe,

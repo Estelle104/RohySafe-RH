@@ -20,6 +20,13 @@ $routes->group('api', ['namespace' => 'App\Controllers\Api'], function ($routes)
     $routes->get('auth/me', 'Auth::me');
     $routes->post('auth/logout', 'Auth::logout');
     $routes->get('health', 'Health::index');
+    $routes->group('rh/relations-hierarchiques', ['filter' => 'auth:RH'], static function ($routes) {
+        $routes->get('', 'RelationHierarchiqueController::index');
+        $routes->get('employes', 'RelationHierarchiqueController::employes');
+        $routes->get('organigramme', 'RelationHierarchiqueController::organigramme');
+        $routes->post('', 'RelationHierarchiqueController::create');
+        $routes->post('(:num)/cloture', 'RelationHierarchiqueController::close/$1');
+    });
     $routes->get('departements', 'Departement::index');
     $routes->get('offres', 'Offre::index');
     $routes->group('demandes', ['filter' => 'auth'], static function ($routes) {
