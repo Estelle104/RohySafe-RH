@@ -27,6 +27,10 @@ $routes->group('api', ['namespace' => 'App\Controllers\Api'], function ($routes)
         $routes->post('', 'RelationHierarchiqueController::create');
         $routes->post('(:num)/cloture', 'RelationHierarchiqueController::close/$1');
     });
+    $routes->group('rh/conges', ['filter' => 'auth:RH'], static function ($routes) {
+        $routes->get('configurations', 'CongeController::configurations');
+        $routes->put('configurations/(:num)', 'CongeController::updateConfiguration/$1');
+    });
     $routes->get('departements', 'Departement::index');
     $routes->get('offres', 'Offre::index');
     $routes->group('demandes', ['filter' => 'auth'], static function ($routes) {
