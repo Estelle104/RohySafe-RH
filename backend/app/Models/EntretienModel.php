@@ -139,11 +139,13 @@ class EntretienModel extends Model
                 . 'ca.telephone, ca.ville, o.id AS id_offre, o.titre AS offre, '
                 . 'e.id AS id_entretien, e.date_entretien, e.lieu_entretien, '
                 . 'e.commentaire AS commentaire_entretien, se.libelle AS statut_entretien, '
+                . 'sc.libelle AS statut_candidature, '
                 . 'ec.note, ec.remarques, ec.date_evaluation'
             )
             ->join('candidatures c', 'c.id = e.id_candidature')
             ->join('candidats ca', 'ca.id = c.id_candidat')
             ->join('offres o', 'o.id = c.id_offre')
+            ->join('statut_candidatures sc', 'sc.id = c.id_statut_actuel', 'left')
             ->join('statut_entretiens se', 'se.id = e.id_statut_actuel', 'left')
             ->join('evaluations_candidat ec', 'ec.id_candidature = c.id', 'left');
     }

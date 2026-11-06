@@ -146,10 +146,10 @@ onMounted(charger)
                     v-if="peutEngager(candidat)"
                     class="btn engager"
                     type="button"
-                    :disabled="enAction === candidat.id_candidature"
+                    :disabled="enAction === candidat.id_candidature || candidat.statut_candidature === 'retenu' || candidat.statut_candidature === 'Embauche'"
                     @click="engager(candidat)"
                   >
-                    Engager
+                    {{ candidat.statut_candidature === 'retenu' || candidat.statut_candidature === 'Embauche' ? 'Engagé' : 'Engager' }}
                   </button>
                   <button
                     v-else
