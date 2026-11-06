@@ -9,3 +9,13 @@ export async function getOffres() {
 
   return reponse.json()
 }
+
+export async function getOffreDetail(idOffre) {
+  const reponse = await fetch(`/api/offres/${idOffre}`)
+
+  if (!reponse.ok) {
+    throw new Error(`Erreur lors du chargement du détail (${reponse.status})`)
+  }
+
+  return reponse.json()
+}

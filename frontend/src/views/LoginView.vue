@@ -2,17 +2,62 @@
   <div class="login-container">
     <div class="form-container">
       <p class="title">RohySafe</p>
-      <form class="form">
-        <input type="email" class="input" placeholder="Identifiant">
-        <input type="password" class="input" placeholder="Mot de passe">
-        <p class="page-link">
-          <span class="page-link-label">Mot de passe oublie ?</span>
-        </p>
-        <button class="form-btn">Se connecter</button>
+      <form class="form" @submit.prevent="connecter">
+        <input v-model="login" type="text" class="input" placeholder="Identifiant" autocomplete="username" required>
+        <input v-model="mdp" type="password" class="input" placeholder="Mot de passe" autocomplete="current-password" required>
+        <p v-if="erreur" class="error">{{ erreur }}</p>
+        <button class="form-btn" :disabled="chargement">{{ chargement ? 'Connexion…' : 'Se connecter' }}</button>
       </form>
+      <router-link class="candidate-link" to="/candidats/login">
+        Vous êtes candidat ? Se connecter
+      </router-link>
     </div>
   </div>
 </template>
+
+<script setup>
+import { ref } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
+import { reinitialiserUtilisateurInterne } from '../services/authInterne'
+
+const route = useRoute()
+const router = useRouter()
+const login = ref('')
+const mdp = ref('')
+const erreur = ref('')
+const chargement = ref(false)
+
+async function connecter() {
+  erreur.value = ''
+  chargement.value = true
+  try {
+    const response = await fetch('/api/auth/login', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      credentials: 'include', body: JSON.stringify({ login: login.value, mdp: mdp.value }),
+    })
+    const texte = await response.text()
+    let result
+    try {
+      result = JSON.parse(texte)
+    } catch {
+      throw new Error(`Le serveur n’a pas renvoyé de réponse JSON (HTTP ${response.status}). Vérifiez le backend.`)
+    }
+    if (!response.ok) throw new Error(result.messages?.error || 'Identifiant ou mot de passe incorrect.')
+    const role = result.utilisateur?.role
+    const destinations = {
+      Manager: '/demandes/nouvelle',
+      RH: '/notification',
+      Finance: '/finance',
+      DG: '/direction-generale',
+    }
+    await router.push(destinations[role] || '/offres')
+  } catch (error) {
+    erreur.value = error.message
+  } finally {
+    chargement.value = false
+  }
+}
+</script>
 
 <style scoped>
     .login-container {
@@ -50,7 +95,7 @@
 
     .input {
       width: 100%;
-      border-radius: 20px;
+      border-radius: 10px;
       border: 1px solid #c0c0c0;
       padding: 12px 15px;
       outline: 0;
@@ -82,7 +127,7 @@
     .form-btn {
       padding: 12px 15px;
       font-family: inherit;
-      border-radius: 20px;
+      border-radius: 10px;
       border: 0;
       outline: 0;
       background: teal;
@@ -98,4 +143,16 @@
     .form-btn:active {
       box-shadow: none;
     }
+
+    .candidate-link {
+      display: block;
+      margin-top: 20px;
+      text-align: center;
+      color: teal;
+      font-size: 12px;
+      font-weight: 700;
+      text-decoration: underline;
+      text-decoration-color: teal;
+    }
+    .error { color: #b42318; margin: 0; font-size: 14px; }
 </style>

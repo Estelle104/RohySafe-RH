@@ -1,173 +1,329 @@
-<style scoped>
+<script setup>
+import { computed, onMounted, ref } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
+import { connecterCandidat, estCandidatConnecte } from '../services/candidatAuth'
 
-    .login-container {
-      min-height: 100vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 16px;
-      background: #f1f3f6;
-      font-family: "Lucida Sans", "Lucida Sans Regular", "Lucida Grande",
-        "Lucida Sans Unicode", Geneva, Verdana, sans-serif;
-    }
+const route = useRoute()
+const router = useRouter()
+const identifiant = ref('')
+const motDePasse = ref('')
+const erreur = ref('')
+const chargement = ref(false)
 
-  .form-container {
-    width: 350px;
-    height: 550px;
-    background-color: #fff;
-    box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
-    border-radius: 10px;
-    box-sizing: border-box;
-    padding: 20px 30px;
+const redirection = computed(() => {
+  const cible = route.query.redirect
+  return typeof cible === 'string' && cible.startsWith('/') && !cible.startsWith('//')
+    ? cible
+    : '/offres'
+})
+
+const lienInscription = computed(() => ({
+  name: 'candidat-inscription',
+  query:
+    typeof route.query.redirect === 'string'
+      ? { redirect: route.query.redirect }
+      : {},
+}))
+
+const login = computed(() => ({
+  name: 'login',
+  query:
+    typeof route.query.redirect === 'string'
+      ? { redirect: route.query.redirect }
+      : {},
+}))
+
+onMounted(() => {
+  if (estCandidatConnecte()) {
+    router.replace(redirection.value)
+  }
+})
+
+async function seConnecter() {
+  erreur.value = ''
+
+  if (!identifiant.value.trim() || !motDePasse.value) {
+    erreur.value = 'Renseignez votre identifiant et votre mot de passe.'
+    return
   }
 
-  .title {
-    text-align: center;
-    font-family: "Lucida Sans", "Lucida Sans Regular", "Lucida Grande",
-          "Lucida Sans Unicode", Geneva, Verdana, sans-serif;
-    margin: 10px 0 30px 0;
-    font-size: 28px;
-    font-weight: 800;
-  }
+  chargement.value = true
 
-  .sub-title {
-    margin: 0;
-    margin-bottom: 5px;
-    font-size: 9px;
-    font-family: "Lucida Sans", "Lucida Sans Regular", "Lucida Grande",
-          "Lucida Sans Unicode", Geneva, Verdana, sans-serif;
+  try {
+    await connecterCandidat(identifiant.value.trim(), motDePasse.value)
+    router.replace(redirection.value)
+  } catch (e) {
+    erreur.value = e.message
+  } finally {
+    chargement.value = false
   }
-
-  .form {
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-    gap: 18px;
-    margin-bottom: 15px;
-  }
-
-  .input {
-    border-radius: 20px;
-    border: 1px solid #c0c0c0;
-    outline: 0 !important;
-    box-sizing: border-box;
-    padding: 12px 15px;
-  }
-
-  .form-btn {
-    padding: 10px 15px;
-    font-family: "Lucida Sans", "Lucida Sans Regular", "Lucida Grande",
-          "Lucida Sans Unicode", Geneva, Verdana, sans-serif;
-    border-radius: 20px;
-    border: 0 !important;
-    outline: 0 !important;
-    background: teal;
-    color: white;
-    cursor: pointer;
-    box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
-  }
-
-  .form-btn:active {
-    box-shadow: none;
-  }
-
-  .sign-up-label {
-    margin: 0;
-    font-size: 10px;
-    color: #747474;
-    font-family: "Lucida Sans", "Lucida Sans Regular", "Lucida Grande",
-          "Lucida Sans Unicode", Geneva, Verdana, sans-serif;
-  }
-
-  .sign-up-link {
-    margin-left: 1px;
-    font-size: 11px;
-    text-decoration: underline;
-    text-decoration-color: teal;
-    color: teal;
-    cursor: pointer;
-    font-weight: 800;
-  }
-
-  .buttons-container {
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-start;
-    margin-top: 20px;
-    gap: 15px;
-  }
-
-  .apple-login-button,
-      .google-login-button {
-    border-radius: 20px;
-    box-sizing: border-box;
-    padding: 10px 15px;
-    box-shadow: rgba(0, 0, 0, 0.16) 0px 10px 36px 0px,
-          rgba(0, 0, 0, 0.06) 0px 0px 0px 1px;
-    cursor: pointer;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    font-family: "Lucida Sans", "Lucida Sans Regular", "Lucida Grande",
-          "Lucida Sans Unicode", Geneva, Verdana, sans-serif;
-    font-size: 11px;
-    gap: 5px;
-  }
-
-  .apple-login-button {
-    background-color: #000;
-    color: #fff;
-    border: 2px solid #000;
-  }
-
-  .google-login-button {
-    border: 2px solid #747474;
-  }
-
-  .apple-icon,
-      .google-icon {
-    font-size: 18px;
-    margin-bottom: 1px;
-  }
-</style>
+}
+</script>
 
 <template>
-  <div class="login-container">
-    <div class="form-container">
-        <p class="title">Create account</p>
-        <p class="sub-title">Let's get statred with your 30 days free trial</p>
-        <form class="form">
-          <input type="text" class="input" placeholder="Name">
-          <input type="email" class="input" placeholder="Email">
-          <input type="password" class="input" placeholder="Password">
-          <button class="form-btn">Create account</button>
-        </form>
-        <p class="sign-up-label">
-          Already have an account?<span class="sign-up-link">Log in</span>
+  <div class="login-page">
+    <!-- Moitié gauche : illustration -->
+    <section class="illustration">
+      <div class="illustration-content">
+        <svg class="art" viewBox="0 0 420 340" role="img" aria-label="Illustration d'un CV et d'une recherche d'emploi">
+          <!-- cercles décoratifs -->
+          <circle cx="60" cy="60" r="38" fill="#ffffff" opacity="0.08" />
+          <circle cx="370" cy="280" r="52" fill="#ffffff" opacity="0.08" />
+          <circle cx="350" cy="50" r="14" fill="#ffffff" opacity="0.15" />
+          <circle cx="40" cy="290" r="10" fill="#ffffff" opacity="0.15" />
+
+          <!-- carte CV arrière -->
+          <rect x="95" y="52" width="190" height="240" rx="14" fill="#ffffff" opacity="0.25"
+            transform="rotate(-6 190 172)" />
+
+          <!-- carte CV principale -->
+          <rect x="120" y="40" width="190" height="250" rx="14" fill="#ffffff" />
+          <circle cx="170" cy="92" r="26" fill="#b2dfdb" />
+          <circle cx="170" cy="86" r="9" fill="#00796b" />
+          <path d="M152 108 q18 -16 36 0" fill="#00796b" />
+          <rect x="208" y="76" width="82" height="9" rx="4.5" fill="#004d4d" />
+          <rect x="208" y="94" width="56" height="7" rx="3.5" fill="#9ecfcb" />
+
+          <rect x="142" y="140" width="146" height="7" rx="3.5" fill="#d5ebe9" />
+          <rect x="142" y="158" width="120" height="7" rx="3.5" fill="#d5ebe9" />
+          <rect x="142" y="176" width="136" height="7" rx="3.5" fill="#d5ebe9" />
+
+          <rect x="142" y="204" width="48" height="20" rx="10" fill="#e0f2f1" />
+          <rect x="196" y="204" width="56" height="20" rx="10" fill="#e0f2f1" />
+          <rect x="142" y="232" width="62" height="20" rx="10" fill="#e0f2f1" />
+
+          <!-- pastille validée -->
+          <circle cx="300" cy="258" r="30" fill="#00897b" stroke="#ffffff" stroke-width="6" />
+          <path d="M286 258 l10 10 l18 -20" fill="none" stroke="#ffffff" stroke-width="6" stroke-linecap="round"
+            stroke-linejoin="round" />
+
+          <!-- loupe -->
+          <circle cx="92" cy="206" r="34" fill="none" stroke="#ffffff" stroke-width="9" />
+          <circle cx="92" cy="206" r="26" fill="#ffffff" opacity="0.18" />
+          <line x1="117" y1="232" x2="146" y2="262" stroke="#ffffff" stroke-width="11" stroke-linecap="round" />
+        </svg>
+
+        <h2 class="illustration-title">Trouvez le poste qui vous correspond</h2>
+        <p class="illustration-text">
+          Déposez votre CV, suivez vos candidatures et soyez présélectionné plus vite.
         </p>
-        <div class="buttons-container">
-          <div class="apple-login-button">
-            <svg stroke="currentColor" fill="currentColor" stroke-width="0" class="apple-icon" viewBox="0 0 1024 1024" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg">
-              <path d="M747.4 535.7c-.4-68.2 30.5-119.6 92.9-157.5-34.9-50-87.7-77.5-157.3-82.8-65.9-5.2-138 38.4-164.4 38.4-27.9 0-91.7-36.6-141.9-36.6C273.1 298.8 163 379.8 163 544.6c0 48.7 8.9 99 26.7 150.8 23.8 68.2 109.6 235.3 199.1 232.6 46.8-1.1 79.9-33.2 140.8-33.2 59.1 0 89.7 33.2 141.9 33.2 90.3-1.3 167.9-153.2 190.5-221.6-121.1-57.1-114.6-167.2-114.6-170.7zm-105.1-305c50.7-60.2 46.1-115 44.6-134.7-44.8 2.6-96.6 30.5-126.1 64.8-32.5 36.8-51.6 82.3-47.5 133.6 48.4 3.7 92.6-21.2 129-63.7z"></path>
-            </svg>
-            <span>Sign up with Apple</span>
-          </div>
-          <div class="google-login-button">
-            <svg stroke="currentColor" fill="currentColor" stroke-width="0" version="1.1" x="0px" y="0px" class="google-icon" viewBox="0 0 48 48" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg">
-              <path fill="#FFC107" d="M43.611,20.083H42V20H24v8h11.303c-1.649,4.657-6.08,8-11.303,8c-6.627,0-12-5.373-12-12
-  	c0-6.627,5.373-12,12-12c3.059,0,5.842,1.154,7.961,3.039l5.657-5.657C34.046,6.053,29.268,4,24,4C12.955,4,4,12.955,4,24
-  	c0,11.045,8.955,20,20,20c11.045,0,20-8.955,20-20C44,22.659,43.862,21.35,43.611,20.083z"></path>
-              <path fill="#FF3D00" d="M6.306,14.691l6.571,4.819C14.655,15.108,18.961,12,24,12c3.059,0,5.842,1.154,7.961,3.039l5.657-5.657
-  	C34.046,6.053,29.268,4,24,4C16.318,4,9.656,8.337,6.306,14.691z"></path>
-              <path fill="#4CAF50" d="M24,44c5.166,0,9.86-1.977,13.409-5.192l-6.19-5.238C29.211,35.091,26.715,36,24,36
-  	c-5.202,0-9.619-3.317-11.283-7.946l-6.522,5.025C9.505,39.556,16.227,44,24,44z"></path>
-              <path fill="#1976D2" d="M43.611,20.083H42V20H24v8h11.303c-0.792,2.237-2.231,4.166-4.087,5.571
-  	c0.001-0.001,0.002-0.001,0.003-0.002l6.19,5.238C36.971,39.205,44,34,44,24C44,22.659,43.862,21.35,43.611,20.083z"></path>
-            </svg>
-            <span>Sign up with Google</span>
-          </div>
-        </div>
       </div>
+    </section>
+
+    <!-- Moitié droite : formulaire -->
+    <section class="panneau-form">
+      <p class="title">RohySafe</p>
+      <p class="sub-title">Connectez-vous pour postuler et gérer votre CV.</p>
+
+      <form class="form" @submit.prevent="seConnecter">
+        <label class="field">
+          Identifiant ou email
+          <input v-model="identifiant" class="input" type="text" autocomplete="username" placeholder="miora_test" />
+        </label>
+
+        <label class="field">
+          Mot de passe
+          <input v-model="motDePasse" class="input" type="password" autocomplete="current-password"
+            placeholder="Mot de passe" />
+        </label>
+
+        <p v-if="erreur" class="error">{{ erreur }}</p>
+
+        <button class="form-btn" type="submit" :disabled="chargement">
+          {{ chargement ? 'Connexion...' : 'Se connecter' }}
+        </button>
+      </form>
+
+      <p class="bas-de-page">
+        Pas encore de compte ?
+        <router-link :to="lienInscription">Créer un compte</router-link>
+      </p>
+
+      <router-link class="page-link" to="/offres">
+        Retour aux offres
+      </router-link>
+
+      <p class="bas-de-page">
+        Admin ?
+        <router-link :to="login">Se connecter</router-link>
+      </p>
+
+    </section>
   </div>
 </template>
+
+<style scoped>
+.login-page {
+  min-height: 100vh;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  font-family: "Lucida Sans", "Lucida Sans Regular", "Lucida Grande",
+    "Lucida Sans Unicode", Geneva, Verdana, sans-serif;
+}
+
+/* ---------- Gauche : illustration ---------- */
+.illustration {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40px;
+  background: linear-gradient(145deg, #006666 0%, #008080 55%, #26a69a 100%);
+  color: #fff;
+}
+
+.illustration-content {
+  max-width: 440px;
+  text-align: center;
+}
+
+.art {
+  width: 100%;
+  height: auto;
+  margin-bottom: 28px;
+}
+
+.illustration-title {
+  margin: 0 0 10px;
+  font-size: 26px;
+  font-weight: 800;
+  line-height: 1.25;
+}
+
+.illustration-text {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.6;
+  opacity: 0.85;
+}
+
+/* ---------- Droite : formulaire ---------- */
+.panneau-form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 32px 24px;
+  background: #fff;
+}
+
+.panneau-form>* {
+  width: 100%;
+  max-width: 380px;
+}
+
+.title {
+  text-align: center;
+  margin: 0 0 8px;
+  font-size: 28px;
+  font-weight: 800;
+  color: #1f2937;
+}
+
+.sub-title {
+  margin: 0 0 28px;
+  text-align: center;
+  color: #667085;
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  color: #344054;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.input {
+  width: 100%;
+  border-radius: 10px;
+  border: 1px solid #c0c0c0;
+  outline: 0;
+  box-sizing: border-box;
+  padding: 12px 15px;
+  font-family: inherit;
+  font-size: 14px;
+  transition: border-color 0.2s;
+}
+
+.input:focus {
+  border-color: teal;
+}
+
+.form-btn {
+  margin-top: 4px;
+  padding: 12px 15px;
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 700;
+  border-radius: 10px;
+  border: 0;
+  outline: 0;
+  background: teal;
+  color: #fff;
+  cursor: pointer;
+  box-shadow: rgba(0, 0, 0, 0.24) 0 3px 8px;
+}
+
+.form-btn:hover:not(:disabled) {
+  background: #006666;
+}
+
+.form-btn:disabled {
+  cursor: not-allowed;
+  opacity: 0.65;
+}
+
+.error {
+  margin: 0;
+  padding: 10px 12px;
+  border-radius: 8px;
+  background: #fef3f2;
+  color: #b42318;
+  font-size: 12px;
+}
+
+.bas-de-page {
+  margin: 20px 0 0;
+  text-align: center;
+  color: #667085;
+  font-size: 12px;
+}
+
+.bas-de-page a {
+  color: teal;
+  font-weight: 700;
+  text-decoration: underline;
+  text-decoration-color: teal;
+}
+
+.page-link {
+  display: block;
+  margin-top: 14px;
+  text-align: center;
+  color: teal;
+  font-size: 12px;
+  font-weight: 700;
+  text-decoration: underline;
+  text-decoration-color: teal;
+}
+
+/* ---------- Mobile / tablette : on masque l'illustration ---------- */
+@media (max-width: 900px) {
+  .login-page {
+    grid-template-columns: 1fr;
+  }
+
+  .illustration {
+    display: none;
+  }
+}
+</style>

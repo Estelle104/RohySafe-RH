@@ -1,55 +1,47 @@
 <script setup>
-import { ref, computed, onMounted } from 'vue'
+import { computed, ref } from 'vue'
+import { useRouter } from 'vue-router'
+import { useOffre } from '../composables/useOffre.js'
 import OffreCard from '../components/OffreCard.vue'
-import { getOffres } from '../services/offreService'
+import ContratCard from '../components/ContratCard.vue'
+import { deconnecterCandidat, getCandidatConnecte } from '../services/candidatAuth'
 
-const recherche = ref('')
-const filtreActif = ref('Toutes')
-const filtres = ['Toutes', 'Informatique', 'Technique', 'Santé', 'CDI', 'CDD']
-
-const offres = ref([])
-const chargement = ref(true)
-const erreur = ref('')
-
-async function chargerOffres() {
-  chargement.value = true
-  erreur.value = ''
-  try {
-    offres.value = await getOffres()
-  } catch (e) {
-    erreur.value = e.message
-  } finally {
-    chargement.value = false
+const router = useRouter()
+const candidat = ref(getCandidatConnecte())
+const initiales = computed(() => {
+  if (!candidat.value) {
+    return ''
   }
-}
 
-onMounted(chargerOffres)
-
-const offresFiltrees = computed(() => {
-  const q = recherche.value.trim().toLowerCase()
-  return offres.value.filter((o) => {
-    const okFiltre =
-      filtreActif.value === 'Toutes' ||
-      o.departement === filtreActif.value ||
-      o.type_contrat === filtreActif.value
-    const okRecherche =
-      !q ||
-      (o.titre ?? '').toLowerCase().includes(q) ||
-      (o.descriptions ?? '').toLowerCase().includes(q)
-    return okFiltre && okRecherche
-  })
+  return `${candidat.value.prenom?.charAt(0) ?? ''}${candidat.value.nom?.charAt(0) ?? ''}`
 })
 
-function voirDetails(offre) {
-  console.log('details', offre.id) // TODO: router.push({ name: 'offre-detail', params: { id: offre.id } })
+function seDeconnecter() {
+  deconnecterCandidat()
+  candidat.value = null
+  router.push({ name: 'candidat-login' })
 }
 
-function postuler(offre) {
-  console.log('postuler', offre.id) // TODO: ouvrir le formulaire de candidature (CV)
-}
+const {
+  recherche,
+  filtreActif,
+  filtres,
+  offresFiltrees,
+  chargement,
+  erreur,
+  chargerOffres,
+  offreDetail,
+  chargementDetail,
+  erreurDetail,
+  voirDetails,
+  fermerDetails,
+  postuler,
+} = useOffre()
 </script>
 
 <template>
+ 
+    
   <div class="page">
     <header class="navbar">
       <span class="brand">RohySafe</span>
@@ -60,8 +52,17 @@ function postuler(offre) {
         placeholder="Rechercher une offre..."
       />
       <div class="nav-right">
-        <span class="nav-link">Mes candidatures</span>
-        <div class="avatar-me">TH</div>
+        <router-link v-if="!candidat" class="nav-link" to="/entretiens">Entretiens</router-link>
+        <!-- <router-link class="nav-link" to="/backoffice">Backoffice</router-link> -->
+        <template v-if="candidat">
+          <router-link class="nav-link" to="/candidats/notifications">Mes notifications</router-link>
+          <span class="nav-link">{{ candidat.prenom }}</span>
+          <button class="nav-link nav-button" type="button" @click="seDeconnecter">
+            Déconnexion
+          </button>
+          <div class="avatar-me">{{ initiales }}</div>
+        </template>
+        <router-link v-else class="nav-link" to="/candidats/login">Espace candidat</router-link>
       </div>
     </header>
 
@@ -98,10 +99,30 @@ function postuler(offre) {
         <p v-else class="end">Vous avez vu toutes les offres</p>
       </template>
     </main>
+
+    <div v-if="offreDetail || chargementDetail" class="modal-backdrop" @click.self="fermerDetails">
+      <section class="detail-modal">
+        <button class="close" @click="fermerDetails">Fermer</button>
+        <p v-if="chargementDetail">Chargement du détail...</p>
+        <p v-else-if="erreurDetail" class="error">{{ erreurDetail }}</p>
+        <template v-else-if="offreDetail">
+          <ContratCard :offre="offreDetail" />
+        </template>
+      </section>
+    </div>
   </div>
 </template>
 
 <style scoped>
+.app-layout {
+  display: grid;
+  grid-template-columns: 260px minmax(0, 1fr);
+  min-height: 100vh;
+  background: #f1f3f6;
+  color: #222;
+  font-family: "Lucida Sans", "Lucida Sans Regular", "Lucida Grande",
+    "Lucida Sans Unicode", Geneva, Verdana, sans-serif;
+}
 .page {
   min-height: 100vh;
   background: #f1f3f6;
@@ -132,7 +153,7 @@ function postuler(offre) {
 .search {
   flex: 1;
   max-width: 360px;
-  border-radius: 20px;
+  border-radius: 10px;
   border: 1px solid #c0c0c0;
   padding: 10px 15px;
   outline: 0;
@@ -155,10 +176,18 @@ function postuler(offre) {
   font-weight: 700;
   color: #747474;
   cursor: pointer;
+  text-decoration: none;
 }
 
 .nav-link:hover {
   color: #000;
+}
+
+.nav-button {
+  border: 0;
+  background: transparent;
+  font-family: inherit;
+  padding: 0;
 }
 
 .avatar-me {
@@ -186,7 +215,7 @@ function postuler(offre) {
 .chip {
   flex: none;
   padding: 8px 16px;
-  border-radius: 20px;
+  border-radius: 10px;
   border: 1px solid #c0c0c0;
   background: #fff;
   font-family: inherit;
@@ -214,6 +243,38 @@ function postuler(offre) {
   gap: 20px;
 }
 
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 20;
+  display: grid;
+  place-items: center;
+  padding: 20px;
+  background: rgb(0 0 0 / 45%);
+}
+
+.detail-modal {
+  position: relative;
+  width: min(620px, 100%);
+  max-height: 90vh;
+  overflow-y: auto;
+  padding: 26px;
+  border-radius: 12px;
+  background: #fff;
+}
+
+.close {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  border: 0;
+  background: transparent;
+  color: #667085;
+  cursor: pointer;
+}
+
+
+
 .end {
   text-align: center;
   font-size: 12px;
@@ -229,7 +290,7 @@ function postuler(offre) {
   align-self: center;
   padding: 10px 22px;
   font-family: inherit;
-  border-radius: 20px;
+  border-radius: 10px;
   border: 0;
   background: teal;
   color: #fff;

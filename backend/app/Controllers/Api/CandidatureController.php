@@ -1,0 +1,11 @@
+<?php
+namespace App\Controllers\Api;
+use App\Controllers\BaseController;
+use App\Models\CandidatureModel;
+use Throwable;
+class CandidatureController extends BaseController {
+    public function index() { try { return $this->response->setJSON((new CandidatureModel())->getListe()); } catch (Throwable $e) { log_message('error', $e->getMessage()); return $this->response->setStatusCode(500)->setJSON(['message' => 'Impossible de récupérer les candidatures.']); } }
+    public function creerEntretien(int $id) { $data = $this->request->getJSON(true) ?? []; if (empty($data['date_entretien'])) return $this->response->setStatusCode(422)->setJSON(['message' => 'La date de l’entretien est obligatoire.']); try { return $this->response->setJSON(['id' => (new CandidatureModel())->creerEntretien($id, $data), 'message' => 'Entretien créé.']); } catch (\DomainException $e) { return $this->response->setStatusCode(422)->setJSON(['message' => $e->getMessage()]); } catch (Throwable $e) { log_message('error', $e->getMessage()); return $this->response->setStatusCode(500)->setJSON(['message' => 'Impossible de créer l’entretien.']); } }
+    public function ficheContrat(int $id) { try { $d = (new CandidatureModel())->getDonneesContrat($id); return $d === null ? $this->response->setStatusCode(404)->setJSON(['message' => 'Candidature non retenue ou introuvable.']) : $this->response->setJSON($d); } catch (Throwable $e) { log_message('error', $e->getMessage()); return $this->response->setStatusCode(500)->setJSON(['message' => 'Impossible de récupérer la fiche contrat.']); } }
+    public function genererContrat(int $id) { try { return $this->response->setJSON(['id' => (new CandidatureModel())->genererContrat($id), 'message' => 'Contrat généré.']); } catch (\DomainException $e) { return $this->response->setStatusCode(422)->setJSON(['message' => $e->getMessage()]); } catch (Throwable $e) { log_message('error', $e->getMessage()); return $this->response->setStatusCode(500)->setJSON(['message' => 'Impossible de générer le contrat.']); } }
+}
