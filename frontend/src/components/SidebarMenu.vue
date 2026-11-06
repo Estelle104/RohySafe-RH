@@ -28,6 +28,10 @@ const liens = [
   { to: { name: 'entretiens-offres' }, label: 'Entretiens', icone: 'entretiens', roles: ['RH'] },
   { to: '/notification', label: 'Notifications', icone: 'notifications', badge: true },  // tous
   { to: '/backoffice', label: 'Gerer les offres d\'emplois', icone: 'demandes', roles: ['RH','DG'] },                          // tous
+  { to: '/backoffice/rh/relations', label: 'Relations hiérarchiques', icone: 'demandes', roles: ['RH','rh'] },
+  { to: '/backoffice/rh/organigramme', label: 'Organigramme', icone: 'accueil', roles: ['RH','rh'] },
+  { to: '/backoffice/rh/conges/configuration', label: 'Configuration des congés', icone: 'demandes', roles: ['RH','rh'] },
+  { to: '/backoffice/rh/conges/soldes', label: 'Soldes de congés', icone: 'demandes', roles: ['RH','rh'] },
   { to: '/profil', label: 'Mon profil', icone: 'profil' },
 ]
 

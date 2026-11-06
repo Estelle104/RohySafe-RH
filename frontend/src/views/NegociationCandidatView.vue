@@ -45,7 +45,7 @@
           <div class="actions-ligne">
             <input v-model.number="nouveauSalaire" type="number" min="0" class="input" placeholder="Nouveau salaire proposé" />
             <button class="btn" type="button" :disabled="enAction" @click="modifierSalaire">Modifier le salaire</button>
-            <button class="btn" type="button" :disabled="enAction" @click="accepter">Accepter</button>
+            <button class="btn" type="button" :disabled="enAction" @click="accepter">Accepter le contrat</button>
             <button class="btn danger" type="button" :disabled="enAction" @click="refuser">Refuser le contrat d'essai</button>
           </div>
         </section>
@@ -146,23 +146,9 @@ async function modifierSalaire() {
   }
 }
 
-async function accepter() {
-  enAction.value = true
-  erreur.value = ''
-  try {
-    const res = await fetch(`/api/candidats/${candidat.value.id}/negociation/${route.params.idCandidature}/accepter`, {
-      method: 'POST',
-      headers: { Accept: 'application/json' },
-    })
-    const o = await res.json().catch(() => ({}))
-    if (!res.ok) throw new Error(o.message || 'Erreur')
-    alert(o.message)
-    router.push({ name: 'candidat-notifications' })
-  } catch (e) {
-    erreur.value = e.message
-  } finally {
-    enAction.value = false
-  }
+function accepter() {
+  // Accepter le contrat : rediriger vers la fiche contrat pour relecture et acceptation finale
+  router.push({ name: 'contrat-fiche', params: { id: route.params.idCandidature }, query: { candidat: '1' } })
 }
 
 async function refuser() {

@@ -20,6 +20,19 @@ $routes->group('api', ['namespace' => 'App\Controllers\Api'], function ($routes)
     $routes->get('auth/me', 'Auth::me');
     $routes->post('auth/logout', 'Auth::logout');
     $routes->get('health', 'Health::index');
+    $routes->group('rh/relations-hierarchiques', ['filter' => 'auth:RH'], static function ($routes) {
+        $routes->get('', 'RelationHierarchiqueController::index');
+        $routes->get('employes', 'RelationHierarchiqueController::employes');
+        $routes->get('organigramme', 'RelationHierarchiqueController::organigramme');
+        $routes->post('', 'RelationHierarchiqueController::create');
+        $routes->post('(:num)/cloture', 'RelationHierarchiqueController::close/$1');
+    });
+    $routes->group('rh/conges', ['filter' => 'auth:RH'], static function ($routes) {
+        $routes->get('configurations', 'CongeController::configurations');
+        $routes->put('configurations/(:num)', 'CongeController::updateConfiguration/$1');
+        $routes->get('soldes', 'CongeController::soldes');
+        $routes->post('soldes/recalculer', 'CongeController::recalculerSoldes');
+    });
     $routes->get('departements', 'Departement::index');
     $routes->get('offres', 'Offre::index');
     $routes->group('demandes', ['filter' => 'auth'], static function ($routes) {
@@ -87,6 +100,7 @@ $routes->group('api', ['namespace' => 'App\Controllers\Api'], function ($routes)
         $routes->post('candidatures/(:num)/entretiens', 'CandidatureController::creerEntretien/$1', ['filter' => 'auth:Manager,RH']);
         $routes->get('candidatures/(:num)/contrat', 'CandidatureController::ficheContrat/$1');
         $routes->post('candidatures/(:num)/contrat', 'CandidatureController::genererContrat/$1');
+        $routes->post('candidatures/(:num)/contrat/accepter', 'CandidatureController::accepterContrat/$1');
 
         $routes->group('entretiens', ['filter' => 'auth:Manager,RH'], static function ($routes) {
             $routes->get('offres', 'EntretienController::offres');
