@@ -7,16 +7,37 @@ import { getOrganigramme } from '../services/relationHierarchique'
 const relations = ref([])
 const error = ref('')
 const menuOuvert = ref(false)
-const cycleDetecte = computed(() => relations.value.length > 0 && racines.value.length === 0)
-const enfants = computed(() => relations.value.reduce((groupes, relation) => {
+const relationsUniques = computed(() => {
+  const uniques = new Map()
+  relations.value.forEach((relation) => {
+    const cle = `${relation.id_superieur}-${relation.id_subordonne}`
+    if (!uniques.has(cle)) uniques.set(cle, relation)
+  })
+  return [...uniques.values()]
+})
+const cycleDetecte = computed(() => relationsUniques.value.length > 0 && racines.value.length === 0)
+const enfants = computed(() => relationsUniques.value.reduce((groupes, relation) => {
   ;(groupes[relation.id_superieur] ||= []).push(relation)
   return groupes
 }, {}))
-const racines = computed(() => relations.value.filter((relation) => !relations.value.some((candidate) => candidate.id_subordonne === relation.id_superieur)))
+const racines = computed(() => {
+  const superieursAvecRacine = new Map()
+  relationsUniques.value
+    .filter((relation) => !relationsUniques.value.some((candidate) => candidate.id_subordonne === relation.id_superieur))
+    .forEach((relation) => {
+      if (!superieursAvecRacine.has(relation.id_superieur)) {
+        superieursAvecRacine.set(relation.id_superieur, relation)
+      }
+    })
+  return [...superieursAvecRacine.values()]
+})
 
 onMounted(async () => {
   try {
     relations.value = (await getOrganigramme()).relations
+    console.log('relations', relations.value)
+    console.log('racines', racines.value)
+    console.log('enfants', enfants.value)
   } catch (e) {
     error.value = e.message
   }
