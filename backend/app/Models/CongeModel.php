@@ -36,6 +36,7 @@ class CongeModel extends Model
         $builder = $this->db->table('solde_conges sc')
             ->select("sc.id, sc.id_employe, sc.id_type_conge, sc.periode_debut,
                 sc.periode_fin, sc.droits_acquis, sc.jours_pris, sc.solde_restant,
+                e.date_embauche,
                 e.matricule, CONCAT(c.prenom, ' ', c.nom) AS nom_complet,
                 tc.libelle")
             ->join('employes e', 'e.id = sc.id_employe')
