@@ -65,8 +65,21 @@ class CandidatureModel extends Model
 
     public function getDonneesContrat(int $id): ?array
     {
-        return $this->db->table('candidatures c')->select('c.id, ca.nom, ca.prenom, ca.ville, o.titre AS titre_offre, p.libelle AS poste, dpt.libelle AS departement, tc.id AS id_type_contrat, tc.libelle AS type_contrat, dm.date_prise_poste, dm.salaire_propose')
-            ->join('statut_candidatures sc', 'sc.id = c.id_statut_actuel')->join('candidats ca', 'ca.id = c.id_candidat')->join('offres o', 'o.id = c.id_offre')->join('demandes dm', 'dm.id = o.id_demande')->join('poste_departement pd', 'pd.id = dm.id_poste_departement')->join('postes p', 'p.id = pd.id_poste')->join('departements dpt', 'dpt.id = pd.id_departement')->join('type_contrats tc', 'tc.id = dm.id_type_contrat')->where('c.id', $id)->where('sc.libelle', 'retenu')->get()->getRowArray();
+        return $this->db->table('candidatures c')->select('c.id, c.id_candidat, ca.nom, ca.prenom, ca.ville, o.titre AS titre_offre, p.libelle AS poste, dpt.libelle AS departement, tc.id AS id_type_contrat, tc.libelle AS type_contrat, dm.date_prise_poste, dm.salaire_propose, sc.libelle AS statut_candidature')
+            ->join('statut_candidatures sc', 'sc.id = c.id_statut_actuel')
+            ->join('candidats ca', 'ca.id = c.id_candidat')
+            ->join('offres o', 'o.id = c.id_offre')
+            ->join('demandes dm', 'dm.id = o.id_demande')
+            ->join('poste_departement pd', 'pd.id = dm.id_poste_departement')
+            ->join('postes p', 'p.id = pd.id_poste')
+            ->join('departements dpt', 'dpt.id = pd.id_departement')
+            ->join('type_contrats tc', 'tc.id = dm.id_type_contrat')
+            ->where('c.id', $id)
+            ->groupStart()
+                ->where('sc.libelle', 'retenu')
+                ->orWhere('sc.libelle', 'Embauche')
+            ->groupEnd()
+            ->get()->getRowArray();
     }
 
     public function genererContrat(int $id): int
@@ -84,6 +97,78 @@ class CandidatureModel extends Model
         if ($statut === null) throw new \RuntimeException('Le statut de contrat cree (id 1) est introuvable.');
         $this->db->table('contrats')->insert(['id_employe' => $employe['id'], 'id_type_contrat' => $donnees['id_type_contrat'], 'date_debut' => $donnees['date_prise_poste'] ?: date('Y-m-d'), 'date_fin' => null, 'salaire' => $donnees['salaire_propose'], 'id_statut_actuel' => $statut['id'], 'date_signature' => date('Y-m-d')]);
         $contrat = (int) $this->db->insertID(); $this->db->transComplete(); if (! $this->db->transStatus()) throw new \RuntimeException('Échec de génération du contrat.'); return $contrat;
+    }
+
+    public function accepterContratEtEmbaucher(int $idCandidature, ?int $idCandidat = null): array
+    {
+        $candidature = $this->find($idCandidature);
+        if ($candidature === null) {
+            throw new \DomainException('Candidature introuvable.');
+        }
+        if ($idCandidat !== null && (int) $candidature['id_candidat'] !== $idCandidat) {
+            throw new \DomainException('Candidature non autorisée.');
+        }
+
+        $donnees = $this->getDonneesContrat($idCandidature);
+        if ($donnees === null) {
+            throw new \DomainException('Cette candidature ne peut pas accepter de contrat.');
+        }
+
+        $statutEmbauche = $this->db->table('statut_candidatures')->select('id')->where('libelle', 'Embauche')->get()->getRowArray();
+        if ($statutEmbauche === null) {
+            throw new \RuntimeException('Statut Embauche introuvable.');
+        }
+
+        $this->db->transStart();
+
+        $employe = $this->db->table('employes')->select('id, matricule')->where('id_candidat', $candidature['id_candidat'])->get()->getRowArray();
+        $matricule = $employe['matricule'] ?? null;
+        if ($employe === null) {
+            $matricule = 'EMP-' . date('Y') . '-' . str_pad((string) $idCandidature, 4, '0', STR_PAD_LEFT);
+            $this->db->table('employes')->insert([
+                'id_candidat' => $candidature['id_candidat'],
+                'matricule' => $matricule,
+                'date_embauche' => $donnees['date_prise_poste'] ?: date('Y-m-d'),
+            ]);
+            $employe = ['id' => $this->db->insertID(), 'matricule' => $matricule];
+        }
+
+        $statutContrat = $this->db->table('statut_contrats')->select('id')->where('id', 1)->get()->getRowArray();
+        if ($statutContrat === null) {
+            throw new \RuntimeException('Statut contrat introuvable.');
+        }
+
+        $contratExistant = $this->db->table('contrats')->where('id_employe', $employe['id'])->orderBy('id', 'DESC')->get()->getRowArray();
+        if ($contratExistant === null) {
+            $this->db->table('contrats')->insert([
+                'id_employe' => $employe['id'],
+                'id_type_contrat' => $donnees['id_type_contrat'],
+                'date_debut' => $donnees['date_prise_poste'] ?: date('Y-m-d'),
+                'date_fin' => null,
+                'salaire' => $donnees['salaire_propose'],
+                'id_statut_actuel' => $statutContrat['id'],
+                'date_signature' => date('Y-m-d'),
+            ]);
+        }
+
+        $this->update($idCandidature, ['id_statut_actuel' => (int) $statutEmbauche['id']]);
+
+        $this->db->table('notifications_candidats')->insert([
+            'id_candidat' => (int) $candidature['id_candidat'],
+            'id_candidature' => $idCandidature,
+            'id_offre' => (int) $candidature['id_offre'],
+            'type' => 'proposition',
+            'message' => "Contrat accepté. Vous êtes embauché(e). Matricule : {$matricule}.",
+            'lu' => false,
+            'date_creation' => date('Y-m-d H:i:s'),
+        ]);
+
+        $this->db->transComplete();
+        if (! $this->db->transStatus()) {
+            throw new \RuntimeException("Échec de l'acceptation du contrat.");
+        }
+
+        return ['matricule' => $matricule, 'statut' => 'Embauche'];
     }
 
     public function updateStatutCandidatureEngage($id){

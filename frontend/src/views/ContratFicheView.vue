@@ -1,15 +1,24 @@
 
 <script setup>
-import { onMounted, ref } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
+import { getCandidatConnecte } from '../services/candidatAuth'
 
 const route = useRoute()
 const router = useRouter()
+const candidat = ref(getCandidatConnecte())
 
 const d = ref(null)
 const erreur = ref('')
 const cours = ref(false)
 const succes = ref('')
+
+const estModeCandidat = computed(() => {
+  if (route.query.candidat === '1') return true
+  return !!candidat.value?.id && d.value?.id_candidat && Number(candidat.value.id) === Number(d.value.id_candidat)
+})
+
+const dejaEmbauche = computed(() => d.value?.statut_candidature === 'Embauche')
 
 const date = (v) => {
   if (!v) return 'Non renseignée'
@@ -58,6 +67,27 @@ async function generer() {
     }
 
     succes.value = 'Contrat généré avec le statut « créé ».'
+  } catch (e) {
+    erreur.value = e.message || 'Une erreur est survenue.'
+  } finally {
+    cours.value = false
+  }
+}
+
+async function accepterContrat() {
+  erreur.value = ''
+  cours.value = true
+  try {
+    const payload = candidat.value?.id ? { id_candidat: candidat.value.id } : {}
+    const r = await fetch(`/api/candidatures/${route.params.id}/contrat/accepter`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+      body: JSON.stringify(payload),
+    })
+    const o = await r.json().catch(() => ({}))
+    if (!r.ok) throw new Error(o.message || "Impossible d'accepter le contrat.")
+    succes.value = o.message + (o.matricule ? ` (Matricule: ${o.matricule})` : '')
+    if (d.value) d.value.statut_candidature = 'Embauche'
   } catch (e) {
     erreur.value = e.message || 'Une erreur est survenue.'
   } finally {
@@ -270,6 +300,15 @@ async function generer() {
 
       <div class="actions-finales">
         <button
+          v-if="estModeCandidat"
+          class="generer"
+          :disabled="cours || dejaEmbauche"
+          @click="accepterContrat"
+        >
+          {{ dejaEmbauche ? 'Contrat accepté' : cours ? 'Traitement en cours…' : 'Accepter le contrat' }}
+        </button>
+        <button
+          v-else
           class="generer"
           :disabled="cours || !!succes"
           @click="generer"
