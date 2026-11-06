@@ -63,6 +63,10 @@ class RelationHierarchiqueModel extends Model
             throw new DomainException('Les deux employés sélectionnés sont introuvables.');
         }
 
+        if ($this->createsCycle($superieur, $subordonne)) {
+            throw new DomainException('Cette affectation créerait un cycle hiérarchique.');
+        }
+
         $relationActive = $this->db->table($this->table)
             ->where('id_subordonne', $subordonne)
             ->where('date_debut <=', date('Y-m-d'))
@@ -114,5 +118,26 @@ class RelationHierarchiqueModel extends Model
         }
 
         return $this->update($id, ['date_fin' => $dateFin]);
+    }
+
+    private function createsCycle(int $superieur, int $subordonne): bool
+    {
+        $relations = $this->getRelations(true);
+        $superieurs = [];
+        foreach ($relations as $relation) {
+            $superieurs[(int) $relation['id_subordonne']] = (int) $relation['id_superieur'];
+        }
+
+        $visites = [];
+        $courant = $superieur;
+        while (isset($superieurs[$courant])) {
+            if ($courant === $subordonne || isset($visites[$courant])) {
+                return true;
+            }
+            $visites[$courant] = true;
+            $courant = $superieurs[$courant];
+        }
+
+        return false;
     }
 }

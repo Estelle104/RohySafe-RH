@@ -7,6 +7,7 @@ import { getOrganigramme } from '../services/relationHierarchique'
 const relations = ref([])
 const error = ref('')
 const menuOuvert = ref(false)
+const cycleDetecte = computed(() => relations.value.length > 0 && racines.value.length === 0)
 const enfants = computed(() => relations.value.reduce((groupes, relation) => {
   ;(groupes[relation.id_superieur] ||= []).push(relation)
   return groupes
@@ -27,7 +28,9 @@ onMounted(async () => {
     <SidebarMenu nom="Ressources humaines" role="RH" code-role="RH" initiales="RH" :ouvert="menuOuvert" @fermer="menuOuvert = false" />
     <main class="page"><button class="burger" type="button" @click="menuOuvert = true">☰ Menu</button>
       <div class="contenu"><div class="top"><div><p class="eyebrow">Ressources humaines</p><h1>Organigramme des employés</h1><p class="subtitle">Relations hiérarchiques actives à la date du jour.</p></div><RouterLink to="/backoffice/rh/relations" class="back">Gérer les relations</RouterLink></div>
-        <p v-if="error" class="alert error">{{ error }}</p><p v-else-if="!relations.length" class="empty card">Aucune relation hiérarchique active.</p>
+        <p v-if="error" class="alert error">{{ error }}</p>
+        <p v-else-if="cycleDetecte" class="alert error">L’organigramme ne peut pas être affiché : les relations actives forment un cycle hiérarchique. Corrigez les relations dans l’écran de gestion.</p>
+        <p v-else-if="!relations.length" class="empty card">Aucune relation hiérarchique active.</p>
         <section v-else class="organigramme card">
           <ul class="tree"><li v-for="racine in racines" :key="racine.id"><div class="person"><strong>{{ racine.superieur }}</strong><small>Supérieur · {{ racine.matricule_superieur }}</small></div>
             <ul v-if="enfants[racine.id_superieur]"><OrganigrammeNoeud v-for="enfant in enfants[racine.id_superieur]" :key="enfant.id" :relation="enfant" :enfants="enfants" /></ul>
