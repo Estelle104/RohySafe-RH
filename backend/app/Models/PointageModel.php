@@ -12,13 +12,28 @@ class PointageModel extends Model
     protected $useTimestamps = false;
     protected $allowedFields = ['id_employe', 'date_heure', 'id_type_pointage', 'cree_par'];
 
+    public function getOptions(): array
+    {
+        return [
+            'employes' => $this->db->table('employes e')
+                ->select("e.id, e.matricule, CONCAT(c.prenom, ' ', c.nom) AS nom_complet")
+                ->join('candidats c', 'c.id = e.id_candidat')
+                ->orderBy('c.nom', 'ASC')->orderBy('c.prenom', 'ASC')
+                ->get()->getResultArray(),
+            'types' => $this->db->table('type_pointages')
+                ->select('id, libelle')->orderBy('id', 'ASC')
+                ->get()->getResultArray(),
+        ];
+    }
+
     public function getPointages(array $filtres = []): array
     {
         $builder = $this->db->table('pointages p')
             ->select("p.id, p.id_employe, p.date_heure, p.id_type_pointage,
-                p.cree_par, p.created_at, tp.libelle AS type_pointage,
+                p.cree_par, p.created_at, u.login AS saisi_par, tp.libelle AS type_pointage,
                 e.matricule, CONCAT(c.prenom, ' ', c.nom) AS nom_complet")
             ->join('type_pointages tp', 'tp.id = p.id_type_pointage')
+            ->join('utilisateurs u', 'u.id = p.cree_par', 'left')
             ->join('employes e', 'e.id = p.id_employe')
             ->join('candidats c', 'c.id = e.id_candidat')
             ->orderBy('p.date_heure', 'DESC');

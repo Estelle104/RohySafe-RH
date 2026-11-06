@@ -29,6 +29,7 @@ const liens = [
   { to: '/backoffice/rh/organigramme', label: 'Organigramme', icone: 'accueil', roles: ['RH','rh'] },
   { to: '/backoffice/rh/conges/configuration', label: 'Configuration des congés', icone: 'demandes', roles: ['RH','rh'] },
   { to: '/backoffice/rh/conges/soldes', label: 'Soldes de congés', icone: 'demandes', roles: ['RH','rh'] },
+  { to: '/backoffice/rh/pointages', label: 'Pointages', icone: 'demandes', roles: ['RH','rh'] },
   { to: '/profil', label: 'Mon profil', icone: 'profil' },
 ]
 

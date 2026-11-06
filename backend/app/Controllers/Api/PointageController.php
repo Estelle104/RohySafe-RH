@@ -8,6 +8,16 @@ use Throwable;
 
 class PointageController extends BaseController
 {
+    public function options()
+    {
+        try {
+            return $this->response->setJSON((new PointageModel())->getOptions());
+        } catch (Throwable $e) {
+            log_message('error', $e->getMessage());
+            return $this->response->setStatusCode(500)->setJSON(['message' => 'Impossible de récupérer les options de pointage.']);
+        }
+    }
+
     public function index()
     {
         try {

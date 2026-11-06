@@ -34,6 +34,7 @@ $routes->group('api', ['namespace' => 'App\Controllers\Api'], function ($routes)
         $routes->post('soldes/recalculer', 'CongeController::recalculerSoldes');
     });
     $routes->group('rh/pointages', ['filter' => 'auth:RH'], static function ($routes) {
+        $routes->get('options', 'PointageController::options');
         $routes->get('', 'PointageController::index');
         $routes->get('employe/(:num)', 'PointageController::parEmploye/$1');
         $routes->post('', 'PointageController::create');

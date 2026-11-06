@@ -21,5 +21,6 @@ function queryParams({ idEmploye, dateDebut, dateFin } = {}) {
 }
 
 export const getPointages = (filtres = {}) => request(`${API}${queryParams(filtres)}`)
+export const getPointageOptions = () => request(`${API}/options`)
 export const createPointage = (data) => request(API, { method: 'POST', body: JSON.stringify(data) })
 export const getPointageParEmploye = (idEmploye, filtres = {}) => request(`${API}/employe/${idEmploye}${queryParams(filtres)}`)
