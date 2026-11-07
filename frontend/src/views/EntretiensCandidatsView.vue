@@ -2,6 +2,7 @@
 import { onMounted, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { getCandidatsEntretiens } from '../services/entretienService'
+import SidebarMenu from '../components/SidebarMenu.vue'
 
 const route = useRoute()
 const router = useRouter()
@@ -9,6 +10,11 @@ const offre = ref(null)
 const candidats = ref([])
 const chargement = ref(true)
 const erreur = ref('')
+const enAction = ref(null)
+const menuOuvert = ref(false)
+
+// Note minimale (sur 20) pour pouvoir engager un candidat.
+const NOTE_ENGAGEMENT = 15
 
 function formaterDate(valeur) {
   if (!valeur) {
@@ -23,6 +29,10 @@ function formaterDate(valeur) {
 
 function aUneEvaluation(candidat) {
   return candidat.note !== null && candidat.note !== undefined && candidat.note !== ''
+}
+
+function peutEngager(candidat) {
+  return Number(candidat.note) >= NOTE_ENGAGEMENT
 }
 
 async function charger() {
@@ -40,21 +50,50 @@ async function charger() {
   }
 }
 
+// Change le statut de la candidature : "engager" ou "attente".
+// Adapter les URL à tes routes CodeIgniter 4.
+async function changerStatut(candidat, action) {
+  enAction.value = candidat.id_candidature
+  erreur.value = ''
+
+  try {
+    const res = await fetch(`/api/candidatures/${candidat.id_candidature}/${action}`, {
+      method: 'POST',
+      headers: { Accept: 'application/json' },
+      credentials: 'include',
+    })
+    const resultat = await res.json().catch(() => ({}))
+    if (!res.ok) throw new Error(resultat.message || 'Action impossible.')
+    await charger()
+  } catch (e) {
+    erreur.value = e.message
+  } finally {
+    enAction.value = null
+  }
+}
+
+const engager = candidat => changerStatut(candidat, 'engager')
+const mettreEnAttente = candidat => changerStatut(candidat, 'attente')
+
 onMounted(charger)
 </script>
 
 <template>
-  <div class="page">
-    <header class="navbar">
-      <span class="brand">RohySafe</span>
-      <div class="nav-right">
-        <router-link class="nav-link" :to="{ name: 'entretiens-offres' }">Entretiens</router-link>
-        <router-link class="nav-link" :to="{ name: 'offres' }">Offres</router-link>
-        <span class="avatar-me">RH</span>
-      </div>
-    </header>
+  <div class="app-layout">
+    <!-- Nom / initiales : à remplacer par l'utilisateur connecté -->
+    <SidebarMenu
+      nom="Ressources humaines"
+      role="RH"
+      codeRole="RH"
+      initiales="RH"
+      :ouvert="menuOuvert"
+      @fermer="menuOuvert = false"
+    />
 
-    <main class="contenu">
+    <main class="page">
+      <button class="burger" type="button" @click="menuOuvert = true">☰ Menu</button>
+
+      <div class="contenu">
       <button class="retour" type="button" @click="router.push({ name: 'entretiens-offres' })">
         ← Retour aux offres
       </button>
@@ -64,98 +103,103 @@ onMounted(charger)
       <p class="sous-titre">Une note et des remarques par candidature après l’entretien.</p>
 
       <p v-if="chargement" class="message">Chargement des candidats...</p>
-      <p v-else-if="erreur" class="message erreur">{{ erreur }}</p>
+      <p v-else-if="erreur && candidats.length === 0" class="message erreur">{{ erreur }}</p>
       <p v-else-if="candidats.length === 0" class="message">
         Aucun candidat n’a d’entretien planifié pour cette offre.
       </p>
 
-      <section v-else class="liste">
-        <article v-for="candidat in candidats" :key="candidat.id_candidature" class="carte">
-          <div class="identite">
-            <h2>{{ candidat.prenom }} {{ candidat.nom }}</h2>
-            <p>{{ candidat.email }} · {{ candidat.ville || 'Ville non renseignée' }}</p>
-            <p class="entretien">
-              {{ formaterDate(candidat.date_entretien) }}
-              <span v-if="candidat.lieu_entretien"> · {{ candidat.lieu_entretien }}</span>
-            </p>
-          </div>
+      <template v-else>
+        <p v-if="erreur" class="message erreur">{{ erreur }}</p>
 
-          <div class="etat">
-            <span class="statut" :class="candidat.statut_entretien">
-              {{ candidat.statut_entretien || 'planifie' }}
-            </span>
-            <p v-if="aUneEvaluation(candidat)" class="note">
-              {{ Number(candidat.note).toFixed(2) }} / 20
-            </p>
-            <p v-else class="sans-note">Pas encore évalué</p>
-            <button
-              class="btn"
-              type="button"
-              @click="router.push({ name: 'entretien-evaluation', params: { id: candidat.id_candidature } })"
-            >
-              {{ aUneEvaluation(candidat) ? 'Modifier l’évaluation' : 'Évaluer' }}
-            </button>
-          </div>
-        </article>
-      </section>
+        <section class="liste">
+          <article v-for="candidat in candidats" :key="candidat.id_candidature" class="carte">
+            <div class="identite">
+              <h2>{{ candidat.prenom }} {{ candidat.nom }}</h2>
+              <p>{{ candidat.email }} · {{ candidat.ville || 'Ville non renseignée' }}</p>
+              <p class="entretien">
+                {{ formaterDate(candidat.date_entretien) }}
+                <span v-if="candidat.lieu_entretien"> · {{ candidat.lieu_entretien }}</span>
+              </p>
+            </div>
+
+            <div class="etat">
+              <span class="statut" :class="candidat.statut_entretien">
+                {{ candidat.statut_entretien || 'planifie' }}
+              </span>
+              <p v-if="aUneEvaluation(candidat)" class="note">
+                {{ Number(candidat.note).toFixed(2) }} / 20
+              </p>
+              <p v-else class="sans-note">Pas encore évalué</p>
+
+              <div class="actions">
+                <button
+                  class="btn"
+                  type="button"
+                  @click="router.push({ name: 'entretien-evaluation', params: { id: candidat.id_candidature } })"
+                >
+                  {{ aUneEvaluation(candidat) ? 'Modifier l’évaluation' : 'Évaluer' }}
+                </button>
+
+                <!-- Décision : seulement une fois la note saisie -->
+                <template v-if="aUneEvaluation(candidat)">
+                  <button
+                    v-if="peutEngager(candidat)"
+                    class="btn engager"
+                    type="button"
+                    :disabled="enAction === candidat.id_candidature || candidat.statut_candidature === 'retenu' || candidat.statut_candidature === 'Embauche'"
+                    @click="engager(candidat)"
+                  >
+                    {{ candidat.statut_candidature === 'retenu' || candidat.statut_candidature === 'Embauche' ? 'Engagé' : 'Engager' }}
+                  </button>
+                  <button
+                    v-else
+                    class="btn attente"
+                    type="button"
+                    :disabled="enAction === candidat.id_candidature"
+                    @click="mettreEnAttente(candidat)"
+                  >
+                    En attente
+                  </button>
+                </template>
+              </div>
+            </div>
+          </article>
+        </section>
+      </template>
+      </div>
     </main>
   </div>
 </template>
 
 <style scoped>
-.page {
+/* Structure globale : sidebar + page */
+.app-layout {
+  display: grid;
+  grid-template-columns: 260px minmax(0, 1fr);
   min-height: 100vh;
   background: #f1f3f6;
   color: #222;
-  font-family: "Lucida Sans", sans-serif;
+  font-family: "Lucida Sans", "Lucida Sans Regular", "Lucida Grande",
+    "Lucida Sans Unicode", Geneva, Verdana, sans-serif;
 }
 
-.navbar {
-  position: sticky;
-  top: 0;
-  z-index: 10;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  padding: 10px 20px;
+.page {
+  min-width: 0;
+  min-height: 100vh;
+}
+
+.burger {
+  display: none;
+  margin: 16px 0 0 16px;
+  padding: 8px 16px;
+  border: 0;
+  border-radius: 10px;
   background: #fff;
-  box-shadow: rgba(0, 0, 0, 0.15) 0 2px 8px;
-}
-
-.brand {
   color: teal;
-  font-size: 22px;
-  font-weight: 800;
-}
-
-.nav-right {
-  display: flex;
-  align-items: center;
-  gap: 14px;
-}
-
-.nav-link {
-  color: #747474;
-  font-size: 13px;
+  font-family: inherit;
   font-weight: 700;
-  text-decoration: none;
-}
-
-.nav-link:hover {
-  color: teal;
-}
-
-.avatar-me {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 36px;
-  height: 36px;
-  border-radius: 50%;
-  background: teal;
-  color: #fff;
-  font-weight: 700;
+  cursor: pointer;
+  box-shadow: rgba(0, 0, 0, 0.24) 0 3px 8px;
 }
 
 .contenu {
@@ -241,7 +285,7 @@ h1 {
 .statut {
   display: inline-block;
   padding: 4px 10px;
-  border-radius: 20px;
+  border-radius: 10px;
   background: #e6f2f2;
   color: #006666;
   font-size: 11px;
@@ -272,9 +316,16 @@ h1 {
   font-size: 12px;
 }
 
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
 .btn {
   border: 0;
-  border-radius: 20px;
+  border-radius: 10px;
   padding: 9px 16px;
   background: teal;
   color: #fff;
@@ -282,6 +333,31 @@ h1 {
   font-size: 13px;
   font-weight: 700;
   cursor: pointer;
+}
+
+.btn:disabled {
+  opacity: 0.6;
+  cursor: wait;
+}
+
+/* Décision : engager (note >= 15) */
+.btn.engager {
+  background: #137333;
+}
+
+.btn.engager:hover:not(:disabled) {
+  background: #0f5c28;
+}
+
+/* Décision : en attente (note < 15) */
+.btn.attente {
+  border: 1px solid #b54708;
+  background: #fff;
+  color: #b54708;
+}
+
+.btn.attente:hover:not(:disabled) {
+  background: #fef3e6;
 }
 
 .message {
@@ -295,6 +371,16 @@ h1 {
   color: #b42318;
 }
 
+@media (max-width: 960px) {
+  .app-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .burger {
+    display: block;
+  }
+}
+
 @media (max-width: 640px) {
   .carte {
     align-items: flex-start;
@@ -304,6 +390,10 @@ h1 {
   .etat {
     width: 100%;
     text-align: left;
+  }
+
+  .actions {
+    justify-content: flex-start;
   }
 }
 </style>

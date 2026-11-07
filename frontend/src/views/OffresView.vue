@@ -40,6 +40,8 @@ const {
 </script>
 
 <template>
+ 
+    
   <div class="page">
     <header class="navbar">
       <span class="brand">RohySafe</span>
@@ -51,8 +53,9 @@ const {
       />
       <div class="nav-right">
         <router-link v-if="!candidat" class="nav-link" to="/entretiens">Entretiens</router-link>
-        <router-link class="nav-link" to="/backoffice">Backoffice</router-link>
+        <!-- <router-link class="nav-link" to="/backoffice">Backoffice</router-link> -->
         <template v-if="candidat">
+          <router-link class="nav-link" to="/candidats/notifications">Mes notifications</router-link>
           <span class="nav-link">{{ candidat.prenom }}</span>
           <button class="nav-link nav-button" type="button" @click="seDeconnecter">
             Déconnexion
@@ -111,6 +114,15 @@ const {
 </template>
 
 <style scoped>
+.app-layout {
+  display: grid;
+  grid-template-columns: 260px minmax(0, 1fr);
+  min-height: 100vh;
+  background: #f1f3f6;
+  color: #222;
+  font-family: "Lucida Sans", "Lucida Sans Regular", "Lucida Grande",
+    "Lucida Sans Unicode", Geneva, Verdana, sans-serif;
+}
 .page {
   min-height: 100vh;
   background: #f1f3f6;
@@ -141,7 +153,7 @@ const {
 .search {
   flex: 1;
   max-width: 360px;
-  border-radius: 20px;
+  border-radius: 10px;
   border: 1px solid #c0c0c0;
   padding: 10px 15px;
   outline: 0;
@@ -203,7 +215,7 @@ const {
 .chip {
   flex: none;
   padding: 8px 16px;
-  border-radius: 20px;
+  border-radius: 10px;
   border: 1px solid #c0c0c0;
   background: #fff;
   font-family: inherit;
@@ -278,7 +290,7 @@ const {
   align-self: center;
   padding: 10px 22px;
   font-family: inherit;
-  border-radius: 20px;
+  border-radius: 10px;
   border: 0;
   background: teal;
   color: #fff;

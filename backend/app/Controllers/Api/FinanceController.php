@@ -57,7 +57,8 @@ class FinanceController extends BaseController
     public function valider(int $id)
     {
         try {
-            $utilisateurId = (int) session()->get('id_utilisateur');
+            $utilisateur = session()->get('utilisateur');
+            $utilisateurId = (int) ($utilisateur['id'] ?? 0);
 
             $this->financeService->valider(
                 $id,
@@ -80,7 +81,8 @@ class FinanceController extends BaseController
     public function annuler(int $id)
     {
         try {
-            $utilisateurId = (int) session()->get('id_utilisateur');
+            $utilisateur = session()->get('utilisateur');
+            $utilisateurId = (int) ($utilisateur['id'] ?? 0);
             $payload = $this->request->getJSON(true) ?? [];
             $motif = (string) ($payload['motif'] ?? $this->request->getPost('motif'));
 

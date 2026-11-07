@@ -4,8 +4,8 @@ import {
   getCandidatsIdeauxByDemande,
   getCandidatsIdeauxByOffre,
   getCvCandidat,
-  preselectionnerCandidature,
 } from '../services/candidatService'
+import { creerEntretien } from '../services/entretienService'
 
 export function useCandidatsIdeaux() {
   const route = useRoute()
@@ -22,7 +22,8 @@ export function useCandidatsIdeaux() {
   const cvDocuments = ref([])
   const erreurAction = ref('')
   const messageAction = ref('')
-  const candidatEnCours = ref(null)
+  const entretienCandidat = ref(null)
+  const entretienEnCours = ref(false)
 
   async function chargerCandidats() {
     chargement.value = true
@@ -80,7 +81,7 @@ export function useCandidatsIdeaux() {
     router.push({ name: 'exigences-offre', params: { id: route.params.id } })
   }
 
-  async function preselectionnerCandidat(candidat) {
+  function ouvrirEntretien(candidat) {
     erreurAction.value = ''
     messageAction.value = ''
 
@@ -89,16 +90,44 @@ export function useCandidatsIdeaux() {
       return
     }
 
-    candidatEnCours.value = candidat.id_candidature
+    if (candidat.entretien_cree) {
+      erreurAction.value = 'Un entretien est déjà planifié pour cette candidature.'
+      return
+    }
+
+    entretienCandidat.value = candidat
+  }
+
+  function fermerEntretien() {
+    if (entretienEnCours.value) {
+      return
+    }
+
+    entretienCandidat.value = null
+    erreurAction.value = ''
+  }
+
+  async function planifierEntretien(donnees) {
+    if (!entretienCandidat.value) {
+      return
+    }
+
+    erreurAction.value = ''
+    entretienEnCours.value = true
+    const candidat = entretienCandidat.value
 
     try {
-      await preselectionnerCandidature(candidat.id_candidature)
-      candidat.preselectionne = true
-      messageAction.value = `${candidat.prenom} ${candidat.nom} a été présélectionné(e).`
+      await creerEntretien(candidat.id_candidature, donnees)
+      candidat.entretien_cree = true
+      candidat.date_entretien = donnees.date_entretien
+      candidat.lieu_entretien = donnees.lieu_entretien
+      candidat.statut_entretien = 'planifie'
+      entretienCandidat.value = null
+      messageAction.value = `L’entretien de ${candidat.prenom} ${candidat.nom} a été planifié.`
     } catch (e) {
       erreurAction.value = e.message
     } finally {
-      candidatEnCours.value = null
+      entretienEnCours.value = false
     }
   }
 
@@ -130,10 +159,13 @@ export function useCandidatsIdeaux() {
     cvDocuments,
     erreurAction,
     messageAction,
-    candidatEnCours,
+    entretienCandidat,
+    entretienEnCours,
     voirCv,
     fermerCv,
-    preselectionnerCandidat,
+    ouvrirEntretien,
+    fermerEntretien,
+    planifierEntretien,
     retourner,
     gererExigences,
     peutGererExigences,

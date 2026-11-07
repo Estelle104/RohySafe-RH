@@ -165,7 +165,7 @@ h1 {
   width: min(320px, 100%);
   flex: none;
   border: 1px solid #c0c0c0;
-  border-radius: 20px;
+  border-radius: 10px;
   padding: 10px 16px;
   outline: 0;
   font-family: inherit;
@@ -212,7 +212,7 @@ h2 {
 
 .statut {
   flex: none;
-  border-radius: 20px;
+  border-radius: 10px;
   padding: 5px 10px;
   background: #e6f2f2;
   color: #006666;
@@ -246,7 +246,7 @@ h2 {
 }
 
 .tags span {
-  border-radius: 20px;
+  border-radius: 10px;
   padding: 4px 10px;
   background: #f1f3f6;
   color: #475467;
@@ -280,7 +280,7 @@ h2 {
 .btn {
   padding: 10px 20px;
   border: 0;
-  border-radius: 20px;
+  border-radius: 10px;
   background: teal;
   color: #fff;
   cursor: pointer;

@@ -363,8 +363,8 @@ const {
             <button class="btn secondary" type="button" @click="retourner">
               Annuler
             </button>
-            <button class="btn" type="button" :disabled="enregistrement" @click="enregistrer">
-              {{ enregistrement ? 'Enregistrement...' : 'Enregistrer mon CV et postuler' }}
+            <button class="btn" type="button" :disabled="enregistrement || !!candidature" @click="enregistrer">
+              {{ candidature ? 'Déjà postulé' : enregistrement ? 'Enregistrement...' : 'Enregistrer mon CV et postuler' }}
             </button>
           </div>
         </section>
@@ -489,7 +489,7 @@ h3 {
 .infos span,
 .badge,
 .obligatoire {
-  border-radius: 20px;
+  border-radius: 10px;
   background: #e6f2f2;
   color: #006666;
   font-size: 12px;
@@ -626,7 +626,7 @@ textarea:focus {
 .btn {
   padding: 10px 20px;
   border: 0;
-  border-radius: 20px;
+  border-radius: 10px;
   background: teal;
   color: #fff;
   cursor: pointer;

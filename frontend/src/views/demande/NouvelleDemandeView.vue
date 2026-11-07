@@ -4,6 +4,7 @@ import { useRoute, useRouter } from 'vue-router'
 
 import DemandeForm from '../../components/demande/DemandeForm.vue'
 import DemandeConfirmation from '../../components/demande/DemandeConfirmation.vue'
+import SidebarMenu from '../../components/SidebarMenu.vue'
 
 import { obtenirOptions, creerDemande } from '../../services/demandeService.js'
 
@@ -12,6 +13,9 @@ const route = useRoute()
 
 // Données de l'utilisateur connecté.
 const utilisateur = ref(null)
+
+// Menu latéral (affichage mobile).
+const menuOuvert = ref(false)
 
 // Options du formulaire.
 const postes = ref([])
@@ -30,6 +34,11 @@ const form = ref({
 const confirmation = ref(false)
 const erreur = ref('')
 const chargement = ref(false)
+
+// Initiales affichées dans la sidebar.
+const initiales = computed(() =>
+    (utilisateur.value?.login ?? '').slice(0, 2).toUpperCase()
+)
 
 // Rechercher le poste sélectionné.
 const posteChoisi = computed(() =>
@@ -124,111 +133,135 @@ async function deconnecter() {
 </script>
 
 <template>
-    <main class="page">
-        <section class="form-container">
-            <p class="title">RohySafe</p>
-            <p class="subtitle">Demande de recrutement</p>
+    <div class="app-layout">
+        <SidebarMenu
+            :nom="utilisateur?.login ?? ''"
+            :role="utilisateur?.departement || 'Tous départements'"
+            codeRole="Manager"
+            :initiales="initiales"
+            :ouvert="menuOuvert"
+            @fermer="menuOuvert = false"
+            @deconnexion="deconnecter"
+        />
 
-            <button class="logout" @click="deconnecter">
-                Déconnexion
+        <main class="page">
+
+            
+            <button class="burger" type="button" @click="menuOuvert = true">
+                ☰ Menu
             </button>
 
-            <!-- Résultat après l'enregistrement. -->
-            <template v-if="route.query.cree">
-                <h1>Demande enregistrée</h1>
+            <!-- Contenu directement dans la page (plus de carte centrée). -->
+            <section class="contenu">
+                <p class="eyebrow">Demande de recrutement</p>
 
-                <p>
-                    La demande #{{ route.query.cree }} a bien été créée.
-                </p>
+                <!-- Résultat après l'enregistrement. -->
+                <template v-if="route.query.cree">
+                    <h1>Demande enregistrée</h1>
 
-                <button class="form-btn" @click="router.replace('/demandes/nouvelle')">
-                    Créer une autre demande
-                </button>
-            </template>
+                    <p class="texte">
+                        La demande #{{ route.query.cree }} a bien été créée.
+                    </p>
 
-            <!-- Formulaire et confirmation. -->
-            <template v-else>
-                <h1>
-                    {{
-                        confirmation
-                            ? 'Confirmer la demande'
-                            : 'Nouvelle demande de recrutement'
-                    }}
-                </h1>
+                    <button class="form-btn" @click="router.replace('/demandes/nouvelle')">
+                        Créer une autre demande
+                    </button>
+                </template>
 
-                <!-- <p v-if="utilisateur">
-                    Connecté : {{ utilisateur.login }}
-                    ·
-                    {{ utilisateur.departement || 'Tous départements' }}
-                </p> -->
+                <!-- Formulaire et confirmation. -->
+                <template v-else>
+                    <h1>
+                        {{
+                            confirmation
+                                ? 'Confirmer la demande'
+                                : 'Nouvelle demande de recrutement'
+                        }}
+                    </h1>
 
-                <p v-if="erreur" class="error">
-                    {{ erreur }}
-                </p>
+                    <p v-if="erreur" class="error">
+                        {{ erreur }}
+                    </p>
 
-                <!-- Étape 1 : saisie du formulaire. -->
-                <DemandeForm v-if="!confirmation" :form="form" :postes="postes" :types="types"
-                    @submit="verifierDemande" />
+                    <!-- Étape 1 : saisie du formulaire. -->
+                    <DemandeForm v-if="!confirmation" :form="form" :postes="postes" :types="types"
+                        @submit="verifierDemande" />
 
-                <!-- Étape 2 : vérification de la demande. -->
-                <DemandeConfirmation v-else :form="form" :poste-choisi="posteChoisi" :types="types"
-                    :chargement="chargement" @modifier="modifierDemande" @confirmer="enregistrer" />
-            </template>
-        </section>
-    </main>
+                    <!-- Étape 2 : vérification de la demande. -->
+                    <DemandeConfirmation v-else :form="form" :poste-choisi="posteChoisi" :types="types"
+                        :chargement="chargement" @modifier="modifierDemande" @confirmer="enregistrer" />
+                </template>
+            </section>
+        </main>
+    </div>
 </template>
 
 <style scoped>
-.page {
+/* Structure globale : sidebar + page */
+.app-layout {
+    display: grid;
+    grid-template-columns: 260px minmax(0, 1fr);
     min-height: 100vh;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 16px;
     background: #f1f3f6;
     font-family: "Lucida Sans", "Lucida Sans Regular",
         "Lucida Grande", "Lucida Sans Unicode", Geneva, Verdana, sans-serif;
     color: #222;
 }
 
-.form-container {
-    box-sizing: border-box;
-    width: 100%;
-    max-width: 480px;
-    background: #fff;
-    box-shadow: rgba(0, 0, 0, 0.35) 0 5px 15px;
-    border-radius: 10px;
-    padding: 30px;
+.page {
+    min-width: 0;
+    min-height: 100vh;
+    background: #f1f3f6;
 }
 
-.title {
-    text-align: center;
-    margin: 0 0 8px;
+.burger {
+    display: none;
+    margin: 16px 0 0 16px;
+    padding: 8px 16px;
+    border: 0;
+    border-radius: 10px;
+    background: #fff;
+    color: teal;
+    font-family: inherit;
+    font-weight: 700;
+    cursor: pointer;
+    box-shadow: rgba(0, 0, 0, 0.24) 0 3px 8px;
+}
+
+/* Contenu intégré à la page, aligné en haut comme les autres pages. */
+.contenu {
+    box-sizing: border-box;
+    width: 100%;
+    max-width: 760px;
+    margin: 0 auto;
+    padding: 32px 20px 60px;
+}
+
+.eyebrow {
+    margin: 0 0 6px;
+    color: #747474;
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+}
+
+h1 {
+    margin: 0 0 20px;
+    color: teal;
     font-size: 28px;
     font-weight: 800;
 }
 
-.subtitle {
-    text-align: center;
+.texte {
     margin: 0 0 18px;
-    color: #747474;
-}
-
-.logout {
-    display: block;
-    margin: 0 auto 20px;
-    padding: 7px 14px;
-    border: 1px solid #c0c0c0;
-    border-radius: 20px;
-    background: white;
-    color: #555;
-    cursor: pointer;
+    color: #475467;
+    font-size: 14px;
 }
 
 .form-btn {
-    padding: 12px 15px;
+    padding: 12px 22px;
     font-family: inherit;
-    border-radius: 20px;
+    font-weight: 700;
+    border-radius: 10px;
     border: 0;
     background: teal;
     color: #fff;
@@ -241,12 +274,21 @@ async function deconnecter() {
 }
 
 .error {
+    margin: 0 0 16px;
+    padding: 12px 15px;
+    border-radius: 8px;
+    background: #fdecec;
     color: #b42318;
-    margin: 0;
     font-size: 14px;
 }
 
-h1 {
-    font-size: 22px;
+@media (max-width: 960px) {
+    .app-layout {
+        grid-template-columns: 1fr;
+    }
+
+    .burger {
+        display: block;
+    }
 }
 </style>

@@ -43,10 +43,14 @@ async function connecter() {
       throw new Error(`Le serveur n’a pas renvoyé de réponse JSON (HTTP ${response.status}). Vérifiez le backend.`)
     }
     if (!response.ok) throw new Error(result.messages?.error || 'Identifiant ou mot de passe incorrect.')
-
-    reinitialiserUtilisateurInterne(result.utilisateur)
-    const redirection = typeof route.query.redirect === 'string' ? route.query.redirect : ''
-    await router.push(redirection.startsWith('/') ? redirection : '/demandes/nouvelle')
+    const role = result.utilisateur?.role
+    const destinations = {
+      Manager: '/demandes/nouvelle',
+      RH: '/notification',
+      Finance: '/finance',
+      DG: '/direction-generale',
+    }
+    await router.push(destinations[role] || '/offres')
   } catch (error) {
     erreur.value = error.message
   } finally {
@@ -91,7 +95,7 @@ async function connecter() {
 
     .input {
       width: 100%;
-      border-radius: 20px;
+      border-radius: 10px;
       border: 1px solid #c0c0c0;
       padding: 12px 15px;
       outline: 0;
@@ -123,7 +127,7 @@ async function connecter() {
     .form-btn {
       padding: 12px 15px;
       font-family: inherit;
-      border-radius: 20px;
+      border-radius: 10px;
       border: 0;
       outline: 0;
       background: teal;

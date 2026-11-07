@@ -53,7 +53,8 @@ class DirectionGeneraleController extends BaseController
     public function valider(int $id)
     {
         try {
-            $utilisateurId = (int) session()->get('id_utilisateur');
+            $utilisateur = session()->get('utilisateur');
+            $utilisateurId = (int) ($utilisateur['id'] ?? 0);
 
             $this->directionService->valider(
                 $id,
@@ -75,7 +76,8 @@ class DirectionGeneraleController extends BaseController
     public function refuser(int $id)
     {
         try {
-            $utilisateurId = (int) session()->get('id_utilisateur');
+            $utilisateur = session()->get('utilisateur');
+            $utilisateurId = (int) ($utilisateur['id'] ?? 0);
             $annee = (int) date('Y');
             $payload = $this->request->getJSON(true) ?? [];
             $motif = (string) ($payload['motif'] ?? $this->request->getPost('motif'));

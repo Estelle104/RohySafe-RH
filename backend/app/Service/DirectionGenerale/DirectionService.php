@@ -31,13 +31,14 @@ class DirectionService
     }
 
     public function valider(int $id, int $utilisateurId): bool {
-        $id_utilisateur = 1;    
+        $utilisateurId = 4;    
 
         $this->db->transBegin();
         try {
             $demande = $this->demande($id);
             $this->exigerDirection($demande);
-            $this->changerStatut($id, 'VALIDEE');
+            $this->changerStatut($id, 'valide');
+            $this->affecterAuRH($id);
             $this->historique($id, $utilisateurId, $this->montant($demande), 'Demande validée par la Direction générale.');
             $this->terminer('Erreur lors de la validation.');
             return true;
@@ -46,7 +47,7 @@ class DirectionService
 
     public function refuser(int $id, int $utilisateurId, int $annee, string $motif): bool
     {
-        $id_utilisateur = 1;    
+        $utilisateurId = 4;    
 
         if (trim($motif) === '') throw new RuntimeException('Le motif de refus est obligatoire.');
         $this->db->transBegin();
@@ -58,6 +59,7 @@ class DirectionService
             if ((float) $budget['montant_engage'] < $montant) throw new RuntimeException('Le budget engagé est incohérent avec cette demande.');
             $this->budgets->update($budget['id'], ['montant_engage' => (float) $budget['montant_engage'] - $montant]);
             $this->changerStatut($id, 'REFUSEE');
+            $this->affecterAuRH($id);
             $this->historique($id, $utilisateurId, $montant, $motif);
             $this->terminer('Erreur lors du refus de la demande.');
             return true;
@@ -88,6 +90,18 @@ class DirectionService
         $statut = $this->statuts->trouverParLibelle($libelle);
         if (!$statut) throw new RuntimeException("Statut introuvable : {$libelle}");
         $this->demandes->update($id, ['id_statut_actuel' => $statut['id']]);
+    }
+
+    private function affecterAuRH(int $demandeId): void
+    {
+        $rh = $this->db->table('utilisateurs u')
+            ->select('u.id')
+            ->join('roles r', 'r.id = u.id_role')
+            ->where('r.libelle', 'RH')
+            ->orderBy('u.id', 'ASC')
+            ->get()->getRowArray();
+        if (!$rh) throw new RuntimeException('Aucun utilisateur RH trouvé.');
+        $this->demandes->update($demandeId, ['id_utilisateur_actuel' => $rh['id']]);
     }
     private function historique(int $id, int $utilisateurId, float $montant, string $remarque): void
     {
