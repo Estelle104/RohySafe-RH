@@ -126,6 +126,11 @@ $routes->group('api', ['namespace' => 'App\Controllers\Api'], function ($routes)
     $routes->post('plannings-edt/(:num)/employes', 'PlanningEDTController::assignerEmployes/$1', ['filter' => 'auth:RH,DG,Direction,Manager']);
     $routes->delete('plannings-edt/(:num)/employes/(:num)', 'PlanningEDTController::retirerEmploye/$1/$2', ['filter' => 'auth:RH,DG,Direction,Manager']);
 
+    $routes->get('heures-supplementaires', 'HeureSupplementaireController::index', ['filter' => 'auth:Manager,RH']);
+    $routes->post('heures-supplementaires/(:num)/validation', 'HeureSupplementaireController::valider/$1', ['filter' => 'auth:RH']);
+    $routes->get('heures-supplementaires/employes', 'HeureSupplementaireController::employes', ['filter' => 'auth:Manager']);
+    $routes->post('heures-supplementaires', 'HeureSupplementaireController::create', ['filter' => 'auth:Manager']);
+
     $routes->get('regimes-travail', 'RegimeTravailController::index');
     $routes->get('regimes-travail/(:num)', 'RegimeTravailController::show/$1');
     $routes->post('regimes-travail', 'RegimeTravailController::create', ['filter' => 'auth:RH,DG,Direction,Manager']);

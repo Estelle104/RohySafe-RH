@@ -110,6 +110,8 @@ const router = createRouter({
     { path: '/planning', name: 'planning-edt', meta: { requiresAuth: true, roles: ['RH','DG','Direction','Manager'] }, component: () => import('../views/planning/PlanningEDTView.vue') },
     { path: '/planning/nouveau', name: 'planning-edt-nouveau', meta: { requiresAuth: true, roles: ['RH','DG','Direction','Manager'] }, component: () => import('../views/planning/PlanningFormView.vue') },
     { path: '/planning/:id/modifier', name: 'planning-edt-modifier', meta: { requiresAuth: true, roles: ['RH','DG','Direction','Manager'] }, component: () => import('../views/planning/PlanningFormView.vue') },
+    { path: '/heures-supplementaires', name: 'heures-supplementaires-liste', meta: { requiresAuth: true, roles: ['RH','Manager'] }, component: () => import('../views/heures/HeuresSupplementairesListView.vue') },
+    { path: '/heures-supplementaires/nouveau', name: 'heures-supplementaires-nouveau', meta: { requiresAuth: true, roles: ['Manager'] }, component: () => import('../views/heures/HeuresSupplementairesFormView.vue') },
   ],
 })
 
