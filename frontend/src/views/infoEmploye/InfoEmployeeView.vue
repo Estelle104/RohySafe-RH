@@ -1,7 +1,7 @@
 <script setup>
 import { ref, onMounted, computed } from 'vue'
 import { useRoute, RouterLink } from 'vue-router'
-import { getViewInfoEmp, urlCopie } from '../services/infoEmployee'
+import { getViewInfoEmp, urlCopie } from '../../services/infoEmployee'
 
 const route = useRoute()
 const idEmploye = route.params.id

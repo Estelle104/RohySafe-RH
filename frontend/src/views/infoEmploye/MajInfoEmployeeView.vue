@@ -1,7 +1,7 @@
 <script setup>
 import { ref, reactive, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { getViewInfoEmp, updateInfoEmp, getStatuts } from '../services/infoEmployee'
+import { getViewInfoEmp, updateInfoEmp, getStatuts } from '../../services/infoEmployee'
 
 const route = useRoute()
 const router = useRouter()

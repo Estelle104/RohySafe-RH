@@ -8,9 +8,9 @@ async function handle(res) {
   return json.data ?? json
 }
 
-/** Fiche d'un employé : GET /api/employes/:id */
+/** Fiche d'un employé : GET /api/rh/employes/:id */
 export async function getViewInfoEmp(idEmploye) {
-  const res = await fetch(`${API_URL}/employes/${idEmploye}`, { credentials: 'include' })
+  const res = await fetch(`${API_URL}/rh/employes/${idEmploye}`, { credentials: 'include' })
   return handle(res)
 }
 
@@ -25,7 +25,7 @@ export async function updateInfoEmp(idEmploye, data, copie = null) {
   })
   if (copie) form.append('copie', copie)
 
-  const res = await fetch(`${API_URL}/employes/${idEmploye}/info`, {
+  const res = await fetch(`${API_URL}/rh/employes/${idEmploye}/info`, {
     method: 'POST',
     credentials: 'include',
     body: form,
@@ -35,7 +35,7 @@ export async function updateInfoEmp(idEmploye, data, copie = null) {
 
 /** Historique : GET /api/employes/:id/historique */
 export async function getHistoriqueInfoEmp(idEmploye) {
-  const res = await fetch(`${API_URL}/employes/${idEmploye}/historique`, { credentials: 'include' })
+  const res = await fetch(`${API_URL}/rh/employes/${idEmploye}/historique`, { credentials: 'include' })
   return handle(res)
 }
 

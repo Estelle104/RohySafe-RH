@@ -102,4 +102,12 @@ $routes->group('api', ['namespace' => 'App\Controllers\Api'], function ($routes)
             $routes->get('candidatures/(:num)', 'EntretienController::detail/$1');
             $routes->put('candidatures/(:num)/evaluation', 'EntretienController::enregistrerEvaluation/$1');
         });
+
+        $routes->group('rh/employes', ['filter' => 'auth:RH'], static function ($routes) {
+            $routes->get('statuts', 'EmployeController::statuts');
+            $routes->get('(:num)', 'EmployeController::show/$1');
+            $routes->get('(:num)/historique', 'EmployeController::historique/$1');
+            $routes->post('(:num)/info', 'EmployeController::update/$1');
+        });
+
 });

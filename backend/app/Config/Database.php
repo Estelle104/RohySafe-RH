@@ -83,7 +83,7 @@ class Database extends Config
            'DSN'        => '',
            'hostname'   => 'localhost',
            'username'   => 'postgres',
-           'password'   => 'postgres',
+           'password'   => '4185',
            'database'   => 'rohysafe_rh',
            'schema'     => 'public',
            'DBDriver'   => 'Postgre',

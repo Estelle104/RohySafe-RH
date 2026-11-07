@@ -1,7 +1,7 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import { useRoute, RouterLink } from 'vue-router'
-import { getHistoriqueInfoEmp, urlCopie } from '../services/infoEmployee'
+import { getHistoriqueInfoEmp, urlCopie } from '../../services/infoEmployee'
 
 const route = useRoute()
 const idEmploye = route.params.id
