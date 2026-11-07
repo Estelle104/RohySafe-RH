@@ -41,6 +41,9 @@ const router = createRouter({
     },
     { path: '/backoffice/rh/relations', name: 'relation-hierarchique', meta: { requiresAuth: true, roles: ['RH', 'rh'] }, component: () => import('../views/RelationHierarchiqueView.vue') },
     { path: '/backoffice/rh/organigramme', name: 'organigramme-employe', meta: { requiresAuth: true, roles: ['RH', 'rh'] }, component: () => import('../views/OrganigrammeEmployeView.vue') },
+    { path: '/backoffice/rh/employes/:id', name: 'info-employee', meta: { requiresAuth: true, roles: ['RH', 'rh'] }, component: () => import('../views/InfoEmployeeView.vue') },
+    { path: '/backoffice/rh/employes/:id/modifier', name: 'maj-info-employee', meta: { requiresAuth: true, roles: ['RH', 'rh'] }, component: () => import('../views/MajInfoEmployeeView.vue') },
+    { path: '/backoffice/rh/employes/:id/historique', name: 'historique-info-employee', meta: { requiresAuth: true, roles: ['RH', 'rh'] }, component: () => import('../views/HistoriqueInfoEmployeeView.vue') },
     {
       path: '/backoffice/candidats-ideaux',
       name: 'backoffice-candidats-ideaux',
