@@ -104,15 +104,15 @@ onMounted(async () => {
           <div v-if="chargement" class="loading">Chargement…</div>
 
           <div v-else class="form-grid">
-            <label>
+            <!-- <label>
               <span>ID poste</span>
               <input v-model="formulaire.id_poste" type="number" min="1" />
-            </label>
+            </label> -->
 
-            <label>
+            <!-- <label>
               <span>ID régime</span>
               <input v-model="formulaire.id_regime" type="number" min="1" />
-            </label>
+            </label> -->
 
             <label>
               <span>Heure de début</span>
