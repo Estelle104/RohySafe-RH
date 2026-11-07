@@ -101,6 +101,15 @@ const router = createRouter({
       meta: { rolesEntretiens: true },
       component: () => import('../views/EntretienEvaluationView.vue')
     },
+    { path: '/horaires/postes', name: 'horaires-postes', meta: { requiresAuth: true, roles: ['RH','DG','Direction','Manager'] }, component: () => import('../views/horaire/HorairesPostesView.vue') },
+    { path: '/horaires/postes/nouveau', name: 'horaire-formulaire', meta: { requiresAuth: true, roles: ['RH','DG','Direction','Manager'] }, component: () => import('../views/horaire/HoraireFormView.vue') },
+    { path: '/horaires/postes/:id/modifier', name: 'horaire-modifier', meta: { requiresAuth: true, roles: ['RH','DG','Direction','Manager'] }, component: () => import('../views/horaire/HoraireEditView.vue') },
+    { path: '/regimes/travail', name: 'regimes-travail', meta: { requiresAuth: true, roles: ['RH','DG','Direction','Manager'] }, component: () => import('../views/regime/RegimesTravailView.vue') },
+    { path: '/regimes/travail/nouveau', name: 'regime-formulaire', meta: { requiresAuth: true, roles: ['RH','DG','Direction','Manager'] }, component: () => import('../views/regime/RegimeFormView.vue') },
+    { path: '/regimes/travail/:id/modifier', name: 'regime-modifier', meta: { requiresAuth: true, roles: ['RH','DG','Direction','Manager'] }, component: () => import('../views/regime/RegimeEditView.vue') },
+    { path: '/planning', name: 'planning-edt', meta: { requiresAuth: true, roles: ['RH','DG','Direction','Manager'] }, component: () => import('../views/planning/PlanningEDTView.vue') },
+    { path: '/planning/nouveau', name: 'planning-edt-nouveau', meta: { requiresAuth: true, roles: ['RH','DG','Direction','Manager'] }, component: () => import('../views/planning/PlanningFormView.vue') },
+    { path: '/planning/:id/modifier', name: 'planning-edt-modifier', meta: { requiresAuth: true, roles: ['RH','DG','Direction','Manager'] }, component: () => import('../views/planning/PlanningFormView.vue') },
   ],
 })
 
