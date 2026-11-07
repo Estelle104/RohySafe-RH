@@ -17,6 +17,11 @@ const formulaire = ref({
   date_fin: '',
   heure_debut: '',
   heure_fin: '',
+  creer_planning: false,
+  planning_date_debut: '',
+  planning_date_fin: '',
+  planning_jours: [1, 2, 3, 4, 5],
+  planning_libelle: '',
 })
 const rechercheEmploye = ref('')
 const afficherRechercheEmploye = ref(false)
@@ -79,13 +84,24 @@ async function enregistrer() {
       throw new Error('La date de fin doit être postérieure ou égale à la date de début.')
     }
 
-    await createHeureSupplementaire({
+    const payload = {
       id_employe: Number(formulaire.value.id_employe),
       date_debut: formulaire.value.date_debut,
       date_fin: formulaire.value.date_fin,
       heure_debut: formulaire.value.heure_debut,
       heure_fin: formulaire.value.heure_fin,
-    })
+    }
+
+    if (formulaire.value.creer_planning) {
+      payload.planning = {
+        date_debut: formulaire.value.planning_date_debut || formulaire.value.date_debut,
+        date_fin: formulaire.value.planning_date_fin || formulaire.value.date_fin,
+        jours_semaine: formulaire.value.planning_jours,
+        libelle: formulaire.value.planning_libelle || 'Planning HS - employé',
+      }
+    }
+
+    await createHeureSupplementaire(payload)
 
     router.push('/planning')
   } catch (e) {
@@ -103,6 +119,26 @@ function selectionnerEmploye(id) {
   if (employe) {
     rechercheEmploye.value = employe.nomComplet || `${employe.prenom} ${employe.nom}`.trim()
   }
+}
+
+const joursSemaine = [
+  { value: 1, label: 'Lun' },
+  { value: 2, label: 'Mar' },
+  { value: 3, label: 'Mer' },
+  { value: 4, label: 'Jeu' },
+  { value: 5, label: 'Ven' },
+  { value: 6, label: 'Sam' },
+  { value: 7, label: 'Dim' },
+]
+
+function basculerJourPlanning(jour) {
+  const index = formulaire.value.planning_jours.indexOf(jour)
+  if (index >= 0) {
+    formulaire.value.planning_jours = formulaire.value.planning_jours.filter((item) => item !== jour)
+    return
+  }
+
+  formulaire.value.planning_jours = [...formulaire.value.planning_jours, jour]
 }
 </script>
 
@@ -183,6 +219,48 @@ function selectionnerEmploye(id) {
               <span>Heure de fin</span>
               <input v-model="formulaire.heure_fin" type="time" />
             </label>
+          </div>
+
+          <div class="planning-section">
+            <label class="switch-row">
+              <input v-model="formulaire.creer_planning" type="checkbox" />
+              <span>Créer aussi un planning pour cet employé</span>
+            </label>
+
+            <div v-if="formulaire.creer_planning" class="planning-card">
+              <div class="form-grid compact">
+                <label>
+                  <span>Date de début du planning</span>
+                  <input v-model="formulaire.planning_date_debut" type="date" :placeholder="formulaire.date_debut || 'AAAA-MM-JJ'" />
+                </label>
+
+                <label>
+                  <span>Date de fin du planning</span>
+                  <input v-model="formulaire.planning_date_fin" type="date" :placeholder="formulaire.date_fin || 'AAAA-MM-JJ'" />
+                </label>
+
+                <label class="full-width">
+                  <span>Libellé du planning</span>
+                  <input v-model="formulaire.planning_libelle" type="text" placeholder="Planning HS - employé" />
+                </label>
+              </div>
+
+              <div class="jours-picker">
+                <span class="jours-label">Jours de semaine</span>
+                <div class="jours-list">
+                  <button
+                    v-for="jour in joursSemaine"
+                    :key="jour.value"
+                    type="button"
+                    class="jour-btn"
+                    :class="{ actif: formulaire.planning_jours.includes(jour.value) }"
+                    @click="basculerJourPlanning(jour.value)"
+                  >
+                    {{ jour.label }}
+                  </button>
+                </div>
+              </div>
+            </div>
           </div>
 
           <div class="actions">
@@ -392,6 +470,78 @@ select {
   color: #667085;
   font-size: 0.8rem;
   background: #fff;
+}
+
+.planning-fields {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+  margin-top: 16px;
+}
+
+.jours-semaine {
+  display: flex;
+  gap: 8px;
+}
+
+.jour-btn {
+  flex: 1;
+  padding: 10px 0;
+  border: 1px solid #d0d5dd;
+  border-radius: 10px;
+  background: #f9fafb;
+  color: #111827;
+  font-weight: 700;
+  cursor: pointer;
+  text-align: center;
+}
+
+.jour-btn.actif {
+  background: #0f9a9a;
+  color: #fff;
+}
+
+.switch-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 12px;
+}
+
+.switch-row input {
+  width: auto;
+}
+
+.planning-card {
+  padding: 16px;
+  border: 1px solid #d0d5dd;
+  border-radius: 10px;
+  background: #f9fafb;
+  margin-top: 12px;
+}
+
+.compact {
+  grid-template-columns: 1fr;
+}
+
+.full-width {
+  grid-column: span 2;
+}
+
+.jours-picker {
+  margin-top: 12px;
+}
+
+.jours-label {
+  font-weight: 700;
+  color: #111827;
+  margin-bottom: 8px;
+}
+
+.jours-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
 }
 
 @media (max-width: 900px) {

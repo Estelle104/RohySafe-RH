@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use CodeIgniter\Model;
+use DateTimeImmutable;
 use InvalidArgumentException;
 use RuntimeException;
 
@@ -12,12 +13,12 @@ class HeureSupplementaireModel extends Model
     protected $primaryKey    = 'id';
     protected $returnType    = 'array';
     protected $useTimestamps = false;
-    protected $allowedFields = ['id_employe', 'heure_debut', 'heure_fin', 'date_debut', 'date_fin'];
+    protected $allowedFields = ['id_employe', 'heure_debut', 'heure_fin', 'date_debut', 'date_fin', 'id_planning_edt_employes'];
 
     public function getEmployesDisponibles(?int $idDepartement = null): array
     {
         $builder = $this->db->table('employes e')
-            ->select('e.id, e.matricule, c.nom, c.prenom, CONCAT(c.prenom, \' \', c.nom) AS nom_complet, pd.id_departement AS id_departement, d.libelle AS departement')
+            ->select("e.id, e.matricule, c.nom, c.prenom, CONCAT(c.prenom, ' ', c.nom) AS nom_complet, pd.id_departement AS id_departement, d.libelle AS departement")
             ->join('candidats c', 'c.id = e.id_candidat')
             ->join('poste_departement pd', 'pd.id = e.id_poste_departement', 'left')
             ->join('departements d', 'd.id = pd.id_departement', 'left');
@@ -39,6 +40,13 @@ class HeureSupplementaireModel extends Model
 
         $this->db->transStart();
 
+        $idPlanningEmploye = $this->traiterPlanningAssocie($data, (int) $donnees['id_employe']);
+        if ($idPlanningEmploye !== null) {
+            $donnees['id_planning_edt_employes'] = $idPlanningEmploye;
+        }
+
+        $this->validerConflitsMetier($donnees);
+
         $id = (int) $this->insert($donnees, true);
 
         $idUtilisateur = isset($data['id_utilisateur']) ? (int) $data['id_utilisateur'] : 0;
@@ -58,6 +66,78 @@ class HeureSupplementaireModel extends Model
         }
 
         return $id;
+    }
+
+    private function traiterPlanningAssocie(array $data, int $idEmploye): ?int
+    {
+        if (! empty($data['id_planning_edt_employes'])) {
+            return (int) $data['id_planning_edt_employes'];
+        }
+
+        if (! empty($data['id_planning_edt'])) {
+            return (int) $data['id_planning_edt'];
+        }
+
+        $planning = $data['planning'] ?? $data['planning_edt'] ?? null;
+        if ($planning === null) {
+            return null;
+        }
+
+        if (! is_array($planning)) {
+            throw new InvalidArgumentException('Le planning associé est invalide.');
+        }
+
+        $dateDebut = trim((string) ($planning['date_debut'] ?? $planning['dateDebut'] ?? ''));
+        $dateFin = trim((string) ($planning['date_fin'] ?? $planning['dateFin'] ?? ''));
+        $jours = $planning['jours_semaine'] ?? $planning['joursSemaine'] ?? [];
+        $libelle = trim((string) ($planning['libelle'] ?? 'Planning HS - employé'));
+
+        if ($dateDebut === '' || $dateFin === '') {
+            throw new InvalidArgumentException('La date de début et la date de fin du planning sont obligatoires.');
+        }
+
+        if (! preg_match('/^\d{4}-\d{2}-\d{2}$/', $dateDebut) || ! preg_match('/^\d{4}-\d{2}-\d{2}$/', $dateFin)) {
+            throw new InvalidArgumentException('Les dates du planning doivent être au format YYYY-MM-DD.');
+        }
+
+        if ($dateFin < $dateDebut) {
+            throw new InvalidArgumentException('La date de fin du planning doit être postérieure ou égale à la date de début.');
+        }
+
+        $joursNormales = $this->normaliserJoursSemaine($jours);
+        if ($joursNormales === []) {
+            $joursNormales = $this->infererJoursSemaineDepuisDates($dateDebut, $dateFin);
+        }
+
+        if ($joursNormales === []) {
+            throw new InvalidArgumentException('Au moins un jour de semaine doit être sélectionné pour le planning associé.');
+        }
+
+        $builderPlanning = $this->db->table('planning_edts');
+        $builderPlanning
+            ->set('date_debut', $dateDebut)
+            ->set('date_fin', $dateFin)
+            ->set('jours_semaine', $this->toArraySqlPostgres($joursNormales), false)
+            ->set('libelle', $libelle !== '' ? $libelle : 'Planning HS - employé');
+
+        $insertPlanning = $builderPlanning->insert();
+        if ($insertPlanning === false) {
+            throw new RuntimeException('Impossible de créer le planning associé à la demande d’heures supplémentaires.');
+        }
+
+        $idPlanning = (int) $this->db->insertID();
+
+        $builderAffectation = $this->db->table('planning_edt_employes');
+        $insertAffectation = $builderAffectation
+            ->set('id_planning_edt', $idPlanning)
+            ->set('id_employe', $idEmploye)
+            ->insert();
+
+        if ($insertAffectation === false) {
+            throw new RuntimeException('Impossible d’affecter l’employé au planning associé.');
+        }
+
+        return (int) $this->db->insertID();
     }
 
     private function normaliserDonnees(array $data): array
@@ -119,6 +199,161 @@ class HeureSupplementaireModel extends Model
             'heure_debut' => $dateTimeDebut,
             'heure_fin' => $dateTimeFin,
         ];
+    }
+
+    private function validerConflitsMetier(array $donnees): void
+    {
+        $idEmploye = (int) ($donnees['id_employe'] ?? 0);
+        $dateDebut = (string) ($donnees['date_debut'] ?? '');
+        $dateFin = (string) ($donnees['date_fin'] ?? '');
+        $heureDebut = (string) ($donnees['heure_debut'] ?? '');
+        $heureFin = (string) ($donnees['heure_fin'] ?? '');
+
+        if ($idEmploye <= 0 || $dateDebut === '' || $dateFin === '' || $heureDebut === '' || $heureFin === '') {
+            return;
+        }
+
+        $dateDebutTs = $this->toDateTimeFromValeur($dateDebut, $heureDebut);
+        $dateFinTs = $this->toDateTimeFromValeur($dateFin, $heureFin);
+
+        $this->validerConflitsAvecHeuresSupplementaires($idEmploye, $dateDebutTs, $dateFinTs);
+        $this->validerConflitsAvecPlanningEmploye($idEmploye, $dateDebutTs, $dateFinTs, $donnees['id_planning_edt_employes'] ?? null);
+        $this->validerConflitsAvecJourneesTravail($idEmploye, $dateDebut, $dateFin);
+    }
+
+    private function toDateTimeFromValeur(string $date, string $heure): DateTimeImmutable
+    {
+        $heureNorm = trim($heure);
+
+        if (preg_match('/^\d{4}-\d{2}-\d{2} \d{2}:\d{2}(:\d{2})?$/', $heureNorm)) {
+            return new DateTimeImmutable($heureNorm);
+        }
+
+        if (preg_match('/^\d{2}:\d{2}$/', $heureNorm)) {
+            return new DateTimeImmutable($date . ' ' . $heureNorm . ':00');
+        }
+
+        return new DateTimeImmutable($date . ' ' . substr($heureNorm, 0, 5) . ':00');
+    }
+
+    private function toArraySqlPostgres(array $jours): string
+    {
+        if ($jours === []) {
+            return "'{}'::smallint[]";
+        }
+
+        $values = array_map(static fn ($jour) => (int) $jour, $jours);
+
+        return 'ARRAY[' . implode(', ', $values) . ']::smallint[]';
+    }
+
+    private function validerConflitsAvecHeuresSupplementaires(int $idEmploye, DateTimeImmutable $dateDebut, DateTimeImmutable $dateFin): void
+    {
+        $rows = $this->db->table('heure_supplementaires hs')
+            ->select('hs.id, hs.date_debut, hs.date_fin, hs.heure_debut, hs.heure_fin')
+            ->where('hs.id_employe', $idEmploye)
+            ->where('hs.heure_fin >', $dateDebut->format('Y-m-d H:i:s'))
+            ->where('hs.heure_debut <', $dateFin->format('Y-m-d H:i:s'))
+            ->get()
+            ->getResultArray();
+
+        if ($rows !== []) {
+            throw new InvalidArgumentException('Un chevauchement existe déjà sur une demande d’heures supplémentaires pour cet employé.');
+        }
+    }
+
+    private function validerConflitsAvecPlanningEmploye(int $idEmploye, DateTimeImmutable $dateDebut, DateTimeImmutable $dateFin, ?int $idPlanningEmploye = null): void
+    {
+        $rows = $this->db->table('planning_edt_employes pee')
+            ->select(['pee.id', 'pe.date_debut AS planning_date_debut', 'pe.date_fin AS planning_date_fin', 'pe.jours_semaine'])
+            ->join('planning_edts pe', 'pe.id = pee.id_planning_edt', 'left')
+            ->where('pee.id_employe', $idEmploye)
+            ->get()
+            ->getResultArray();
+
+        foreach ($rows as $row) {
+            if ($idPlanningEmploye !== null && (int) ($row['id'] ?? 0) === $idPlanningEmploye) {
+                continue;
+            }
+
+            $planningDateDebut = $row['planning_date_debut'] ?? null;
+            $planningDateFin = $row['planning_date_fin'] ?? null;
+            $jours = $this->normaliserJoursSemaine($row['jours_semaine'] ?? []);
+
+            if ($planningDateDebut === null || $planningDateFin === null || $jours === []) {
+                continue;
+            }
+
+            $dateDebutPlanning = new DateTimeImmutable($planningDateDebut);
+            $dateFinPlanning = new DateTimeImmutable($planningDateFin);
+
+            if ($dateFin < $dateDebutPlanning || $dateDebut > $dateFinPlanning) {
+                continue;
+            }
+
+            $jourDebut = (int) $dateDebut->format('N');
+            $jourFin = (int) $dateFin->format('N');
+
+            $joursDemande = [];
+            for ($jour = $jourDebut; $jour <= $jourFin; $jour++) {
+                $joursDemande[] = $jour;
+            }
+
+            $joursCommuns = array_values(array_intersect($jours, $joursDemande));
+            if ($joursCommuns !== []) {
+                throw new InvalidArgumentException('L’employé est déjà prévu sur ces dates et jours de semaine.');
+            }
+        }
+    }
+
+    private function validerConflitsAvecJourneesTravail(int $idEmploye, string $dateDebut, string $dateFin): void
+    {
+        $rows = $this->db->table('journee_travails jt')
+            ->select('jt.date_jour, jt.minutes_prevues')
+            ->where('jt.id_employe', $idEmploye)
+            ->where('jt.date_jour >=', $dateDebut)
+            ->where('jt.date_jour <=', $dateFin)
+            ->where('jt.minutes_prevues >', 0)
+            ->get()
+            ->getResultArray();
+
+        if ($rows !== []) {
+            throw new InvalidArgumentException('L’employé est déjà prévu pour travailler pendant cette période.');
+        }
+    }
+
+    private function normaliserJoursSemaine($valeur): array
+    {
+        $brut = is_array($valeur) ? $valeur : (is_string($valeur) ? explode(',', $valeur) : []);
+        $jours = array_map('trim', array_map('strval', $brut));
+        $jours = array_values(array_filter($jours, fn ($jour) => $jour !== ''));
+
+        if ($jours === []) {
+            return [];
+        }
+
+        $numeriques = [];
+        foreach ($jours as $jour) {
+            $nombre = (int) $jour;
+            if ($nombre >= 1 && $nombre <= 7) {
+                $numeriques[] = $nombre;
+            }
+        }
+
+        return array_values(array_unique($numeriques));
+    }
+
+    private function infererJoursSemaineDepuisDates(string $dateDebut, string $dateFin): array
+    {
+        $debut = new DateTimeImmutable($dateDebut);
+        $fin = new DateTimeImmutable($dateFin);
+        $jours = [];
+
+        for ($date = $debut; $date <= $fin; $date = $date->modify('+1 day')) {
+            $jours[] = (int) $date->format('N');
+        }
+
+        return array_values(array_unique($jours));
     }
 
     private function trouverIdStatut(string $libelle): int
