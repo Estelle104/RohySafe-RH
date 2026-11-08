@@ -6,4 +6,3 @@ backend/.env
 /backend/writable/session
 /frontend/.vite
 /backend/public/assets
-/backend/public/assets

@@ -33,14 +33,23 @@ $routes->group('api', ['namespace' => 'App\Controllers\Api'], function ($routes)
         $routes->get('employes', 'AffectationEmployeController::employes');
         $routes->get('employes/(:num)', 'AffectationEmployeController::historiqueEmploye/$1');
         $routes->post('', 'AffectationEmployeController::create');
+    });
     $routes->group('rh/conges', ['filter' => 'auth:Manager,RH'], static function ($routes) {
         $routes->get('demande/types', 'CongeController::typesDemande');
         $routes->get('demande/employes', 'CongeController::employesDemande');
         $routes->post('demande', 'CongeController::creerDemande');
+        $routes->get('remplacements/suggerer', 'CongeController::suggererRemplacants');
+        $routes->get('remplacements/disponibles', 'CongeController::disponiblesRemplacement');
     });
     $routes->group('rh/conges', ['filter' => 'auth:RH'], static function ($routes) {
         $routes->get('demandes', 'CongeController::demandes');
+        $routes->get('demandes/(:num)', 'CongeController::demande/$1');
         $routes->post('demandes/(:num)/acceptation', 'CongeController::accepter/$1');
+        $routes->post('demandes/(:num)/validation', 'CongeController::accepter/$1');
+        $routes->post('demandes/(:num)/refus', 'CongeController::refuser/$1');
+        $routes->post('demandes/(:num)/annulation', 'CongeController::annuler/$1');
+        $routes->get('conges-prevus', 'CongeController::congesPrevus');
+        $routes->get('employes-eligibles', 'CongeController::employesEligibles');
         $routes->get('configurations', 'CongeController::configurations');
         $routes->put('configurations/(:num)', 'CongeController::updateConfiguration/$1');
         $routes->get('soldes', 'CongeController::soldes');
@@ -49,6 +58,9 @@ $routes->group('api', ['namespace' => 'App\Controllers\Api'], function ($routes)
         $routes->post('valider', 'CongeController::validerDemande');
         $routes->get('remplacements', 'RemplacementController::index');
         $routes->post('remplacements', 'RemplacementController::create');
+        $routes->get('remplacements/disponibles', 'CongeController::disponiblesRemplacement');
+        $routes->get('remplacements/suggerer', 'CongeController::suggererRemplacants');
+        $routes->post('remplacements/affecter', 'CongeController::affecterRemplacant');
         $routes->get('recalculer', 'CongeController::recalculer');
     });
     $routes->get('departements', 'Departement::index');

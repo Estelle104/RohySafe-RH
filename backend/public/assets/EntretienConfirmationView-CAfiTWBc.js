@@ -1,1 +1,0 @@
-import{C as e,c as t,g as n,j as r,s as i,y as a}from"./index-C7D9n0jp.js";var o=t({__name:`EntretienConfirmationView`,setup(t){let o=i();return(t,i)=>(e(),a(`main`,null,[n(`section`,null,[i[1]||=n(`p`,null,`Entretien créé`,-1),n(`button`,{onClick:i[0]||=e=>r(o).push(`/candidatures`)},`Retour aux candidatures`)])]))}},[[`__scopeId`,`data-v-bf678923`]]);export{o as default};

@@ -6,7 +6,7 @@ async function request(url, options = {}) {
     headers: { Accept: 'application/json', 'Content-Type': 'application/json' },
     ...options,
   })
-  const body = await response.json()
+  const body = await response.json().catch(() => ({}))
   if (!response.ok) throw new Error(body.message || 'Une erreur est survenue.')
   return body
 }
@@ -24,6 +24,27 @@ export const creerRemplacement = (remplacement) => request(API, {
   method: 'POST',
   body: JSON.stringify(remplacement),
 })
+
+export const affecterRemplacant = (data) => request(`${API}/affecter`, { method: 'POST', body: JSON.stringify(data) })
+
+export const getEmployesDisponiblesRemplacement = ({ dateDebut, dateFin, idEmployeAbsent, idConge } = {}) => {
+  const p = new URLSearchParams()
+  if (dateDebut) p.set('date_debut', dateDebut)
+  if (dateFin) p.set('date_fin', dateFin)
+  if (idEmployeAbsent) p.set('id_employe_absent', idEmployeAbsent)
+  if (idConge) p.set('id_conge', idConge)
+  const q = p.toString()
+  return request(`${API}/disponibles${q ? `?${q}` : ''}`)
+}
+
+export const suggererRemplacants = ({ idEmployeAbsent, dateDebut, dateFin } = {}) => {
+  const p = new URLSearchParams()
+  if (idEmployeAbsent) p.set('id_employe_absent', idEmployeAbsent)
+  if (dateDebut) p.set('date_debut', dateDebut)
+  if (dateFin) p.set('date_fin', dateFin)
+  const q = p.toString()
+  return request(`${API}/suggerer${q ? `?${q}` : ''}`)
+}
 
 export function calculerRemuneration(heures, salaireHoraire, majoration = 1) {
   return Math.round(Number(heures || 0) * Number(salaireHoraire || 0) * Number(majoration || 1) * 100) / 100

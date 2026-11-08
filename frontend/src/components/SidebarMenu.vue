@@ -98,6 +98,8 @@ const liens = [
   { to: '/backoffice/rh/relations', label: 'Relations hiérarchiques', icone: 'demandes', roles: ['RH','rh'] },
   { to: '/backoffice/rh/affectations/employes', label: 'Affectation employés', icone: 'demandes', roles: ['RH','rh'] },
   { to: '/backoffice/rh/organigramme', label: 'Organigramme', icone: 'accueil', roles: ['RH','rh'] },
+  { to: '/backoffice/rh/conges/demandes', label: 'Demandes de congés', icone: 'demandes', roles: ['RH','rh'] },
+  { to: '/backoffice/rh/conges/planning-remplacements', label: 'Planning & remplacements', icone: 'demandes', roles: ['RH','rh'] },
   { to: '/backoffice/rh/conges/configuration', label: 'Configuration des congés', icone: 'demandes', roles: ['RH','rh'] },
   { to: '/backoffice/rh/conges/soldes', label: 'Soldes de congés', icone: 'demandes', roles: ['RH','rh'] },
   { to: '/backoffice/rh/conges/valeur', label: 'Valeur des congés', icone: 'demandes', roles: ['RH','rh'] },
