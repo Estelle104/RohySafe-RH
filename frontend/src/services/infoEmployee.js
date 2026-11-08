@@ -49,3 +49,8 @@ export async function getStatuts() {
 export function urlCopie(chemin) {
   return chemin ? `/${chemin}` : null
 }
+
+export async function getListeEmployes() {
+  const res = await fetch(`${API_URL}/rh/employes`, { credentials: 'include' })
+  return handle(res)
+}

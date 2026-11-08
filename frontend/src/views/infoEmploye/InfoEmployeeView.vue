@@ -1,7 +1,11 @@
 <script setup>
 import { ref, onMounted, computed } from 'vue'
 import { useRoute, RouterLink } from 'vue-router'
+import PageAvecMenu from '../../components/PageAvecMenu.vue'
 import { getViewInfoEmp, urlCopie } from '../../services/infoEmployee'
+
+// Même valeur que le seuil par défaut de la liste des employés
+const SEUIL_ECHEANCE_JOURS = 30
 
 const route = useRoute()
 const idEmploye = route.params.id
@@ -19,93 +23,309 @@ onMounted(async () => {
   }
 })
 
+const fmt = (d) => (d ? new Date(d).toLocaleDateString('fr-FR') : '—')
+
 const initiales = computed(() =>
   fiche.value ? `${fiche.value.prenom?.[0] ?? ''}${fiche.value.nom?.[0] ?? ''}`.toUpperCase() : ''
 )
-const echeanceProche = computed(() => {
+
+// Nombre de jours avant l'échéance (négatif si dépassée, null si pas de date)
+const joursRestants = computed(() => {
   const d = fiche.value?.date_echeance
-  if (!d) return false
-  return (new Date(d) - new Date()) / 86400000 < 60
+  if (!d) return null
+  const aujourdhui = new Date()
+  aujourdhui.setHours(0, 0, 0, 0)
+  const echeance = new Date(`${String(d).slice(0, 10)}T00:00:00`)
+  return Math.round((echeance - aujourdhui) / 86400000)
 })
-const fmt = (d) => (d ? new Date(d).toLocaleDateString('fr-FR') : '—')
+
+const echeanceAlerte = computed(() => joursRestants.value !== null && joursRestants.value <= SEUIL_ECHEANCE_JOURS)
+
+const texteEcheance = computed(() => {
+  const j = joursRestants.value
+  if (j === null) return ''
+  if (j < 0) return `Expiré depuis ${-j} j`
+  if (j === 0) return "Expire aujourd'hui"
+  return `Dans ${j} j`
+})
+
+// Les blocs d'informations : on décrit les champs une fois, le template les affiche tous
+const blocs = computed(() => {
+  const f = fiche.value
+  if (!f) return []
+  return [
+    {
+      titre: 'Coordonnées',
+      champs: [
+        { label: 'Email', valeur: f.email },
+        { label: 'Téléphone', valeur: f.telephone },
+        { label: 'Ville', valeur: f.ville },
+        { label: "Date d'embauche", valeur: f.date_embauche ? fmt(f.date_embauche) : null }
+      ]
+    },
+    {
+      titre: 'Situation',
+      champs: [
+        { label: 'Statut matrimonial', valeur: f.statut_matrimoniale },
+        { label: 'Statut professionnel', valeur: f.statut_professionnelle },
+        { label: 'Statut actuel', valeur: f.statut_actuel }
+      ]
+    },
+    {
+      titre: 'Résidence et justificatif',
+      champs: [
+        { label: 'Résidence actuelle', valeur: f.residence_actuel, large: true },
+        {
+          label: 'Copie du justificatif',
+          valeur: f.copie_actuel ? 'Voir la copie' : null,
+          lien: urlCopie(f.copie_actuel)
+        },
+        {
+          label: 'Échéance',
+          valeur: f.date_echeance ? `${fmt(f.date_echeance)}${echeanceAlerte.value ? ` · ${texteEcheance.value}` : ''}` : null,
+          alerte: echeanceAlerte.value
+        }
+      ]
+    },
+    {
+      titre: 'Hiérarchie',
+      champs: [
+        { label: 'Supérieur hiérarchique', valeur: f.superieur },
+        { label: 'Subordonnés', valeur: f.inferieurs }
+      ]
+    }
+  ]
+})
 </script>
 
 <template>
-  <div class="dossier-page">
-    <p v-if="chargement">Chargement du dossier…</p>
-    <p v-else-if="erreur" class="erreur">{{ erreur }}</p>
+  <PageAvecMenu
+    :eyebrow="fiche ? `Matricule ${fiche.matricule}` : 'Ressources humaines'"
+    titre="Fiche employé"
+    sous-titre="Informations personnelles, situation, justificatif de résidence et hiérarchie."
+  >
+    <RouterLink to="/backoffice/rh/employes" class="retour">← Retour à la liste</RouterLink>
 
-    <article v-else-if="fiche" class="dossier">
-      <header class="dossier-entete">
-        <span class="tampon">CONFIDENTIEL</span>
-        <span class="ref">MATRICULE {{ fiche.matricule }}</span>
-      </header>
+    <p v-if="chargement" class="message">Chargement de la fiche…</p>
+    <p v-else-if="erreur" class="message erreur">{{ erreur }}</p>
 
-      <section class="identite">
-        <div class="photo">{{ initiales }}</div>
-        <div>
-          <h1>{{ fiche.prenom }} <strong>{{ fiche.nom }}</strong></h1>
-          <p class="statut">
-            {{ fiche.statut_professionnelle || 'Statut professionnel non renseigné' }}
-            · {{ fiche.statut_actuel || '—' }}
-          </p>
+    <article v-else-if="fiche" class="carte">
+      <div class="entete">
+        <div class="identite">
+          <span class="avatar">{{ initiales }}</span>
+          <div>
+            <h2>{{ fiche.prenom }} {{ fiche.nom }}</h2>
+            <div class="tags">
+              <span class="tag">{{ fiche.statut_professionnelle || 'Statut professionnel non renseigné' }}</span>
+              <span v-if="fiche.statut_actuel" class="tag">{{ fiche.statut_actuel }}</span>
+            </div>
+          </div>
         </div>
-      </section>
 
-      <section class="grille">
-        <div class="champ"><label>Email</label><span>{{ fiche.email || '—' }}</span></div>
-        <div class="champ"><label>Téléphone</label><span>{{ fiche.telephone || '—' }}</span></div>
-        <div class="champ"><label>Ville</label><span>{{ fiche.ville || '—' }}</span></div>
-        <div class="champ"><label>Date d'embauche</label><span>{{ fmt(fiche.date_embauche) }}</span></div>
-        <div class="champ"><label>Statut matrimonial</label><span>{{ fiche.statut_matrimoniale || '—' }}</span></div>
-        <div class="champ"><label>Statut professionnel</label><span>{{ fiche.statut_professionnelle || '—' }}</span></div>
-      </section>
-
-      <section class="grille">
-        <div class="champ large"><label>Résidence actuelle</label><span>{{ fiche.residence_actuel || '—' }}</span></div>
-        <div class="champ">
-          <label>Copie du justificatif</label>
-          <span v-if="fiche.copie_actuel">
-            <a :href="urlCopie(fiche.copie_actuel)" target="_blank">Voir la copie</a>
-          </span>
-          <span v-else>—</span>
+        <div class="actions">
+          <RouterLink :to="`/backoffice/rh/employes/${idEmploye}/modifier`" class="btn">Mettre à jour</RouterLink>
+          <RouterLink :to="`/backoffice/rh/employes/${idEmploye}/historique`" class="btn secondaire">Historique</RouterLink>
         </div>
-        <div class="champ" :class="{ alerte: echeanceProche }">
-          <label>Échéance</label>
-          <span>{{ fmt(fiche.date_echeance) }}</span>
-        </div>
-      </section>
+      </div>
 
-      <section class="grille">
-        <div class="champ"><label>Supérieur hiérarchique</label><span>{{ fiche.superieur || '—' }}</span></div>
-        <div class="champ"><label>Subordonnés</label><span>{{ fiche.inferieurs || '—' }}</span></div>
-      </section>
+      <p v-if="echeanceAlerte" class="alerte-echeance">
+        Justificatif de résidence : {{ texteEcheance.toLowerCase() }}. Pense à le renouveler.
+      </p>
 
-      <footer class="actions">
-        <RouterLink :to="`/backoffice/rh/employes/${idEmploye}/modifier`" class="btn">Mettre à jour</RouterLink>
-        <RouterLink :to="`/backoffice/rh/employes/${idEmploye}/historique`" class="btn secondaire">Historique</RouterLink>
-      </footer>
+      <section v-for="bloc in blocs" :key="bloc.titre">
+        <h3>{{ bloc.titre }}</h3>
+        <dl class="informations">
+          <div v-for="c in bloc.champs" :key="c.label" :class="{ large: c.large }">
+            <dt>{{ c.label }}</dt>
+            <dd :class="{ rouge: c.alerte }">
+              <a v-if="c.lien && c.valeur" :href="c.lien" target="_blank">{{ c.valeur }}</a>
+              <template v-else>{{ c.valeur || '—' }}</template>
+            </dd>
+          </div>
+        </dl>
+      </section>
     </article>
-  </div>
+  </PageAvecMenu>
 </template>
 
-<!-- <style scoped>
-.dossier-page { max-width: 900px; margin: 2rem auto; padding: 0 1rem; }
-.dossier { background: #f6f1e4; border: 2px solid #2b2b2b; border-radius: 6px; padding: 1.5rem; box-shadow: 6px 6px 0 #2b2b2b; font-family: 'Courier New', monospace; color: #1d1d1d; }
-.dossier-entete { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px dashed #2b2b2b; padding-bottom: .75rem; margin-bottom: 1rem; }
-.tampon { border: 3px solid #b3261e; color: #b3261e; padding: .15rem .6rem; font-weight: bold; letter-spacing: 3px; transform: rotate(-3deg); }
-.ref { font-weight: bold; }
-.identite { display: flex; gap: 1.25rem; align-items: center; margin-bottom: 1.25rem; }
-.photo { width: 96px; height: 120px; background: #cfc8b4; border: 2px solid #2b2b2b; display: flex; align-items: center; justify-content: center; font-size: 2rem; font-weight: bold; }
-h1 { margin: 0; font-size: 1.6rem; text-transform: uppercase; }
-.statut { margin: .25rem 0 0; opacity: .75; }
-.grille { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: .75rem 1.25rem; padding: 1rem 0; border-top: 1px solid #b9b19a; }
-.champ label { display: block; font-size: .7rem; text-transform: uppercase; letter-spacing: 1px; opacity: .6; }
-.champ span { font-weight: bold; }
-.champ.large { grid-column: 1 / -1; }
-.champ.alerte span { color: #b3261e; }
-.actions { display: flex; gap: .75rem; border-top: 2px dashed #2b2b2b; padding-top: 1rem; }
-.btn { background: #2b2b2b; color: #f6f1e4; padding: .5rem 1rem; text-decoration: none; border-radius: 3px; }
-.btn.secondaire { background: transparent; color: #2b2b2b; border: 2px solid #2b2b2b; }
-.erreur { color: #b3261e; }
-</style> -->
+<style scoped>
+.retour {
+  display: inline-block;
+  margin-bottom: 16px;
+  color: teal;
+  font-size: 13px;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.retour:hover {
+  text-decoration: underline;
+}
+
+/* Carte principale */
+.carte {
+  padding: 24px;
+  border-radius: 10px;
+  background: #fff;
+  box-shadow: rgba(0, 0, 0, 0.35) 0 5px 15px;
+}
+
+.entete {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.identite {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.avatar {
+  display: grid;
+  width: 52px;
+  height: 52px;
+  place-items: center;
+  border-radius: 50%;
+  background: #e6f2f2;
+  color: teal;
+  font-weight: 800;
+}
+
+h2 {
+  margin: 0 0 8px;
+  color: teal;
+  font-size: 20px;
+}
+
+.tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.tag {
+  padding: 4px 12px;
+  border-radius: 10px;
+  background: #e6f2f2;
+  color: #006666;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+h3 {
+  margin: 24px 0 8px;
+  color: teal;
+  font-size: 16px;
+}
+
+/* Liste d'informations : même présentation que FicheDemande */
+.informations {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+  margin: 0;
+}
+
+.informations > div {
+  border-top: 1px solid #edf0f0;
+  padding-top: 10px;
+}
+
+.informations > div.large {
+  grid-column: 1 / -1;
+}
+
+dt {
+  color: #687575;
+  font-size: 12px;
+}
+
+dd {
+  margin: 4px 0 0;
+  font-weight: 700;
+}
+
+dd a {
+  color: teal;
+}
+
+dd.rouge {
+  color: #b42318;
+}
+
+.alerte-echeance {
+  margin: 20px 0 0;
+  padding: 10px 14px;
+  border: 1px solid #b42318;
+  border-radius: 10px;
+  background: #fdecec;
+  color: #b42318;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+/* Boutons */
+.actions {
+  display: flex;
+  gap: 10px;
+}
+
+.btn {
+  display: inline-block;
+  padding: 10px 22px;
+  border: 0;
+  border-radius: 10px;
+  background: teal;
+  color: #fff;
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 700;
+  text-decoration: none;
+  cursor: pointer;
+  box-shadow: rgba(0, 0, 0, 0.24) 0 3px 8px;
+}
+
+.btn:hover {
+  background: #006666;
+}
+
+.btn.secondaire {
+  border: 1px solid #cbd5e1;
+  background: #fff;
+  color: #344054;
+  box-shadow: none;
+}
+
+.btn.secondaire:hover {
+  background: #f1f3f6;
+}
+
+/* Messages */
+.message {
+  margin: 0 0 16px;
+  padding: 18px;
+  border-radius: 10px;
+  background: #fff;
+  color: #667085;
+  font-size: 14px;
+}
+
+.erreur {
+  background: #fdecec;
+  color: #b42318;
+}
+
+@media (max-width: 560px) {
+  .informations {
+    grid-template-columns: 1fr;
+  }
+
+  .actions {
+    width: 100%;
+  }
+}
+</style>

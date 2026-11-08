@@ -104,6 +104,7 @@ $routes->group('api', ['namespace' => 'App\Controllers\Api'], function ($routes)
         });
 
         $routes->group('rh/employes', ['filter' => 'auth:RH'], static function ($routes) {
+            $routes->get('', 'EmployeController::index');
             $routes->get('statuts', 'EmployeController::statuts');
             $routes->get('(:num)', 'EmployeController::show/$1');
             $routes->get('(:num)/historique', 'EmployeController::historique/$1');
