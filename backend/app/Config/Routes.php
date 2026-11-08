@@ -33,11 +33,13 @@ $routes->group('api', ['namespace' => 'App\Controllers\Api'], function ($routes)
         $routes->get('employes', 'AffectationEmployeController::employes');
         $routes->get('employes/(:num)', 'AffectationEmployeController::historiqueEmploye/$1');
         $routes->post('', 'AffectationEmployeController::create');
+    });
     $routes->group('rh/conges', ['filter' => 'auth:Manager,RH'], static function ($routes) {
         $routes->get('demande/types', 'CongeController::typesDemande');
         $routes->get('demande/employes', 'CongeController::employesDemande');
         $routes->post('demande', 'CongeController::creerDemande');
     });
+    
     $routes->group('rh/conges', ['filter' => 'auth:RH'], static function ($routes) {
         $routes->get('demandes', 'CongeController::demandes');
         $routes->post('demandes/(:num)/acceptation', 'CongeController::accepter/$1');
@@ -154,4 +156,6 @@ $routes->group('api', ['namespace' => 'App\Controllers\Api'], function ($routes)
     $routes->post('regimes-travail', 'RegimeTravailController::create', ['filter' => 'auth:RH,DG,Direction,Manager']);
     $routes->put('regimes-travail/(:num)', 'RegimeTravailController::update/$1', ['filter' => 'auth:RH,DG,Direction,Manager']);
     $routes->delete('regimes-travail/(:num)', 'RegimeTravailController::delete/$1', ['filter' => 'auth:RH,DG,Direction,Manager']);
-});
+    });
+
+
