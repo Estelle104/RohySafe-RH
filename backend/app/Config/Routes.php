@@ -108,6 +108,7 @@ $routes->group('api', ['namespace' => 'App\Controllers\Api'], function ($routes)
             $routes->get('(:num)', 'EmployeController::show/$1');
             $routes->get('(:num)/historique', 'EmployeController::historique/$1');
             $routes->post('(:num)/info', 'EmployeController::update/$1');
+            $routes->get('referentiels/statuts', 'EmployeController::statuts');
         });
 
 });

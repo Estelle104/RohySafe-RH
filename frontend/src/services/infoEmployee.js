@@ -41,7 +41,7 @@ export async function getHistoriqueInfoEmp(idEmploye) {
 
 /** Listes des statuts pour les <select> */
 export async function getStatuts() {
-  const res = await fetch(`${API_URL}/referentiels/statuts`, { credentials: 'include' })
+  const res = await fetch(`${API_URL}/rh/employes/referentiels/statuts`, { credentials: 'include' })
   return handle(res)
 }
 

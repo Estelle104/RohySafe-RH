@@ -13,6 +13,7 @@ const form = reactive({
   id_statut_matrimoniale: '',
   id_statut_professionnelle: '',
 })
+
 const copie = ref(null)
 const statuts = reactive({ matrimoniaux: [], professionnels: [] })
 const erreur = ref('')
