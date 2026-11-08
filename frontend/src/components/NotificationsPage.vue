@@ -55,7 +55,7 @@ function ouvrir(notification) {
       role="Manager"
       codeRole="RH"
       initiales="U"
-      :notifications="notifications.length"
+      :notificationsDemandes="notifications.length"
       :ouvert="menuOuvert"
       @fermer="menuOuvert = false"
     />

@@ -33,6 +33,23 @@ $routes->group('api', ['namespace' => 'App\Controllers\Api'], function ($routes)
         $routes->get('employes', 'AffectationEmployeController::employes');
         $routes->get('employes/(:num)', 'AffectationEmployeController::historiqueEmploye/$1');
         $routes->post('', 'AffectationEmployeController::create');
+    $routes->group('rh/conges', ['filter' => 'auth:Manager,RH'], static function ($routes) {
+        $routes->get('demande/types', 'CongeController::typesDemande');
+        $routes->get('demande/employes', 'CongeController::employesDemande');
+        $routes->post('demande', 'CongeController::creerDemande');
+    });
+    $routes->group('rh/conges', ['filter' => 'auth:RH'], static function ($routes) {
+        $routes->get('demandes', 'CongeController::demandes');
+        $routes->post('demandes/(:num)/acceptation', 'CongeController::accepter/$1');
+        $routes->get('configurations', 'CongeController::configurations');
+        $routes->put('configurations/(:num)', 'CongeController::updateConfiguration/$1');
+        $routes->get('soldes', 'CongeController::soldes');
+        $routes->post('soldes/recalculer', 'CongeController::recalculerSoldes');
+        $routes->get('valeurs', 'CongeController::valeurs');
+        $routes->post('valider', 'CongeController::validerDemande');
+        $routes->get('remplacements', 'RemplacementController::index');
+        $routes->post('remplacements', 'RemplacementController::create');
+        $routes->get('recalculer', 'CongeController::recalculer');
     });
     $routes->get('departements', 'Departement::index');
     $routes->get('offres', 'Offre::index');
@@ -109,4 +126,32 @@ $routes->group('api', ['namespace' => 'App\Controllers\Api'], function ($routes)
             $routes->get('candidatures/(:num)', 'EntretienController::detail/$1');
             $routes->put('candidatures/(:num)/evaluation', 'EntretienController::enregistrerEvaluation/$1');
         });
+
+    $routes->get('horaires', 'HoraireController::index');
+    $routes->get('horaires/postes/(:num)', 'HoraireController::byPoste/$1');
+    $routes->get('horaires/postes/(:num)/planning-avenir', 'HoraireController::planningAvenir/$1');
+    $routes->post('horaires', 'HoraireController::create', ['filter' => 'auth:RH,DG,Direction,Manager']);
+    $routes->put('horaires/(:num)', 'HoraireController::update/$1', ['filter' => 'auth:RH,DG,Direction,Manager']);
+    $routes->delete('horaires/(:num)', 'HoraireController::delete/$1', ['filter' => 'auth:RH,DG,Direction,Manager']);
+
+    $routes->get('plannings-edt', 'PlanningEDTController::index');
+    $routes->get('plannings-edt/(:num)', 'PlanningEDTController::show/$1');
+    $routes->get('plannings-edt/employes', 'PlanningEDTController::employesDisponibles');
+    $routes->get('plannings-edt/(:num)/employes', 'PlanningEDTController::employesParPlanning/$1');
+    $routes->post('plannings-edt', 'PlanningEDTController::create', ['filter' => 'auth:RH,DG,Direction,Manager']);
+    $routes->put('plannings-edt/(:num)', 'PlanningEDTController::update/$1', ['filter' => 'auth:RH,DG,Direction,Manager']);
+    $routes->delete('plannings-edt/(:num)', 'PlanningEDTController::delete/$1', ['filter' => 'auth:RH,DG,Direction,Manager']);
+    $routes->post('plannings-edt/(:num)/employes', 'PlanningEDTController::assignerEmployes/$1', ['filter' => 'auth:RH,DG,Direction,Manager']);
+    $routes->delete('plannings-edt/(:num)/employes/(:num)', 'PlanningEDTController::retirerEmploye/$1/$2', ['filter' => 'auth:RH,DG,Direction,Manager']);
+
+    $routes->get('heures-supplementaires', 'HeureSupplementaireController::index', ['filter' => 'auth:Manager,RH']);
+    $routes->post('heures-supplementaires/(:num)/validation', 'HeureSupplementaireController::valider/$1', ['filter' => 'auth:RH']);
+    $routes->get('heures-supplementaires/employes', 'HeureSupplementaireController::employes', ['filter' => 'auth:Manager']);
+    $routes->post('heures-supplementaires', 'HeureSupplementaireController::create', ['filter' => 'auth:Manager']);
+
+    $routes->get('regimes-travail', 'RegimeTravailController::index');
+    $routes->get('regimes-travail/(:num)', 'RegimeTravailController::show/$1');
+    $routes->post('regimes-travail', 'RegimeTravailController::create', ['filter' => 'auth:RH,DG,Direction,Manager']);
+    $routes->put('regimes-travail/(:num)', 'RegimeTravailController::update/$1', ['filter' => 'auth:RH,DG,Direction,Manager']);
+    $routes->delete('regimes-travail/(:num)', 'RegimeTravailController::delete/$1', ['filter' => 'auth:RH,DG,Direction,Manager']);
 });

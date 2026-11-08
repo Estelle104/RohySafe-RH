@@ -1,0 +1,3 @@
+ALTER TABLE heure_supplementaires
+ADD COLUMN id_planning_edt_employes BIGINT
+REFERENCES planning_edt_employes(id);

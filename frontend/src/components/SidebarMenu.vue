@@ -1,33 +1,108 @@
 <script setup>
 
-import { computed } from 'vue'
+import { computed, onMounted, ref, watch } from 'vue'
 
 // Sidebar commune à tous les utilisateurs de l'entreprise.
-// Adapter les chemins (`to`) à router/index.js.
+// Adapter les chemins (`to
 const props = defineProps({
   nom: { type: String, default: '' },
   role: { type: String, default: '' },        // texte affiché (ex. "Manager · Informatique")
   codeRole: { type: String, default: '' },    // code utilisé pour le filtre : 'DG', 'FINANCE', 'RH', 'MANAGER'
   initiales: { type: String, default: '' },
   notifications: { type: Number, default: 0 },
+  notificationsHeures: { type: Number, default: 0 },
+  notificationsDemandes: { type: Number, default: 0 },
   ouvert: { type: Boolean, default: false },
 })
 
+const heuresEnAttente = ref(0)
+const demandesEnCours = ref(0)
+
 defineEmits(['fermer', 'deconnexion'])
 
+async function chargerNotificationsGlobales() {
+  const roleActuel = (props.codeRole || props.role || '').toString().trim()
+
+  if (!['RH', 'Manager'].includes(roleActuel)) {
+    heuresEnAttente.value = 0
+    demandesEnCours.value = 0
+    return
+  }
+
+  try {
+    const reponseHeures = await fetch('/api/heures-supplementaires', {
+      credentials: 'include',
+      headers: { Accept: 'application/json' },
+    })
+
+    if (reponseHeures.ok) {
+      const contenu = await reponseHeures.json().catch(() => null)
+      const tableau = Array.isArray(contenu?.data) ? contenu.data : Array.isArray(contenu) ? contenu : []
+      heuresEnAttente.value = tableau.filter((item) => String(item?.statut_libelle || '').toLowerCase() === 'en attente').length
+    }
+  } catch {
+    heuresEnAttente.value = 0
+  }
+
+  if (roleActuel === 'RH') {
+    try {
+      const reponseDemandes = await fetch('/api/demandes/notifications', {
+        credentials: 'include',
+        headers: { Accept: 'application/json' },
+      })
+
+      if (reponseDemandes.ok) {
+        const contenu = await reponseDemandes.json().catch(() => [])
+        demandesEnCours.value = Array.isArray(contenu) ? contenu.length : 0
+      }
+    } catch {
+      demandesEnCours.value = 0
+    }
+  } else {
+    demandesEnCours.value = 0
+  }
+}
+
+onMounted(() => {
+  chargerNotificationsGlobales()
+})
+
+watch(() => [props.codeRole, props.role], () => {
+  chargerNotificationsGlobales()
+}, { immediate: true })
+
+const totalHeures = computed(() => {
+  if (Number(props.notificationsHeures) > 0) return Number(props.notificationsHeures)
+  return Number(heuresEnAttente.value)
+})
+
+const totalDemandes = computed(() => {
+  if (Number(props.notificationsDemandes) > 0) return Number(props.notificationsDemandes)
+  return Number(demandesEnCours.value)
+})
+
 const liens = [
-  { to: '/dashboard', label: 'Dashboard', icone: 'accueil' },                       // tous
+  { to: '/dashboard', label: 'Dashboard', icone: 'accueil' },
   { groupe: 'Recrutement' },
   { to: '/demandes/nouvelle', label: 'Demandes de personnel', icone: 'demandes', roles: ['Manager','DG'] },
   { to: '/offres/a-publier', label: 'Offres à publier', icone: 'offres', roles: ['RH','DG','Direction'] },
+  { to: '/planning', label: 'Planning EDT', icone: 'calendar', roles: ['RH','DG','Direction','Manager'] },
+  { to: '/heures-supplementaires', label: 'Heures supplémentaires', icone: 'notifications', roles: ['RH','Manager'], badge: 'heures' },
+  { to: '/horaires/postes', label: 'Horaires postes', icone: 'entretiens', roles: ['RH','DG','Direction','Manager'] },
+  { to: '/regimes/travail', label: 'Régimes travail', icone: 'notifications', roles: ['RH','DG','Direction','Manager'] },
   { groupe: 'Mon espace' },
   { to: '/candidatures', label: 'Liste des candidatures', icone: 'demandes', roles: ['RH'] },
   { to: { name: 'entretiens-offres' }, label: 'Entretiens', icone: 'entretiens', roles: ['RH'] },
-  { to: '/notification', label: 'Notifications', icone: 'notifications', badge: true },  // tous
-  { to: '/backoffice', label: 'Gerer les offres d\'emplois', icone: 'demandes', roles: ['RH','DG'] },                          // tous
+  { to: '/notification', label: 'Notifications', icone: 'notifications', badge: 'notifications' },
+  { to: '/backoffice', label: 'Gerer les offres d\'emplois', icone: 'demandes', roles: ['RH','DG'] },
   { to: '/backoffice/rh/relations', label: 'Relations hiérarchiques', icone: 'demandes', roles: ['RH','rh'] },
   { to: '/backoffice/rh/affectations/employes', label: 'Affectation employés', icone: 'demandes', roles: ['RH','rh'] },
   { to: '/backoffice/rh/organigramme', label: 'Organigramme', icone: 'accueil', roles: ['RH','rh'] },
+  { to: '/backoffice/rh/conges/configuration', label: 'Configuration des congés', icone: 'demandes', roles: ['RH','rh'] },
+  { to: '/backoffice/rh/conges/soldes', label: 'Soldes de congés', icone: 'demandes', roles: ['RH','rh'] },
+  { to: '/backoffice/rh/conges/valeur', label: 'Valeur des congés', icone: 'demandes', roles: ['RH','rh'] },
+  { to: '/backoffice/rh/conges/remplacements', label: 'Coût des remplacements', icone: 'demandes', roles: ['RH','rh'] },
+  { to: '/backoffice/rh/conges/nouvelle', label: 'Nouvelle demande de congé', icone: 'demandes', roles: ['Manager','RH','rh'] },
   { to: '/profil', label: 'Mon profil', icone: 'profil' },
 ]
 
@@ -83,7 +158,8 @@ const liensVisibles = computed(() => {
             </template>
           </svg>
           {{ l.label }}
-          <span v-if="l.badge && notifications > 0" class="badge">{{ notifications }}</span>
+          <span v-if="l.badge === 'heures' && totalHeures > 0" class="badge">{{ totalHeures }}</span>
+          <span v-else-if="l.badge === 'notifications' && totalDemandes > 0" class="badge">{{ totalDemandes }}</span>
         </router-link>
       </template>
     </nav>
