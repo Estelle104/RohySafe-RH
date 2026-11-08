@@ -48,6 +48,10 @@ const router = createRouter({
     { path: '/backoffice/rh/conges/remplacements', name: 'cout-remplacement', meta: { requiresAuth: true, roles: ['RH', 'rh'] }, component: () => import('../views/CoutRemplacement.vue') },
     { path: '/backoffice/rh/conges/nouvelle', name: 'nouvelle-demande-conge', meta: { requiresAuth: true, roles: ['Manager', 'RH', 'rh'] }, component: () => import('../views/demande/NouvelleDemandeCongeView.vue') },
     { path: '/backoffice/rh/organigramme', name: 'organigramme-employe', meta: { requiresAuth: true, roles: ['RH', 'rh'] }, component: () => import('../views/OrganigrammeEmployeView.vue') },
+    { path: '/backoffice/rh/employes', name: 'liste-employes', meta: { requiresAuth: true, roles: ['RH', 'rh'] }, component: () => import('../views/infoEmploye/ListeEmployesView.vue') },
+    { path: '/backoffice/rh/employes/:id', name: 'info-employee', meta: { requiresAuth: true, roles: ['RH', 'rh'] }, component: () => import('../views/infoEmploye/InfoEmployeeView.vue') },
+    { path: '/backoffice/rh/employes/:id/modifier', name: 'maj-info-employee', meta: { requiresAuth: true, roles: ['RH', 'rh'] }, component: () => import('../views/infoEmploye/MajInfoEmployeeView.vue') },
+    { path: '/backoffice/rh/employes/:id/historique', name: 'historique-info-employee', meta: { requiresAuth: true, roles: ['RH', 'rh'] }, component: () => import('../views/infoEmploye/HistoriqueInfoEmployeeView.vue') },
     {
       path: '/backoffice/candidats-ideaux',
       name: 'backoffice-candidats-ideaux',

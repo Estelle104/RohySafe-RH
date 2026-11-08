@@ -84,6 +84,16 @@ const totalDemandes = computed(() => {
 const liens = [
   { to: '/dashboard', label: 'Dashboard', icone: 'accueil' },
   { groupe: 'Recrutement' },
+  { to: '/demandes/nouvelle', label: 'Demandes de personnel', icone: 'demandes', roles: ['Manager', 'DG'] },
+  { to: '/offres/a-publier', label: 'Offres à publier', icone: 'offres', roles: ['RH', 'DG', 'Direction'] },
+  { groupe: 'Mon espace' },
+  { to: '/candidatures', label: 'Liste des candidatures', icone: 'demandes', roles: ['RH'] },
+  { to: { name: 'entretiens-offres' }, label: 'Entretiens', icone: 'entretiens', roles: ['RH'] },
+  { to: '/notification', label: 'Notifications', icone: 'notifications', badge: true },  // tous
+  { to: '/backoffice', label: 'Gerer les offres d\'emplois', icone: 'demandes', roles: ['RH', 'DG'] },                          // tous
+  { to: '/backoffice/rh/relations', label: 'Relations hiérarchiques', icone: 'demandes', roles: ['RH', 'rh'] },
+  { to: '/backoffice/rh/organigramme', label: 'Organigramme', icone: 'accueil', roles: ['RH', 'rh'] },
+  { to: '/backoffice/rh/employes', label: 'Liste des employés', icone: 'personne', roles: ['RH', 'rh'] }, // icone de personne à ajouter
   { to: '/demandes/nouvelle', label: 'Demandes de personnel', icone: 'demandes', roles: ['Manager','DG'] },
   { to: '/offres/a-publier', label: 'Offres à publier', icone: 'offres', roles: ['RH','DG','Direction'] },
   { to: '/planning', label: 'Planning EDT', icone: 'calendar', roles: ['RH','DG','Direction','Manager'] },

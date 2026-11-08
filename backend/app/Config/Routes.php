@@ -121,6 +121,15 @@ $routes->group('api', ['namespace' => 'App\Controllers\Api'], function ($routes)
             $routes->put('candidatures/(:num)/evaluation', 'EntretienController::enregistrerEvaluation/$1');
         });
 
+        $routes->group('rh/employes', ['filter' => 'auth:RH'], static function ($routes) {
+            $routes->get('', 'EmployeController::index');
+            $routes->get('statuts', 'EmployeController::statuts');
+            $routes->get('(:num)', 'EmployeController::show/$1');
+            $routes->get('(:num)/historique', 'EmployeController::historique/$1');
+            $routes->post('(:num)/info', 'EmployeController::update/$1');
+            $routes->get('referentiels/statuts', 'EmployeController::statuts');
+        });
+
     $routes->get('horaires', 'HoraireController::index');
     $routes->get('horaires/postes/(:num)', 'HoraireController::byPoste/$1');
     $routes->get('horaires/postes/(:num)/planning-avenir', 'HoraireController::planningAvenir/$1');
