@@ -1,7 +1,7 @@
 <script setup>
 import { onMounted, ref } from 'vue'
 import SidebarMenu from '../components/SidebarMenu.vue'
-import { getAnomalies, traiterAnomalie } from '../services/anomaliePointage'
+import { detecterAnomaliesApi, getAnomalies, traiterAnomalie } from '../services/anomaliePointage'
 
 const anomalies = ref([])
 const filtres = ref({ idEmploye: '', dateDebut: '', dateFin: '' })
@@ -13,7 +13,7 @@ const menuOuvert = ref(false)
 
 async function charger() {
   loading.value = true; error.value = ''; message.value = ''
-  try { anomalies.value = (await getAnomalies(filtres.value)).anomalies || [] } catch (e) { error.value = e.message } finally { loading.value = false }
+  try { await detecterAnomaliesApi(filtres.value); anomalies.value = (await getAnomalies(filtres.value)).anomalies || [] } catch (e) { error.value = e.message } finally { loading.value = false }
 }
 
 async function traiter(anomalie, statut) {

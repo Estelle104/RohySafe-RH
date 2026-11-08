@@ -17,6 +17,7 @@ const props = defineProps({
 
 const heuresEnAttente = ref(0)
 const demandesEnCours = ref(0)
+const anomaliesEnAttente = ref(0)
 
 defineEmits(['fermer', 'deconnexion'])
 
@@ -26,6 +27,7 @@ async function chargerNotificationsGlobales() {
   if (!['RH', 'Manager'].includes(roleActuel)) {
     heuresEnAttente.value = 0
     demandesEnCours.value = 0
+    anomaliesEnAttente.value = 0
     return
   }
 
@@ -58,8 +60,18 @@ async function chargerNotificationsGlobales() {
     } catch {
       demandesEnCours.value = 0
     }
+    try {
+      const reponseAnomalies = await fetch('/api/rh/anomalies-pointage', { credentials: 'include', headers: { Accept: 'application/json' } })
+      if (reponseAnomalies.ok) {
+        const contenu = await reponseAnomalies.json().catch(() => ({}))
+        anomaliesEnAttente.value = (contenu.anomalies || []).filter((anomalie) => anomalie.statut === 'A_TRAITER').length
+      }
+    } catch {
+      anomaliesEnAttente.value = 0
+    }
   } else {
     demandesEnCours.value = 0
+    anomaliesEnAttente.value = 0
   }
 }
 
@@ -104,7 +116,7 @@ const liens = [
   { to: '/backoffice/rh/conges/nouvelle', label: 'Nouvelle demande de congé', icone: 'demandes', roles: ['Manager','RH','rh'] },
   { to: '/backoffice/rh/pointages', label: 'Pointages', icone: 'demandes', roles: ['RH','rh'] },
   { to: '/backoffice/rh/temps-travail', label: 'Temps de travail', icone: 'demandes', roles: ['RH','rh'] },
-  { to: '/backoffice/rh/anomalies-pointage', label: 'Anomalies de pointage', icone: 'demandes', roles: ['RH','rh'] },
+  { to: '/backoffice/rh/anomalies-pointage', label: 'Anomalies de pointage', icone: 'demandes', roles: ['RH','rh'], badge: 'anomalies' },
   { to: '/profil', label: 'Mon profil', icone: 'profil' },
 ]
 
@@ -162,6 +174,7 @@ const liensVisibles = computed(() => {
           {{ l.label }}
           <span v-if="l.badge === 'heures' && totalHeures > 0" class="badge">{{ totalHeures }}</span>
           <span v-else-if="l.badge === 'notifications' && totalDemandes > 0" class="badge">{{ totalDemandes }}</span>
+          <span v-else-if="l.badge === 'anomalies' && anomaliesEnAttente > 0" class="badge">{{ anomaliesEnAttente }}</span>
         </router-link>
       </template>
     </nav>

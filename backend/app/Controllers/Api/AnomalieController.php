@@ -8,6 +8,14 @@ use Throwable;
 
 class AnomalieController extends BaseController
 {
+    public function detecter()
+    {
+        try {
+            $nombre = (new AnomalieModel())->detecter(['id_employe' => $this->request->getGet('id_employe'), 'date_debut' => $this->request->getGet('date_debut'), 'date_fin' => $this->request->getGet('date_fin')]);
+            return $this->response->setJSON(['nombre_anomalies' => $nombre]);
+        } catch (Throwable $e) { log_message('error', $e->getMessage()); return $this->response->setStatusCode(500)->setJSON(['message' => 'Impossible de détecter les anomalies.']); }
+    }
+
     public function index()
     {
         try {

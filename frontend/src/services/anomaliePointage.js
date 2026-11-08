@@ -20,6 +20,15 @@ export const getAnomalies = (filtres = {}) => {
   return request(query ? `${API}?${query}` : API)
 }
 
+export const detecterAnomaliesApi = (filtres = {}) => {
+  const params = new URLSearchParams()
+  if (filtres.idEmploye) params.set('id_employe', filtres.idEmploye)
+  if (filtres.dateDebut) params.set('date_debut', filtres.dateDebut)
+  if (filtres.dateFin) params.set('date_fin', filtres.dateFin)
+  const query = params.toString()
+  return request(`${API}/detecter${query ? `?${query}` : ''}`, { method: 'POST' })
+}
+
 /** Détecte les anomalies de séquence dans une liste de pointages triés. */
 export function detecterAnomalies(pointages) {
   const anomalies = []
