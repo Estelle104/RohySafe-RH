@@ -40,6 +40,9 @@ const router = createRouter({
       component: () => import('../views/BackofficeAccueilView.vue')
     },
     { path: '/backoffice/rh/relations', name: 'relation-hierarchique', meta: { requiresAuth: true, roles: ['RH', 'rh'] }, component: () => import('../views/RelationHierarchiqueView.vue') },
+    { path: '/backoffice/rh/affectations', name: 'affectation-employe', meta: { requiresAuth: true, roles: ['RH', 'rh'] }, component: () => import('../views/AffectationEmployeView.vue') },
+    { path: '/backoffice/rh/affectations/employes', name: 'affectation-employes-module', meta: { requiresAuth: true, roles: ['RH', 'rh'] }, component: () => import('../views/AffectationEmployesModuleView.vue') },
+    { path: '/backoffice/rh/affectations/employes/:id', name: 'affectation-employe-historique', meta: { requiresAuth: true, roles: ['RH', 'rh'] }, component: () => import('../views/AffectationEmployeHistoriqueView.vue') },
     { path: '/backoffice/rh/organigramme', name: 'organigramme-employe', meta: { requiresAuth: true, roles: ['RH', 'rh'] }, component: () => import('../views/OrganigrammeEmployeView.vue') },
     {
       path: '/backoffice/candidats-ideaux',
