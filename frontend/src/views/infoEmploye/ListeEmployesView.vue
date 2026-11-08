@@ -95,7 +95,7 @@ const fmt = (d) => (d ? new Date(d).toLocaleDateString('fr-FR') : '—')
         {{ nbAlertes }} employé(s) avec un justificatif expiré ou qui expire dans {{ seuilJours }} jours ou moins.
       </p>
 
-      <section class="bloc filtres">
+      <section class="bloc zone-filtres">
         <FiltreStatuts :statuts="boutonsStatutPro" :actif="statutPro" @choisir="statutPro = $event" />
 
         <div class="champs">
@@ -174,7 +174,8 @@ const fmt = (d) => (d ? new Date(d).toLocaleDateString('fr-FR') : '—')
 <style scoped>
 .liste-page { display: grid; gap: 16px; }
 .bloc { background: #fff; border: 1px solid #d8dddd; border-radius: 16px; padding: 24px; }
-.filtres { display: grid; gap: 16px; }
+/* Nom volontairement différent de « filtres » : FiltreStatuts utilise déjà cette classe */
+.zone-filtres { display: grid; gap: 16px; }
 .champs { display: flex; flex-wrap: wrap; gap: 12px 16px; align-items: flex-end; }
 label { display: grid; gap: 6px; color: #344054; font-size: 13px; font-weight: 700; }
 label.case { display: flex; align-items: center; gap: 8px; font-weight: 400; }
