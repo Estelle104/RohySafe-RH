@@ -103,6 +103,8 @@ const liens = [
   { to: '/backoffice/rh/conges/remplacements', label: 'Coût des remplacements', icone: 'demandes', roles: ['RH','rh'] },
   { to: '/backoffice/rh/conges/nouvelle', label: 'Nouvelle demande de congé', icone: 'demandes', roles: ['Manager','RH','rh'] },
   { to: '/backoffice/rh/pointages', label: 'Pointages', icone: 'demandes', roles: ['RH','rh'] },
+  { to: '/backoffice/rh/temps-travail', label: 'Temps de travail', icone: 'demandes', roles: ['RH','rh'] },
+  { to: '/backoffice/rh/anomalies-pointage', label: 'Anomalies de pointage', icone: 'demandes', roles: ['RH','rh'] },
   { to: '/profil', label: 'Mon profil', icone: 'profil' },
 ]
 

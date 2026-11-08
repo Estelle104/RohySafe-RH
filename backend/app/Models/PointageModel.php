@@ -54,6 +54,60 @@ class PointageModel extends Model
     public function createPointage(array $data): int
     {
         $this->insert($data);
-        return (int) $this->getInsertID();
+        $id = (int) $this->getInsertID();
+        $type = $this->db->table('type_pointages')->where('id', (int) $data['id_type_pointage'])->get()->getRowArray();
+        if (($type['libelle'] ?? null) === 'SORTIE') {
+            $this->creerHeureSupplementaire($data);
+        }
+        return $id;
+    }
+
+    public function existeDeja(array $data): bool
+    {
+        return $this->where('id_employe', (int) $data['id_employe'])
+            ->where('date_heure', $data['date_heure'])
+            ->where('id_type_pointage', (int) $data['id_type_pointage'])
+            ->countAllResults() > 0;
+    }
+
+    private function creerHeureSupplementaire(array $data): void
+    {
+        $dateHeureSortie = (string) $data['date_heure'];
+        $dateJour = substr($dateHeureSortie, 0, 10);
+        $planning = $this->db->table('planning_edt_employes pee')
+            ->select('h.heure_fin')
+            ->join('planning_edts pe', 'pe.id = pee.id_planning_edt')
+            ->join('employes emp', 'emp.id = pee.id_employe')
+            ->join('poste_departement pd', 'pd.id = emp.id_poste_departement')
+            ->join('horaire_postes h', 'h.id_poste = pd.id_poste')
+            ->where('pee.id_employe', (int) $data['id_employe'])
+            ->where('pe.date_debut <=', $dateJour)
+            ->where('pe.date_fin >=', $dateJour)
+            ->where("EXTRACT(ISODOW FROM DATE '{$dateJour}') = ANY(pe.jours_semaine)", null, false)
+            ->orderBy('pe.date_debut', 'DESC')
+            ->get()->getRowArray();
+        if ($planning === null) return;
+
+        $heurePrevue = strtotime($dateJour . ' ' . $planning['heure_fin']);
+        $heureReelle = strtotime($dateHeureSortie);
+        if ($heureReelle <= $heurePrevue) return;
+
+        $heureDebut = date('Y-m-d H:i:s', $heurePrevue);
+        $heureFin = date('Y-m-d H:i:s', $heureReelle);
+        $table = $this->db->table('heure_supplementaires');
+        $existe = $table->where([
+            'id_employe' => (int) $data['id_employe'],
+            'heure_debut' => $heureDebut,
+            'heure_fin' => $heureFin,
+        ])->countAllResults();
+        if ($existe > 0) return;
+
+        $table->insert([
+            'id_employe' => (int) $data['id_employe'],
+            'heure_debut' => $heureDebut,
+            'heure_fin' => $heureFin,
+            'date_debut' => $dateJour,
+            'date_fin' => $dateJour,
+        ]);
     }
 }

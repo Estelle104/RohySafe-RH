@@ -66,7 +66,13 @@ class PointageController extends BaseController
         try {
             $session = session()->get('utilisateur');
             $data['cree_par'] = $session['id'] ?? null;
-            $id = (new PointageModel())->createPointage([
+            $model = new PointageModel();
+            if ($model->existeDeja($data)) {
+                return $this->response->setStatusCode(409)->setJSON([
+                    'message' => 'Ce pointage existe déjà pour cet employé, à cette date et cette heure.',
+                ]);
+            }
+            $id = $model->createPointage([
                 'id_employe' => (int) $data['id_employe'],
                 'date_heure' => $data['date_heure'],
                 'id_type_pointage' => (int) $data['id_type_pointage'],
