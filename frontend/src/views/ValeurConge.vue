@@ -34,7 +34,7 @@ onMounted(charger)
         <input v-model="recherche" class="recherche" type="search" placeholder="Nom ou matricule">
         <section class="card"><p v-if="loading">Chargement...</p><p v-else-if="!valeursFiltrees.length">Aucune donnée.</p>
           <div v-else class="table-wrap"><table><thead><tr><th>Employé</th><th>Salaire brut</th><th>Jours acquis</th><th>Valeur théorique</th><th>Indemnité départ</th></tr></thead>
-            <tbody><tr v-for="valeur in valeursFiltrees" :key="valeur.id"><td>{{ valeur.nom_complet || valeur.matricule }}</td><td>{{ valeur.salaire_brut }} €</td><td>{{ valeur.droits_acquis }} j</td><td>{{ valeur.valeur_theorique }} €</td><td>{{ valeur.indemnite_depart }} €</td></tr></tbody>
+            <tbody><tr v-for="valeur in valeursFiltrees" :key="valeur.id"><td>{{ valeur.nom_complet || valeur.matricule }}</td><td>{{ valeur.salaire_brut }} Ar</td><td>{{ valeur.droits_acquis }} j</td><td>{{ valeur.valeur_theorique }} Ar</td><td>{{ valeur.indemnite_depart }} Ar</td></tr></tbody>
           </table></div>
         </section>
       </div>
