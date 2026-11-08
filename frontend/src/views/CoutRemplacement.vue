@@ -23,8 +23,8 @@ onMounted(charger)
       <p class="eyebrow">Ressources humaines</p><h1>Coût des remplacements</h1><p class="subtitle">Remplacements effectués et rémunérations correspondantes.</p>
       <p v-if="error" class="alert">{{ error }}</p><input v-model="recherche" class="recherche" type="search" placeholder="Employé ou remplaçant">
       <section class="card"><p v-if="loading">Chargement...</p><p v-else-if="!lignes.length">Aucun remplacement.</p><div v-else class="table-wrap"><table><thead><tr><th>Employé absent</th><th>Remplaçant</th><th>Période</th><th>Heures</th><th>Salaire horaire</th><th>Coût</th></tr></thead><tbody>
-        <tr v-for="ligne in lignes" :key="ligne.id"><td>{{ ligne.employe_absent }}</td><td>{{ ligne.remplacant }}</td><td>{{ ligne.date_debut }} – {{ ligne.date_fin }}</td><td>{{ ligne.heures }}</td><td>{{ Number(ligne.salaire_horaire).toFixed(2) }} €</td><td>{{ Number(ligne.cout).toFixed(2) }} €</td></tr>
-        <tr><th colspan="5">Total</th><th>{{ total }} €</th></tr></tbody></table></div></section>
+        <tr v-for="ligne in lignes" :key="ligne.id"><td>{{ ligne.employe_absent }}</td><td>{{ ligne.remplacant }}</td><td>{{ ligne.date_debut }} – {{ ligne.date_fin }}</td><td>{{ ligne.heures }}</td><td>{{ Number(ligne.salaire_horaire).toFixed(2) }} Ar</td><td>{{ Number(ligne.cout).toFixed(2) }} Ar</td></tr>
+        <tr><th colspan="5">Total</th><th>{{ total }} Ar</th></tr></tbody></table></div></section>
     </div></main>
   </div>
 </template>

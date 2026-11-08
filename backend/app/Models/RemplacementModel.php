@@ -91,7 +91,11 @@ class RemplacementModel extends Model
             ->where('h.id_employe', $idEmploye)
             ->where('h.date_fin >=', $debut)
             ->where('h.date_debut <=', $fin)
-            ->whereIn('LOWER(sh.libelle)', ['validée', 'validee', 'validé', 'valide'], false)
+            ->where(
+                "LOWER(sh.libelle) IN ('validée', 'validee', 'validé', 'valide')",
+                null,
+                false
+            )
             ->get()
             ->getRowArray();
 
