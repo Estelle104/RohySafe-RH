@@ -1,0 +1,1 @@
+var e,t=null;async function n(n=!1){return!n&&e!==void 0?e:(t===null&&(t=(async()=>{try{let t=await fetch(`/api/auth/me`,{headers:{Accept:`application/json`}});return t.ok?(e=(await t.json())?.utilisateur??null,e):(e=null,null)}catch{return e=null,null}finally{t=null}})()),t)}export{n as t};

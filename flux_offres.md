@@ -1,0 +1,1 @@
+- Le rh cree l offre a partir de la liste des candidats
