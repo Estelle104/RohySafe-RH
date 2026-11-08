@@ -43,6 +43,7 @@ export function calculerSolde({ periodeDebut, periodeFin, joursPris = 0, droitsM
   const droitsAcquis = Math.max(0, moisAcquis * Number(droitsMensuels))
   const joursConsommes = Math.max(0, Number(joursPris) || 0)
 
+
   return {
     droitsAcquis,
     joursConsommes,

@@ -27,11 +27,23 @@ $routes->group('api', ['namespace' => 'App\Controllers\Api'], function ($routes)
         $routes->post('', 'RelationHierarchiqueController::create');
         $routes->post('(:num)/cloture', 'RelationHierarchiqueController::close/$1');
     });
+    $routes->group('rh/conges', ['filter' => 'auth:Manager,RH'], static function ($routes) {
+        $routes->get('demande/types', 'CongeController::typesDemande');
+        $routes->get('demande/employes', 'CongeController::employesDemande');
+        $routes->post('demande', 'CongeController::creerDemande');
+    });
     $routes->group('rh/conges', ['filter' => 'auth:RH'], static function ($routes) {
+        $routes->get('demandes', 'CongeController::demandes');
+        $routes->post('demandes/(:num)/acceptation', 'CongeController::accepter/$1');
         $routes->get('configurations', 'CongeController::configurations');
         $routes->put('configurations/(:num)', 'CongeController::updateConfiguration/$1');
         $routes->get('soldes', 'CongeController::soldes');
         $routes->post('soldes/recalculer', 'CongeController::recalculerSoldes');
+        $routes->get('valeurs', 'CongeController::valeurs');
+        $routes->post('valider', 'CongeController::validerDemande');
+        $routes->get('remplacements', 'RemplacementController::index');
+        $routes->post('remplacements', 'RemplacementController::create');
+        $routes->get('recalculer', 'CongeController::recalculer');
     });
     $routes->get('departements', 'Departement::index');
     $routes->get('offres', 'Offre::index');
