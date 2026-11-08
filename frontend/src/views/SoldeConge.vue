@@ -24,8 +24,11 @@ const soldesParEmploye = computed(() => {
     if (!groupes.has(solde.id_employe)) groupes.set(solde.id_employe, { ...solde, details: [] })
     groupes.get(solde.id_employe).details.push(solde)
   }
+  const today = new Date().toISOString().slice(0, 10)
   return [...groupes.values()].map((employe) => {
-    const annuel = employe.details.find((solde) => solde.libelle === 'annuel')
+    const annuels = employe.details.filter((s) => s.libelle === 'annuel')
+    const courant = annuels.find((s) => s.periode_debut <= today && s.periode_fin >= today)
+    const annuel = courant || annuels[0] || employe.details[0]
     return annuel ? { ...employe, ...annuel, details: employe.details } : employe
   })
 })

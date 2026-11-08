@@ -31,7 +31,10 @@ async function enregistrer(configuration) {
   message.value = ''
   savingId.value = configuration.id
   try {
-    await updateConfiguration(configuration.id, Number(configuration.nombre_jour))
+    const n = Number(String(configuration.nombre_jour).replace(',', '.'))
+    if (!Number.isFinite(n) || n < 0) throw new Error('Le nombre de jours doit être un nombre positif ou nul.')
+    await updateConfiguration(configuration.id, n)
+    configuration.nombre_jour = String(n)
     message.value = `La configuration « ${configuration.libelle} » a été mise à jour.`
   } catch (e) {
     error.value = e.message
