@@ -55,6 +55,9 @@ $routes->group('api', ['namespace' => 'App\Controllers\Api'], function ($routes)
     $routes->get('rh/anomalies-pointage', 'AnomalieController::index', ['filter' => 'auth:RH']);
     $routes->post('rh/anomalies-pointage/detecter', 'AnomalieController::detecter', ['filter' => 'auth:RH']);
     $routes->patch('rh/anomalies-pointage/(:num)', 'AnomalieController::traiter/$1', ['filter' => 'auth:RH']);
+    $routes->get('rh/absences', 'AbsenceController::index', ['filter' => 'auth:RH']);
+    $routes->post('rh/absences', 'AbsenceController::create', ['filter' => 'auth:RH']);
+    $routes->patch('rh/absences/(:num)/statut', 'AbsenceController::statut/$1', ['filter' => 'auth:RH']);
     $routes->post('rh/temps-travail/recalculer', 'TempsTravailController::recalculer', ['filter' => 'auth:RH']);
     $routes->get('departements', 'Departement::index');
     $routes->get('offres', 'Offre::index');

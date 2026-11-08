@@ -117,6 +117,7 @@ const liens = [
   { to: '/backoffice/rh/pointages', label: 'Pointages', icone: 'demandes', roles: ['RH','rh'] },
   { to: '/backoffice/rh/temps-travail', label: 'Temps de travail', icone: 'demandes', roles: ['RH','rh'] },
   { to: '/backoffice/rh/anomalies-pointage', label: 'Anomalies de pointage', icone: 'demandes', roles: ['RH','rh'], badge: 'anomalies' },
+  { to: '/backoffice/rh/absences', label: 'Absences', icone: 'demandes', roles: ['RH','rh'] },
   { to: '/profil', label: 'Mon profil', icone: 'profil' },
 ]
 

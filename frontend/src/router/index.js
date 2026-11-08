@@ -48,6 +48,7 @@ const router = createRouter({
     { path: '/backoffice/rh/pointages/nouveau', name: 'pointage-nouveau', meta: { requiresAuth: true, roles: ['RH', 'rh'] }, component: () => import('../views/PointageForm.vue') },
     { path: '/backoffice/rh/temps-travail', name: 'temps-travail', meta: { requiresAuth: true, roles: ['RH', 'rh'] }, component: () => import('../views/CalculTempsTravail.vue') },
     { path: '/backoffice/rh/anomalies-pointage', name: 'anomalies-pointage', meta: { requiresAuth: true, roles: ['RH', 'rh'] }, component: () => import('../views/AnomaliePointage.vue') },
+    { path: '/backoffice/rh/absences', name: 'absences', meta: { requiresAuth: true, roles: ['RH', 'rh'] }, component: () => import('../views/Absence.vue') },
     { path: '/backoffice/rh/conges/valeur', name: 'valeur-conge', meta: { requiresAuth: true, roles: ['RH', 'rh'] }, component: () => import('../views/ValeurConge.vue') },
     { path: '/backoffice/rh/conges/remplacements', name: 'cout-remplacement', meta: { requiresAuth: true, roles: ['RH', 'rh'] }, component: () => import('../views/CoutRemplacement.vue') },
     { path: '/backoffice/rh/conges/nouvelle', name: 'nouvelle-demande-conge', meta: { requiresAuth: true, roles: ['Manager', 'RH', 'rh'] }, component: () => import('../views/demande/NouvelleDemandeCongeView.vue') },
