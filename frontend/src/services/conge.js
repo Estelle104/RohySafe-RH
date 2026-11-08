@@ -17,3 +17,9 @@ export const updateConfiguration = (id, nombre_jour) => request(`${API}/${id}`, 
   method: 'PUT',
   body: JSON.stringify({ nombre_jour }),
 })
+
+/** Vérifie le solde et les dates avant la validation d'une demande. */
+export const validerDemandeConge = (demande) => request('/api/rh/conges/valider', {
+  method: 'POST',
+  body: JSON.stringify(demande),
+})

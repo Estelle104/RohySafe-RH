@@ -444,5 +444,62 @@ class HeureSupplementaireModel extends Model
             'id_heure_supplementaire' => $idHeureSupplementaire,
             'date' => date('Y-m-d H:i:s'),
         ]);
+
+        $this->creerPlanningApresValidation($idHeureSupplementaire);
+    }
+
+    private function creerPlanningApresValidation(int $idHeureSupplementaire): void
+    {
+        $demande = $this->db->table('heure_supplementaires')
+            ->select('id, id_employe, date_debut, date_fin, heure_debut, heure_fin, id_planning_edt_employes')
+            ->where('id', $idHeureSupplementaire)
+            ->get()
+            ->getRowArray();
+
+        if ($demande === null) {
+            throw new RuntimeException('La demande validée est introuvable.');
+        }
+        if (! empty($demande['id_planning_edt_employes'])) {
+            return;
+        }
+
+        $jours = [];
+        $debut = new DateTimeImmutable((string) $demande['date_debut']);
+        $fin = new DateTimeImmutable((string) $demande['date_fin']);
+        for ($date = $debut; $date <= $fin; $date = $date->modify('+1 day')) {
+            $jours[] = (int) $date->format('N');
+        }
+        $jours = array_values(array_unique($jours));
+
+        $planning = $this->db->table('planning_edts');
+        $planning
+            ->set('date_debut', $demande['date_debut'])
+            ->set('date_fin', $demande['date_fin'])
+            ->set('jours_semaine', 'ARRAY[' . implode(',', $jours) . ']::smallint[]', false)
+            ->set(
+                'libelle',
+                'HS remplacement ' . substr((string) $demande['heure_debut'], 11, 5)
+                . '-' . substr((string) $demande['heure_fin'], 11, 5)
+            )
+            ->insert();
+
+        $idPlanning = (int) $this->db->insertID();
+        if ($idPlanning <= 0) {
+            throw new RuntimeException('Impossible de créer l’EDT du remplacement.');
+        }
+
+        $this->db->table('planning_edt_employes')->insert([
+            'id_planning_edt' => $idPlanning,
+            'id_employe' => (int) $demande['id_employe'],
+        ]);
+        $idPlanningEmploye = (int) $this->db->insertID();
+
+        if ($idPlanningEmploye <= 0) {
+            throw new RuntimeException('Impossible d’affecter l’EDT au remplaçant.');
+        }
+
+        $this->db->table('heure_supplementaires')
+            ->where('id', $idHeureSupplementaire)
+            ->update(['id_planning_edt_employes' => $idPlanningEmploye]);
     }
 }

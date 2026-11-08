@@ -36,10 +36,11 @@ VALUES
     (5, (SELECT id FROM regime_travails WHERE libelle = 'Temps plein 40h'),
         'Journée standard', '08:00', '17:00', 60),
 
-    -- 9 : Développeur Web
-    (9, (SELECT id FROM regime_travails WHERE libelle = 'Temps plein 40h'),
+
+    -- 6 : Développeur Web
+    (6, (SELECT id FROM regime_travails WHERE libelle = 'Temps plein 40h'),
         'Journée décalée', '09:00', '18:00', 60),
 
     -- 10 : Responsable RH
-    (10, (SELECT id FROM regime_travails WHERE libelle = 'Temps plein 40h'),
+    (1, (SELECT id FROM regime_travails WHERE libelle = 'Temps plein 40h'),
         'Journée standard', '08:00', '17:00', 60);

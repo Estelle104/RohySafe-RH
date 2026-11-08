@@ -44,6 +44,9 @@ const router = createRouter({
     { path: '/backoffice/rh/relations', name: 'relation-hierarchique', meta: { requiresAuth: true, roles: ['RH', 'rh'] }, component: () => import('../views/RelationHierarchiqueView.vue') },
     { path: '/backoffice/rh/conges/configuration', name: 'configuration-conge', meta: { requiresAuth: true, roles: ['RH', 'rh'] }, component: () => import('../views/ConfigurationConge.vue') },
     { path: '/backoffice/rh/conges/soldes', name: 'solde-conge', meta: { requiresAuth: true, roles: ['RH', 'rh'] }, component: () => import('../views/SoldeConge.vue') },
+    { path: '/backoffice/rh/conges/valeur', name: 'valeur-conge', meta: { requiresAuth: true, roles: ['RH', 'rh'] }, component: () => import('../views/ValeurConge.vue') },
+    { path: '/backoffice/rh/conges/remplacements', name: 'cout-remplacement', meta: { requiresAuth: true, roles: ['RH', 'rh'] }, component: () => import('../views/CoutRemplacement.vue') },
+    { path: '/backoffice/rh/conges/nouvelle', name: 'nouvelle-demande-conge', meta: { requiresAuth: true, roles: ['Manager', 'RH', 'rh'] }, component: () => import('../views/demande/NouvelleDemandeCongeView.vue') },
     { path: '/backoffice/rh/organigramme', name: 'organigramme-employe', meta: { requiresAuth: true, roles: ['RH', 'rh'] }, component: () => import('../views/OrganigrammeEmployeView.vue') },
     {
       path: '/backoffice/candidats-ideaux',

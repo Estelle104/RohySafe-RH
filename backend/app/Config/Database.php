@@ -93,7 +93,7 @@ class Database extends Config
            'charset'    => 'utf8',
            'swapPre'    => '',
            'failover'   => [],
-           'port'       => 5432,
+           'port'       => 5433,
            'dateFormat' => [
                'date'     => 'Y-m-d',
                'datetime' => 'Y-m-d H:i:s',

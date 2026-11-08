@@ -103,7 +103,7 @@ async function enregistrer() {
 
     await createHeureSupplementaire(payload)
 
-    router.push('/planning')
+    router.push('/heures-supplementaires')
   } catch (e) {
     erreur.value = e.message || 'Erreur lors de l’enregistrement.'
   } finally {
