@@ -11,6 +11,8 @@ const router = createRouter({
   history: createWebHistory(),
   routes: [
     { path: '/', redirect: '/login' },
+    { path: '/dashboard', redirect: '/backoffice' },
+    { path: '/profil', redirect: '/backoffice' },
     { path: '/login', name: 'login', component: LoginView },
     { path: '/candidats/login', name: 'candidat-login', component: LoginCandidatsView },
     {
@@ -39,6 +41,17 @@ const router = createRouter({
       meta: { requiresAuth: true, roles: ['DG','RH','rh'] },
       component: () => import('../views/BackofficeAccueilView.vue')
     },
+    { path: '/backoffice/rh/relations', name: 'relation-hierarchique', meta: { requiresAuth: true, roles: ['RH', 'rh'] }, component: () => import('../views/RelationHierarchiqueView.vue') },
+    { path: '/backoffice/rh/conges/configuration', name: 'configuration-conge', meta: { requiresAuth: true, roles: ['RH', 'rh'] }, component: () => import('../views/ConfigurationConge.vue') },
+    { path: '/backoffice/rh/conges/soldes', name: 'solde-conge', meta: { requiresAuth: true, roles: ['RH', 'rh'] }, component: () => import('../views/SoldeConge.vue') },
+    { path: '/backoffice/rh/conges/valeur', name: 'valeur-conge', meta: { requiresAuth: true, roles: ['RH', 'rh'] }, component: () => import('../views/ValeurConge.vue') },
+    { path: '/backoffice/rh/conges/remplacements', name: 'cout-remplacement', meta: { requiresAuth: true, roles: ['RH', 'rh'] }, component: () => import('../views/CoutRemplacement.vue') },
+    { path: '/backoffice/rh/conges/nouvelle', name: 'nouvelle-demande-conge', meta: { requiresAuth: true, roles: ['Manager', 'RH', 'rh'] }, component: () => import('../views/demande/NouvelleDemandeCongeView.vue') },
+    { path: '/backoffice/rh/organigramme', name: 'organigramme-employe', meta: { requiresAuth: true, roles: ['RH', 'rh'] }, component: () => import('../views/OrganigrammeEmployeView.vue') },
+    { path: '/backoffice/rh/employes', name: 'liste-employes', meta: { requiresAuth: true, roles: ['RH', 'rh'] }, component: () => import('../views/infoEmploye/ListeEmployesView.vue') },
+    { path: '/backoffice/rh/employes/:id', name: 'info-employee', meta: { requiresAuth: true, roles: ['RH', 'rh'] }, component: () => import('../views/infoEmploye/InfoEmployeeView.vue') },
+    { path: '/backoffice/rh/employes/:id/modifier', name: 'maj-info-employee', meta: { requiresAuth: true, roles: ['RH', 'rh'] }, component: () => import('../views/infoEmploye/MajInfoEmployeeView.vue') },
+    { path: '/backoffice/rh/employes/:id/historique', name: 'historique-info-employee', meta: { requiresAuth: true, roles: ['RH', 'rh'] }, component: () => import('../views/infoEmploye/HistoriqueInfoEmployeeView.vue') },
     {
       path: '/backoffice/candidats-ideaux',
       name: 'backoffice-candidats-ideaux',
@@ -95,6 +108,17 @@ const router = createRouter({
       meta: { rolesEntretiens: true },
       component: () => import('../views/EntretienEvaluationView.vue')
     },
+    { path: '/horaires/postes', name: 'horaires-postes', meta: { requiresAuth: true, roles: ['RH','DG','Direction','Manager'] }, component: () => import('../views/horaire/HorairesPostesView.vue') },
+    { path: '/horaires/postes/nouveau', name: 'horaire-formulaire', meta: { requiresAuth: true, roles: ['RH','DG','Direction','Manager'] }, component: () => import('../views/horaire/HoraireFormView.vue') },
+    { path: '/horaires/postes/:id/modifier', name: 'horaire-modifier', meta: { requiresAuth: true, roles: ['RH','DG','Direction','Manager'] }, component: () => import('../views/horaire/HoraireEditView.vue') },
+    { path: '/regimes/travail', name: 'regimes-travail', meta: { requiresAuth: true, roles: ['RH','DG','Direction','Manager'] }, component: () => import('../views/regime/RegimesTravailView.vue') },
+    { path: '/regimes/travail/nouveau', name: 'regime-formulaire', meta: { requiresAuth: true, roles: ['RH','DG','Direction','Manager'] }, component: () => import('../views/regime/RegimeFormView.vue') },
+    { path: '/regimes/travail/:id/modifier', name: 'regime-modifier', meta: { requiresAuth: true, roles: ['RH','DG','Direction','Manager'] }, component: () => import('../views/regime/RegimeEditView.vue') },
+    { path: '/planning', name: 'planning-edt', meta: { requiresAuth: true, roles: ['RH','DG','Direction','Manager'] }, component: () => import('../views/planning/PlanningEDTView.vue') },
+    { path: '/planning/nouveau', name: 'planning-edt-nouveau', meta: { requiresAuth: true, roles: ['RH','DG','Direction','Manager'] }, component: () => import('../views/planning/PlanningFormView.vue') },
+    { path: '/planning/:id/modifier', name: 'planning-edt-modifier', meta: { requiresAuth: true, roles: ['RH','DG','Direction','Manager'] }, component: () => import('../views/planning/PlanningFormView.vue') },
+    { path: '/heures-supplementaires', name: 'heures-supplementaires-liste', meta: { requiresAuth: true, roles: ['RH','Manager'] }, component: () => import('../views/heures/HeuresSupplementairesListView.vue') },
+    { path: '/heures-supplementaires/nouveau', name: 'heures-supplementaires-nouveau', meta: { requiresAuth: true, roles: ['Manager'] }, component: () => import('../views/heures/HeuresSupplementairesFormView.vue') },
   ],
 })
 

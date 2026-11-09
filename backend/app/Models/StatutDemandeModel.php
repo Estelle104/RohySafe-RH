@@ -12,6 +12,19 @@ class StatutDemandeModel extends Model
     protected $useTimestamps = false;
     protected $allowedFields = ['libelle'];
 
+    public function index()
+    {
+        $db = db_connect();
+
+        $statuts = $db->table('statut_demandes')
+            ->select('id, libelle')
+            ->orderBy('id', 'ASC')
+            ->get()
+            ->getResultArray();
+
+        return $this->response->setJSON($statuts);
+    }
+    
     public function trouverParLibelle(string $libelle): ?array
     {
         return $this->where('libelle', $libelle)->first();
