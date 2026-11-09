@@ -24,8 +24,10 @@ class AnomalieModel extends Model
     {
         $builder = $this->db->table('anomalie_pointages a')
             ->select("a.id, a.id_employe, a.date_jour, a.id_pointage, a.commentaire,
+                p.date_heure, p.id_type_pointage,
                 a.traite_le, ta.libelle AS type_anomalie, sa.libelle AS statut,
                 e.matricule, CONCAT(c.prenom, ' ', c.nom) AS nom_complet")
+            ->join('pointages p', 'p.id = a.id_pointage', 'left')
             ->join('type_anomalies ta', 'ta.id = a.id_type_anomalie')
             ->join('statut_anomalie_pointages sa', 'sa.id = a.id_statut')
             ->join('employes e', 'e.id = a.id_employe')
@@ -41,7 +43,28 @@ class AnomalieModel extends Model
     {
         $statutRow = $this->db->table('statut_anomalie_pointages')->where('libelle', $statut)->get()->getRowArray();
         if ($statutRow === null) return false;
-        return $this->update($id, ['id_statut' => $statutRow['id'], 'commentaire' => $commentaire, 'traite_par' => $utilisateur, 'traite_le' => date('Y-m-d H:i:s')]);
+        $ancienne = $this->find($id);
+        if ($ancienne === null) return false;
+        $ok = $this->update($id, ['id_statut' => $statutRow['id'], 'commentaire' => $commentaire, 'traite_par' => $utilisateur, 'traite_le' => date('Y-m-d H:i:s')]);
+        if ($ok) $this->db->table('historique_anomalies')->insert(['id_anomalie' => $id, 'ancien_statut' => $ancienne['id_statut'], 'nouveau_statut' => $statutRow['id'], 'ancien_commentaire' => $ancienne['commentaire'], 'nouveau_commentaire' => $commentaire, 'id_utilisateur' => $utilisateur]);
+        return $ok;
+    }
+
+    public function corriger(int $id, string $dateHeure, int $type, string $motif, ?int $utilisateur): bool
+    {
+        $anomalie = $this->find($id);
+        if ($anomalie === null || empty($anomalie['id_pointage'])) return false;
+        $pointage = $this->db->table('pointages')->where('id', $anomalie['id_pointage'])->get()->getRowArray();
+        if ($pointage === null) return false;
+        $statut = $this->db->table('statut_anomalie_pointages')->where('libelle', 'CORRIGEE')->get()->getRowArray();
+        if ($statut === null) return false;
+        $this->db->transStart();
+        $this->db->table('pointages')->where('id', $pointage['id'])->update(['date_heure' => $dateHeure, 'id_type_pointage' => $type]);
+        $this->db->table('correction_pointages')->insert(['id_pointage' => $pointage['id'], 'ancienne_valeur' => $pointage['date_heure'], 'nouvelle_valeur' => $dateHeure, 'motif' => $motif, 'corrige_par' => $utilisateur]);
+        $this->db->table('historique_pointages')->insert(['id_pointage' => $pointage['id'], 'action' => 'MODIFICATION', 'ancienne_date_heure' => $pointage['date_heure'], 'nouvelle_date_heure' => $dateHeure, 'ancien_type' => $pointage['id_type_pointage'], 'nouveau_type' => $type, 'id_utilisateur' => $utilisateur, 'motif' => $motif]);
+        $this->db->table('anomalie_pointages')->where('id', $id)->update(['id_statut' => $statut['id'], 'commentaire' => $motif, 'traite_par' => $utilisateur, 'traite_le' => date('Y-m-d H:i:s')]);
+        $this->db->transComplete();
+        return $this->db->transStatus() !== false;
     }
 
     /** Détecte les entrées sans sortie et les pointages hors planning. */

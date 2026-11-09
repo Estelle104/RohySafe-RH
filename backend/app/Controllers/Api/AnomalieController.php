@@ -35,4 +35,12 @@ class AnomalieController extends BaseController
             return $this->response->setJSON(['message' => 'Anomalie traitée.']);
         } catch (Throwable $e) { log_message('error', $e->getMessage()); return $this->response->setStatusCode(500)->setJSON(['message' => 'Impossible de traiter l’anomalie.']); }
     }
+
+    public function corriger(int $id)
+    {
+        $data = $this->request->getJSON(true) ?? [];
+        if (empty($data['date_heure']) || empty($data['id_type_pointage']) || empty(trim((string) ($data['motif'] ?? '')))) return $this->response->setStatusCode(422)->setJSON(['message' => 'La date, le type et le motif sont obligatoires.']);
+        try { $user = session()->get('utilisateur'); if (! (new AnomalieModel())->corriger($id, $data['date_heure'], (int) $data['id_type_pointage'], trim($data['motif']), $user['id'] ?? null)) return $this->response->setStatusCode(404)->setJSON(['message' => 'Anomalie ou pointage introuvable.']); return $this->response->setJSON(['message' => 'Pointage corrigé et historisé.']); }
+        catch (Throwable $e) { log_message('error', $e->getMessage()); return $this->response->setStatusCode(500)->setJSON(['message' => 'Impossible de corriger le pointage.']); }
+    }
 }

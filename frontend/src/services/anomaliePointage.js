@@ -67,3 +67,4 @@ export function detecterAnomalies(pointages) {
 }
 
 export const traiterAnomalie = (id, data) => request(`${API}/${id}`, { method: 'PATCH', body: JSON.stringify(data) })
+export const corrigerAnomalie = (id, data) => request(`${API}/${id}/corriger`, { method: 'PATCH', body: JSON.stringify(data) })

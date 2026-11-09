@@ -86,8 +86,12 @@ class AbsenceModel extends Model
 
     public function modifierStatut(int $id, int $idStatut, ?string $motif = null): bool
     {
+        $ancienne = $this->find($id);
+        if ($ancienne === null) return false;
         $data = ['id_statut_absence' => $idStatut];
         if ($motif !== null && trim($motif) !== '') $data['motif'] = trim($motif);
-        return $this->update($id, $data);
+        $ok = $this->update($id, $data);
+        if ($ok) $this->db->table('historique_absences')->insert(['id_absence' => $id, 'ancien_statut' => $ancienne['id_statut_absence'], 'nouveau_statut' => $idStatut, 'ancien_motif' => $ancienne['motif'], 'nouveau_motif' => $data['motif'] ?? $ancienne['motif']]);
+        return $ok;
     }
 }
