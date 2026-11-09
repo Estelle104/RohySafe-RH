@@ -63,6 +63,21 @@ $routes->group('api', ['namespace' => 'App\Controllers\Api'], function ($routes)
         $routes->post('remplacements/affecter', 'CongeController::affecterRemplacant');
         $routes->get('recalculer', 'CongeController::recalculer');
     });
+    $routes->group('rh/pointages', ['filter' => 'auth:RH'], static function ($routes) {
+        $routes->get('options', 'PointageController::options');
+        $routes->get('', 'PointageController::index');
+        $routes->get('employe/(:num)', 'PointageController::parEmploye/$1');
+        $routes->post('', 'PointageController::create');
+    });
+    $routes->get('rh/temps-travail', 'TempsTravailController::index', ['filter' => 'auth:RH']);
+    $routes->get('rh/anomalies-pointage', 'AnomalieController::index', ['filter' => 'auth:RH']);
+    $routes->post('rh/anomalies-pointage/detecter', 'AnomalieController::detecter', ['filter' => 'auth:RH']);
+    $routes->patch('rh/anomalies-pointage/(:num)', 'AnomalieController::traiter/$1', ['filter' => 'auth:RH']);
+    $routes->patch('rh/anomalies-pointage/(:num)/corriger', 'AnomalieController::corriger/$1', ['filter' => 'auth:RH']);
+    $routes->get('rh/absences', 'AbsenceController::index', ['filter' => 'auth:RH']);
+    $routes->post('rh/absences', 'AbsenceController::create', ['filter' => 'auth:RH']);
+    $routes->patch('rh/absences/(:num)/statut', 'AbsenceController::statut/$1', ['filter' => 'auth:RH']);
+    $routes->post('rh/temps-travail/recalculer', 'TempsTravailController::recalculer', ['filter' => 'auth:RH']);
     $routes->get('departements', 'Departement::index');
     $routes->get('offres', 'Offre::index');
     $routes->group('demandes', ['filter' => 'auth'], static function ($routes) {
@@ -137,6 +152,15 @@ $routes->group('api', ['namespace' => 'App\Controllers\Api'], function ($routes)
             $routes->get('offres/(:num)/candidats', 'EntretienController::candidats/$1');
             $routes->get('candidatures/(:num)', 'EntretienController::detail/$1');
             $routes->put('candidatures/(:num)/evaluation', 'EntretienController::enregistrerEvaluation/$1');
+        });
+
+        $routes->group('rh/employes', ['filter' => 'auth:RH'], static function ($routes) {
+            $routes->get('', 'EmployeController::index');
+            $routes->get('statuts', 'EmployeController::statuts');
+            $routes->get('(:num)', 'EmployeController::show/$1');
+            $routes->get('(:num)/historique', 'EmployeController::historique/$1');
+            $routes->post('(:num)/info', 'EmployeController::update/$1');
+            $routes->get('referentiels/statuts', 'EmployeController::statuts');
         });
 
     $routes->get('horaires', 'HoraireController::index');

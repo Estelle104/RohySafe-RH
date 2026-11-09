@@ -17,6 +17,7 @@ const props = defineProps({
 
 const heuresEnAttente = ref(0)
 const demandesEnCours = ref(0)
+const anomaliesEnAttente = ref(0)
 
 defineEmits(['fermer', 'deconnexion'])
 
@@ -26,6 +27,7 @@ async function chargerNotificationsGlobales() {
   if (!['RH', 'Manager'].includes(roleActuel)) {
     heuresEnAttente.value = 0
     demandesEnCours.value = 0
+    anomaliesEnAttente.value = 0
     return
   }
 
@@ -58,8 +60,18 @@ async function chargerNotificationsGlobales() {
     } catch {
       demandesEnCours.value = 0
     }
+    try {
+      const reponseAnomalies = await fetch('/api/rh/anomalies-pointage', { credentials: 'include', headers: { Accept: 'application/json' } })
+      if (reponseAnomalies.ok) {
+        const contenu = await reponseAnomalies.json().catch(() => ({}))
+        anomaliesEnAttente.value = (contenu.anomalies || []).filter((anomalie) => anomalie.statut === 'A_TRAITER').length
+      }
+    } catch {
+      anomaliesEnAttente.value = 0
+    }
   } else {
     demandesEnCours.value = 0
+    anomaliesEnAttente.value = 0
   }
 }
 
@@ -84,6 +96,16 @@ const totalDemandes = computed(() => {
 const liens = [
   { to: '/dashboard', label: 'Dashboard', icone: 'accueil' },
   { groupe: 'Recrutement' },
+  { to: '/demandes/nouvelle', label: 'Demandes de personnel', icone: 'demandes', roles: ['Manager', 'DG'] },
+  { to: '/offres/a-publier', label: 'Offres à publier', icone: 'offres', roles: ['RH', 'DG', 'Direction'] },
+  { groupe: 'Mon espace' },
+  { to: '/candidatures', label: 'Liste des candidatures', icone: 'demandes', roles: ['RH'] },
+  { to: { name: 'entretiens-offres' }, label: 'Entretiens', icone: 'entretiens', roles: ['RH'] },
+  { to: '/notification', label: 'Notifications', icone: 'notifications', badge: true },  // tous
+  { to: '/backoffice', label: 'Gerer les offres d\'emplois', icone: 'demandes', roles: ['RH', 'DG'] },                          // tous
+  { to: '/backoffice/rh/relations', label: 'Relations hiérarchiques', icone: 'demandes', roles: ['RH', 'rh'] },
+  { to: '/backoffice/rh/organigramme', label: 'Organigramme', icone: 'accueil', roles: ['RH', 'rh'] },
+  { to: '/backoffice/rh/employes', label: 'Liste des employés', icone: 'personne', roles: ['RH', 'rh'] }, // icone de personne à ajouter
   { to: '/demandes/nouvelle', label: 'Demandes de personnel', icone: 'demandes', roles: ['Manager','DG'] },
   { to: '/offres/a-publier', label: 'Offres à publier', icone: 'offres', roles: ['RH','DG','Direction'] },
   { to: '/planning', label: 'Planning EDT', icone: 'calendar', roles: ['RH','DG','Direction','Manager'] },
@@ -105,6 +127,10 @@ const liens = [
   { to: '/backoffice/rh/conges/valeur', label: 'Valeur des congés', icone: 'demandes', roles: ['RH','rh'] },
   { to: '/backoffice/rh/conges/remplacements', label: 'Coût des remplacements', icone: 'demandes', roles: ['RH','rh'] },
   { to: '/backoffice/rh/conges/nouvelle', label: 'Nouvelle demande de congé', icone: 'demandes', roles: ['Manager','RH','rh'] },
+  { to: '/backoffice/rh/pointages', label: 'Pointages', icone: 'demandes', roles: ['RH','rh'] },
+  { to: '/backoffice/rh/temps-travail', label: 'Temps de travail', icone: 'demandes', roles: ['RH','rh'] },
+  { to: '/backoffice/rh/anomalies-pointage', label: 'Anomalies de pointage', icone: 'demandes', roles: ['RH','rh'], badge: 'anomalies' },
+  { to: '/backoffice/rh/absences', label: 'Absences', icone: 'demandes', roles: ['RH','rh'] },
   { to: '/profil', label: 'Mon profil', icone: 'profil' },
 ]
 
@@ -162,6 +188,7 @@ const liensVisibles = computed(() => {
           {{ l.label }}
           <span v-if="l.badge === 'heures' && totalHeures > 0" class="badge">{{ totalHeures }}</span>
           <span v-else-if="l.badge === 'notifications' && totalDemandes > 0" class="badge">{{ totalDemandes }}</span>
+          <span v-else-if="l.badge === 'anomalies' && anomaliesEnAttente > 0" class="badge">{{ anomaliesEnAttente }}</span>
         </router-link>
       </template>
     </nav>
