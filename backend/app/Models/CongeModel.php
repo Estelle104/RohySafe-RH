@@ -64,6 +64,7 @@ class CongeModel extends Model
     /** Recalcule les droits, les jours pris et le solde de la période courante. */
     public function recalculerSoldes(): int
     {
+        $plafondCumul = 90.00;
         $annee = (int) date('Y');
         $debutPeriode = new DateTimeImmutable($annee . '-01-01');
         $finPeriode = new DateTimeImmutable($annee . '-12-31');
@@ -92,7 +93,8 @@ log_message('debug', 'Année PHP : ' . date('Y'));
                 ? (($finAcquisition->format('Y') - $debutAcquisition->format('Y')) * 12)
                     + ((int) $finAcquisition->format('m') - (int) $debutAcquisition->format('m')) + 1
                 : 0;
-            $droitsAcquis = max(0, $moisAcquis * (float) $solde['nombre_jour']);
+            // Le cumul des droits ne peut pas dépasser 90 jours.
+            $droitsAcquis = min($plafondCumul, max(0, $moisAcquis * (float) $solde['nombre_jour']));
 
             $joursPris = $this->db->table('conges cg')
                 ->select("COALESCE(SUM((LEAST(cg.date_fin, '{$finPeriode->format('Y-m-d')}')
@@ -112,7 +114,7 @@ log_message('debug', 'Année PHP : ' . date('Y'));
             $this->db->table('solde_conges')->where('id', (int) $solde['id'])->update([
                 'droits_acquis' => $droitsAcquis,
                 'jours_pris' => $joursPris,
-                'solde_restant' => max(0, $droitsAcquis - $joursPris),
+                'solde_restant' => min($plafondCumul, max(0, $droitsAcquis - $joursPris)),
             ]);
         }
         $this->db->transComplete();

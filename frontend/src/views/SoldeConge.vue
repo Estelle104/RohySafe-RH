@@ -97,7 +97,8 @@ onMounted(charger)
                   <td>{{ employe.nom_complet || employe.matricule || employe.id_employe }}</td>
                   <td>{{ employe.date_embauche }}</td>
                   <td>Annuel</td>
-                  <td>{{ employe.periode_debut }} – {{ employe.periode_fin }}</td>
+                  <!-- <td>{{ employe.periode_debut.getFullYear() }}</td> -->
+                   <td>{{ new Date(employe.periode_debut).getFullYear() }}</td>
                   <td>{{ employe.droits_acquis }} j</td>
                   <td>{{ employe.jours_pris }} j</td>
                   <td class="solde">{{ employe.solde_restant }} j</td>
