@@ -1,14 +1,15 @@
 <script setup>
 import { onMounted, ref } from 'vue'
 import SidebarMenu from '../components/SidebarMenu.vue'
-import { corrigerAnomalie, detecterAnomaliesApi, getAnomalies, traiterAnomalie } from '../services/anomaliePointage'
+import { corrigerAnomalie, detecterAnomaliesApi, getAnomalies, getStatutsAnomalies, traiterAnomalie } from '../services/anomaliePointage'
 import { getPointageOptions } from '../services/pointage'
 
 const anomalies = ref([])
 const types = ref([])
+const statuts = ref([])
 const selection = ref(null)
 const formulaire = ref({ date_heure: '', id_type_pointage: '', motif: '' })
-const filtres = ref({ idEmploye: '', dateDebut: '', dateFin: '' })
+const filtres = ref({ idEmploye: '', dateDebut: '', dateFin: '', statut: '' })
 const loading = ref(false)
 const error = ref('')
 const message = ref('')
@@ -55,7 +56,10 @@ async function traiter(anomalie, statut) {
 }
 
 onMounted(async () => {
-  try { types.value = (await getPointageOptions()).types || [] } catch (e) { error.value = e.message }
+  try {
+    types.value = (await getPointageOptions()).types || []
+    statuts.value = (await getStatutsAnomalies()).statuts || []
+  } catch (e) { error.value = e.message }
   await charger()
 })
 </script>
@@ -91,6 +95,15 @@ onMounted(async () => {
           </label>
           <label>Du<input v-model="filtres.dateDebut" type="date" /></label>
           <label>Au<input v-model="filtres.dateFin" type="date" /></label>
+          <label>
+            Statut
+            <select v-model="filtres.statut">
+              <option value="">Tous</option>
+              <option v-for="statut in statuts" :key="statut.id" :value="statut.libelle">
+                {{ statut.libelle }}
+              </option>
+            </select>
+          </label>
           <button class="primary-button" type="button" :disabled="loading" @click="charger">{{ loading ? 'Recherche...' : 'Rechercher' }}</button>
         </section>
 

@@ -1,5 +1,6 @@
 const API = '/api/rh/conges/soldes'
 const DROITS_MENSUELS = 2.5
+const PLAFOND_CUMUL = 90
 
 async function request(url, options = {}) {
   const response = await fetch(url, {
@@ -40,13 +41,13 @@ export function calculerMoisAcquisition(periodeDebut, periodeFin) {
 /** Calcule les droits acquis, les jours consommés et le solde disponible. */
 export function calculerSolde({ periodeDebut, periodeFin, joursPris = 0, droitsMensuels = DROITS_MENSUELS }) {
   const moisAcquis = calculerMoisAcquisition(periodeDebut, periodeFin)
-  const droitsAcquis = Math.max(0, moisAcquis * Number(droitsMensuels))
+  const droitsAcquis = Math.min(PLAFOND_CUMUL, Math.max(0, moisAcquis * Number(droitsMensuels)))
   const joursConsommes = Math.max(0, Number(joursPris) || 0)
 
 
   return {
     droitsAcquis,
     joursConsommes,
-    soldeDisponible: Math.max(0, droitsAcquis - joursConsommes),
+    soldeDisponible: Math.min(PLAFOND_CUMUL, Math.max(0, droitsAcquis - joursConsommes)),
   }
 }

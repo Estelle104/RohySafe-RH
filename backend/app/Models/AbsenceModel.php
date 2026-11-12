@@ -13,12 +13,13 @@ class AbsenceModel extends Model
 
     public function getAbsences(): array
     {
+        $horaireSemaine = 173.33; // Nombre d'heures de travail par mois pour un temps plein (40h/semaine)
         $absences = $this->db->table('absences a')
             ->select("a.id, a.id_employe, a.date, a.motif, e.matricule,
                 CONCAT(c.prenom, ' ', c.nom) AS nom_complet, sa.libelle AS statut, a.heure_debut, a.heure_fin,
                 COALESCE(ct.salaire, 0) AS salaire_mensuel,
                 CASE WHEN sa.libelle = 'NON_JUSTIFIEE' AND a.heure_debut IS NOT NULL AND a.heure_fin IS NOT NULL
-                    THEN (COALESCE(ct.salaire, 0) / 173.33) * EXTRACT(EPOCH FROM (a.heure_fin - a.heure_debut)) / 3600
+                    THEN (COALESCE(ct.salaire, 0) / $horaireSemaine) * EXTRACT(EPOCH FROM (a.heure_fin - a.heure_debut)) / 3600
                     ELSE 0 END AS retenue")
             ->join('employes e', 'e.id = a.id_employe')
             ->join('candidats c', 'c.id = e.id_candidat')
@@ -44,7 +45,7 @@ class AbsenceModel extends Model
                 $fin = strtotime($absence['date'] . ' ' . $horaire['heure_fin']);
                 if ($fin <= $debut) $fin = strtotime('+1 day', $fin);
                 $heures = max(0, ($fin - $debut) / 3600 - ((int) $horaire['pause_minutes'] / 60));
-                $absence['retenue'] = ((float) $absence['salaire_mensuel'] / 173.33) * $heures;
+                $absence['retenue'] = ((float) $absence['salaire_mensuel'] / $horaireSemaine ) * $heures;
             }
         }
         unset($absence);

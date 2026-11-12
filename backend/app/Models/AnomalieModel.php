@@ -36,7 +36,18 @@ class AnomalieModel extends Model
         if (! empty($filtres['id_employe'])) $builder->where('a.id_employe', (int) $filtres['id_employe']);
         if (! empty($filtres['date_debut'])) $builder->where('a.date_jour >=', $filtres['date_debut']);
         if (! empty($filtres['date_fin'])) $builder->where('a.date_jour <=', $filtres['date_fin']);
+        if (! empty($filtres['statut'])) $builder->where('sa.libelle', $filtres['statut']);
         return $builder->get()->getResultArray();
+    }
+
+    /** Retourne les statuts disponibles pour le filtre des anomalies. */
+    public function getStatuts(): array
+    {
+        return $this->db->table('statut_anomalie_pointages')
+            ->select('id, libelle')
+            ->orderBy('id', 'ASC')
+            ->get()
+            ->getResultArray();
     }
 
     public function traiter(int $id, string $statut, string $commentaire, ?int $utilisateur): bool
@@ -88,7 +99,11 @@ class AnomalieModel extends Model
         foreach ($groupes as $cle => $journee) {
             [$idEmploye, $date] = explode('|', $cle);
             $types = array_column($journee, 'libelle');
-            if (in_array('ENTREE', $types, true) && ! in_array('SORTIE', $types, true)) {
+            if (
+                in_array('ENTREE', $types, true)
+                && ! in_array('SORTIE', $types, true)
+                && $this->heureSortieDepassee((int) $idEmploye, $date)
+            ) {
                 $ajouts += $this->ajouterSiAbsent((int) $idEmploye, $date, 'SORTIE_MANQUANTE', null);
             }
             foreach ($journee as $point) {
@@ -138,6 +153,39 @@ class AnomalieModel extends Model
         $debut = strtotime($date . ' ' . $ligne['heure_debut']) - 3600;
         $fin = strtotime($date . ' ' . $ligne['heure_fin']) + 3600;
         return $heure >= $debut && $heure <= $fin;
+    }
+
+    /**
+     * Vérifie si la tolérance d'une heure après la sortie prévue est dépassée.
+     * Une sortie manquante n'est donc pas créée trop tôt dans la journée.
+     */
+    private function heureSortieDepassee(int $idEmploye, string $date): bool
+    {
+        $horaire = $this->db->table('planning_edt_employes pee')
+            ->select('h.heure_fin')
+            ->join('planning_edts pe', 'pe.id = pee.id_planning_edt')
+            ->join('employes e', 'e.id = pee.id_employe')
+            ->join('poste_departement pd', 'pd.id = e.id_poste_departement')
+            ->join('horaire_postes h', 'h.id_poste = pd.id_poste')
+            ->where('pee.id_employe', $idEmploye)
+            ->where('pe.date_debut <=', $date)
+            ->where('pe.date_fin >=', $date)
+            ->where("EXTRACT(ISODOW FROM DATE '{$date}') = ANY(pe.jours_semaine)", null, false)
+            ->get()->getRowArray();
+
+        if ($horaire === null || empty($horaire['heure_fin'])) {
+            return false;
+        }
+
+        $sortiePrevue = new \DateTimeImmutable($date . ' ' . $horaire['heure_fin']);
+        $maintenant = new \DateTimeImmutable('now');
+
+        // Pour un planning qui traverse minuit, la sortie appartient au jour suivant.
+        if ($horaire['heure_fin'] < '06:00:00') {
+            $sortiePrevue = $sortiePrevue->modify('+1 day');
+        }
+
+        return $maintenant >= $sortiePrevue->modify('+1 hour');
     }
 
     private function ajouterSiAbsent(int $idEmploye, string $date, string $type, ?int $idPointage): int

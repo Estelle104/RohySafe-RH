@@ -16,9 +16,12 @@ export const getAnomalies = (filtres = {}) => {
   if (filtres.idEmploye) params.set('id_employe', filtres.idEmploye)
   if (filtres.dateDebut) params.set('date_debut', filtres.dateDebut)
   if (filtres.dateFin) params.set('date_fin', filtres.dateFin)
+  if (filtres.statut) params.set('statut', filtres.statut)
   const query = params.toString()
   return request(query ? `${API}?${query}` : API)
 }
+
+export const getStatutsAnomalies = () => request(`${API}/statuts`)
 
 export const detecterAnomaliesApi = (filtres = {}) => {
   const params = new URLSearchParams()
