@@ -21,8 +21,19 @@ class AnomalieController extends BaseController
         try {
             return $this->response->setJSON(['anomalies' => (new AnomalieModel())->getAnomalies([
                 'id_employe' => $this->request->getGet('id_employe'), 'date_debut' => $this->request->getGet('date_debut'), 'date_fin' => $this->request->getGet('date_fin'),
+                'statut' => $this->request->getGet('statut'),
             ])]);
         } catch (Throwable $e) { log_message('error', $e->getMessage()); return $this->response->setStatusCode(500)->setJSON(['message' => 'Impossible de récupérer les anomalies.']); }
+    }
+
+    public function statuts()
+    {
+        try {
+            return $this->response->setJSON(['statuts' => (new AnomalieModel())->getStatuts()]);
+        } catch (Throwable $e) {
+            log_message('error', $e->getMessage());
+            return $this->response->setStatusCode(500)->setJSON(['message' => 'Impossible de récupérer les statuts.']);
+        }
     }
 
     public function traiter(int $id)
