@@ -65,7 +65,7 @@ class CandidatureModel extends Model
 
     public function getDonneesContrat(int $id): ?array
     {
-        return $this->db->table('candidatures c')->select('c.id, c.id_candidat, ca.nom, ca.prenom, ca.ville, o.titre AS titre_offre, p.libelle AS poste, dpt.libelle AS departement, tc.id AS id_type_contrat, tc.libelle AS type_contrat, dm.date_prise_poste, dm.salaire_propose, sc.libelle AS statut_candidature')
+        return $this->db->table('candidatures c')->select('c.id, c.id_candidat, ca.nom, ca.prenom, ca.ville, o.titre AS titre_offre, p.libelle AS poste, dpt.libelle AS departement, pd.id AS id_poste_departement, tc.id AS id_type_contrat, tc.libelle AS type_contrat, dm.date_prise_poste, dm.salaire_propose, sc.libelle AS statut_candidature')
             ->join('statut_candidatures sc', 'sc.id = c.id_statut_actuel')
             ->join('candidats ca', 'ca.id = c.id_candidat')
             ->join('offres o', 'o.id = c.id_offre')
@@ -90,8 +90,20 @@ class CandidatureModel extends Model
         $employe = $this->db->table('employes')->select('id')->where('id_candidat', $this->find($id)['id_candidat'])->get()->getRowArray();
         if ($employe === null) {
             $matricule = 'EMP-' . date('Y') . '-' . str_pad((string) $id, 4, '0', STR_PAD_LEFT);
-            $this->db->table('employes')->insert(['id_candidat' => $this->find($id)['id_candidat'], 'matricule' => $matricule, 'date_embauche' => $donnees['date_prise_poste'] ?: date('Y-m-d')]);
-            $employe = ['id' => $this->db->insertID()];
+            $this->db->table('employes')->insert([
+                'id_candidat' => $this->find($id)['id_candidat'],
+                'matricule' => $matricule,
+                'date_embauche' => $donnees['date_prise_poste'] ?: date('Y-m-d'),
+                'id_statut_actuel' => 1,
+                'id_poste_departement' => $donnees['id_poste_departement'],
+            ]);
+            // Ne pas utiliser insertID() : le trigger des soldes de congés
+            // peut insérer une ligne dans une autre table et modifier la séquence.
+            $employe = $this->db->table('employes')
+                ->select('id, matricule')
+                ->where('id_candidat', $this->find($id)['id_candidat'])
+                ->get()->getRowArray();
+            if ($employe === null) throw new \RuntimeException('Employé créé introuvable.');
         }
         $statut = $this->db->table('statut_contrats')->select('id')->where('id', 1)->get()->getRowArray();
         if ($statut === null) throw new \RuntimeException('Le statut de contrat cree (id 1) est introuvable.');
@@ -129,8 +141,16 @@ class CandidatureModel extends Model
                 'id_candidat' => $candidature['id_candidat'],
                 'matricule' => $matricule,
                 'date_embauche' => $donnees['date_prise_poste'] ?: date('Y-m-d'),
+                'id_statut_actuel' => 1,
+                'id_poste_departement' => $donnees['id_poste_departement'],
             ]);
-            $employe = ['id' => $this->db->insertID(), 'matricule' => $matricule];
+            // Le trigger des soldes de congés peut modifier insertID().
+            // Relire l'employé garantit d'utiliser son véritable identifiant.
+            $employe = $this->db->table('employes')
+                ->select('id, matricule')
+                ->where('id_candidat', $candidature['id_candidat'])
+                ->get()->getRowArray();
+            if ($employe === null) throw new \RuntimeException('Employé créé introuvable.');
         }
 
         $statutContrat = $this->db->table('statut_contrats')->select('id')->where('id', 1)->get()->getRowArray();

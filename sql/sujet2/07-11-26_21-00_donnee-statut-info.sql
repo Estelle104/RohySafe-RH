@@ -9,13 +9,7 @@ INSERT INTO statut_matrimoniales (libelle) VALUES
 
 -- Statuts professionnels
 INSERT INTO statut_professionnelles (libelle) VALUES
-('En activité'),
-('En congé'),
-('En congé maladie'),
-('En permission'),
-('En disponibilité'),
-('Suspendu(e)'),
-('En préavis'),
-('Démissionnaire'),
-('Licencié(e)'),
-('Retraité(e)');
+('Stagiaire'),
+('CDD'),
+('CDI'),
+('Consultant');
